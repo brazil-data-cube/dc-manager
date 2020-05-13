@@ -1,0 +1,38 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row" style="padding: 0 20px">
+            <mat-horizontal-stepper labelPosition="bottom" #stepper class="container-stepper">
+                <mat-step>
+                    <ng-template matStepLabel>GRID</ng-template>
+                    <app-step-layout first="true">
+                        <app-create-cube-grid></app-create-cube-grid>
+                    </app-step-layout>
+                </mat-step>
+                <mat-step>
+                    <ng-template matStepLabel>REGION</ng-template>
+                    <app-step-layout>
+                        <app-create-cube-images></app-create-cube-images>
+                    </app-step-layout>
+                </mat-step>
+                <mat-step>
+                    <ng-template matStepLabel>DEFINITION</ng-template>
+                    <app-step-layout>
+                        <app-create-cube-definition></app-create-cube-definition>
+                    </app-step-layout>
+                </mat-step>
+                <mat-step>
+                    <ng-template matStepLabel>METADATA</ng-template>
+                    <app-step-layout>
+                        <app-create-cube-metadata></app-create-cube-metadata>
+                    </app-step-layout>
+                </mat-step>
+                <mat-step>
+                    <ng-template matStepLabel>PREVIEW</ng-template>
+                    <app-step-layout titleNext="CREATE">
+                        <app-create-cube-preview></app-create-cube-preview>
+                    </app-step-layout>
+                </mat-step>
+            </mat-horizontal-stepper>
+        </div>
+    </div>
+</div>

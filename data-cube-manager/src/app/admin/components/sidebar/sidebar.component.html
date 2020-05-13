@@ -1,0 +1,20 @@
+<div class="logo">
+    <a href="http://brazildatacube.org">
+        <div class="logo-img" target="_blank">
+            <img src="/assets/img/logo-without-title.png"/>
+        </div>
+    </a>
+    <span class="simple-text">
+        Data Cube Manager
+    </span>
+</div>
+<div class="sidebar-wrapper">
+    <ul class="nav">
+        <li routerLinkActive="active" *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
+            <a class="nav-link" [routerLink]="[menuItem.path]">
+                <i class="material-icons">{{menuItem.icon}}</i>
+                <p>{{menuItem.title}}</p>
+            </a>
+        </li>
+    </ul>
+</div>

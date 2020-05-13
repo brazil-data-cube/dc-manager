@@ -1,0 +1,66 @@
+<div class="container_grid">
+    <h3 style="display: flex; align-items: center;">
+        <mat-icon>grid_on</mat-icon>
+        <span style="margin-left: 10px;">Select Grid</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-8 col-md-8 col-sm-12">
+            <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)"></div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 form">
+            <div class="btn-group">
+                <mat-button-toggle-group [(ngModel)]="action">
+                    <mat-button-toggle value="select">
+                        <b>SELECT</b> GRID
+                    </mat-button-toggle>
+                    <mat-button-toggle value="create" (click)="removeGrid(grid['id'])">
+                        <b>CREATE NEW</b> GRID
+                    </mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+
+            <div *ngIf="action === 'select'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Grid Name</mat-label>
+                    <mat-select>
+                        <mat-option *ngFor="let grid of grids" [value]="grid.id" (click)="selectGrid(grid)">{{ grid.id }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>CRS</mat-label>
+                    <textarea matInput placeholder="CRS" [value]="grid.crs" rows="4" disabled></textarea>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput placeholder="Central Meridian" [value]="grid.description" rows="3" disabled></textarea>
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="action === 'create'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Name" [(ngModel)]="form.name">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <input matInput placeholder="Description" [(ngModel)]="form.description">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Meridian</mat-label>
+                    <input matInput placeholder="Central Meridian" [(ngModel)]="form.meridian">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Width (in graus)</mat-label>
+                    <input matInput type="number" placeholder="Width Tile" [(ngModel)]="form.width">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Height (in graus)</mat-label>
+                    <input matInput type="number" placeholder="Height Tile" [(ngModel)]="form.height">
+                </mat-form-field>
+
+                <button mat-raised-button disabled class="btn">CREATE GRID</button>
+            </div>
+        </div>
+    </div>
+</div>

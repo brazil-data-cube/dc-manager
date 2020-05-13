@@ -1,0 +1,47 @@
+.cube-detais {
+    .container_progress {
+        justify-content: center;
+
+        .bar {
+            display: flex;
+            align-items: center;
+
+            img {
+                width: 30px;
+                border-radius: 50%;
+            }
+        }
+    }
+    
+    .container_details {
+        padding: 0 25px;
+    
+        .mat-standard-chip {
+            min-height: 20px !important;
+            font-size: small;
+        }
+    }
+
+    .container_cards {
+        margin-top: 20px;
+    }
+    
+    .container_map {
+        margin-top: 15px;
+        height: 500px;
+        width: 100%;
+        box-shadow: 0px 0px 6px rgba(#000, 0.25);
+    }
+    
+    .btns-check {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin: 10px auto;
+
+        a {
+            margin-left: 20px;
+            font-size: 1.2em;
+        }
+    }
+}

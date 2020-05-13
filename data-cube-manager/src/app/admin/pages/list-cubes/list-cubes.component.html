@@ -1,0 +1,30 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3"
+                *ngFor="let cube of cubes">
+                <a [routerLink]="['/details-cube', cube.id]">
+                    <div class="card card-chart">
+                        <div [ngClass]="['card-header', getCubeClass(cube)]">
+                            <h4 class="card-title text-center">{{ cube.id }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-category text-justify">
+                                {{ cube.description }}
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="stats">
+                                <i class="material-icons">search</i> click here for more information
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <a class="btn-create" mat-raised-button color="primary" [routerLink]="['/create-cube']"> + Create New Cube</a>
+        </div>
+    </div>
+</div>

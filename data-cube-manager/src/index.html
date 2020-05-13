@@ -1,0 +1,57 @@
+<!--
+ * This file is part of WEB App for Data Cube Manager.
+    Copyright (C) 2020 Brazil Data Cube.
+ * Layout Base: Copyright 2016 Creative Tim
+
+ * Data Cube Manager is free software; you can redistribute it and/or modify it
+    under the terms of the MIT License; see LICENSE file for more details.
+-->
+
+<!doctype html>
+<html>
+<head>
+    <base href='/'>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <title>Data Cube Manager</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+    <!--     Fonts and icons     -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300|Material+Icons' rel='stylesheet' type='text/css'>
+
+    <script src="/assets/env.js"></script>
+
+    <style media="screen">
+      #loader {
+        position: absolute;
+        display: block;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #ffffff;
+      }
+
+      #loader img {
+        width: 150px;
+        height: 150px;
+        border-radius: 10px;
+      }
+    </style>
+
+</head>
+<body>
+  <app-root>
+    <div id="loader"><img src="/assets/img/loading.gif" alt="loading"></div>
+  </app-root>
+</body>
+
+
+</html>

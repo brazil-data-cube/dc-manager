@@ -1,0 +1,14 @@
+.container_definition {
+    padding: 0 10px;
+
+    .box_btn {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+
+        button {
+            font-size: x-large;
+            padding: 10px 20px;
+        }
+    }
+}

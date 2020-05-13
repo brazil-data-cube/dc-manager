@@ -1,0 +1,8 @@
+<section class="body_step">
+    <ng-content></ng-content>
+
+    <div class="row footer">
+        <button mat-raised-button [disabled]="first" matStepperPrevious>Back</button>
+        <button mat-raised-button color="primary" matStepperNext>{{ titleNext }}</button>
+    </div>
+</section>

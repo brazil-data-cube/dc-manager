@@ -1,0 +1,25 @@
+.container_grid {
+    padding: 0 10px;
+
+    .container_map {
+        margin: 15px 0;
+        height: 500px;
+        width: 100%;
+        box-shadow: 0px 0px 6px rgba(#000, 0.25);
+    }
+
+    .form {
+        padding: 0 10px;
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin: 0px 0 20px 0;
+        }
+
+        .btn {
+            display: block;
+            margin: 0 auto;
+        }
+    }
+}

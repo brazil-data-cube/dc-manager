@@ -1,0 +1,108 @@
+<div class="main-content cube-detais">
+    <div class="container-fluid" *ngIf="cube">
+        
+        <div class="row container_details">
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-" style="background: #999">
+                        <h4 class="card-title">Cube Details</h4>
+                        <p class="card-category">{{ cube.description }}</p>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
+                                    <td class="text-success">Range Time:</td>
+                                    <td>{{ cube.temporal[0] }} / {{ cube.temporal[1] }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
+                                    <td class="text-success">Bands:</td>
+                                    <td>
+                                        <mat-chip-list>
+                                            <mat-chip *ngFor="let band of cube.bands">
+                                                {{ band.name.toUpperCase() }}</mat-chip>
+                                        </mat-chip-list>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
+                                    <td class="text-success">Grid:</td>
+                                    <td>{{ cube.grs_schema_id }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
+                                    <td class="text-success">Bands Quicklook:</td>
+                                    <td>
+                                        <mat-chip-list>
+                                            <mat-chip *ngFor="let band of cube.bands_quicklook.split(',')">
+                                                {{ band.toUpperCase() }}</mat-chip>
+                                        </mat-chip-list>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
+                                    <td class="text-success">Composite Function:</td>
+                                    <td>{{ cube.composite_function_schema_id }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
+                                    <td class="text-success">Temporal Composition:</td>
+                                    <td>{{ cube.temporal_composition_schema_id }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
+                                    <td class="text-success">License:</td>
+                                    <td>{{ cube.license }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-12">
+                <div leaflet 
+                    class="container_map" 
+                    [leafletOptions]="options"
+                    (leafletMapReady)="onMapReady($event)">
+                </div>
+                
+                <div class="btns-check">
+                    <a *ngIf="cube.finished" mat-raised-button color="success" [routerLink]="['/update-cube', cube.id]">
+                        UPDATE CUBE
+                    </a>
+                    <a mat-raised-button color="primary" [routerLink]="['/check-cube', cube.id]">
+                        CHECK CUBE
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row container_progress">
+            <div class="col-10 bar">
+                <mat-progress-bar mode="buffer" [value]="cube.finished ? 100 : 70" color="blue" bufferValue="0">
+                </mat-progress-bar>
+                <img *ngIf="!cube.finished" src="/assets/img/loading.gif" alt="loading">
+            </div>
+        </div>
+
+        <div class="row container_cards">
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <app-mini-card category="Tasks - TOTAL" title="300" icon="list" class="card-header-gray"></app-mini-card>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div *ngIf="!cube.finished">
+                    <app-mini-card category="Tasks - FINISHED" title="200" icon="check" class="card-header-success"></app-mini-card>
+                </div>
+                <div *ngIf="cube.finished">
+                    <app-mini-card category="Time" title="30min 50seg" icon="access_alarm" class="card-header-success"></app-mini-card>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div *ngIf="!cube.finished">
+                    <app-mini-card category="Tasks - PENDING" title="100" icon="warning" class="card-header-warning"></app-mini-card>
+                </div>
+                <div *ngIf="cube.finished">
+                    <app-mini-card category="Collection - ITEM" title="550" icon="check" class="card-header-success"></app-mini-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

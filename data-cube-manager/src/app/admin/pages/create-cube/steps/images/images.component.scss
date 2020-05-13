@@ -1,0 +1,28 @@
+.container_images {
+    padding: 0 10px 20px 10px;
+
+    .container_map {
+        margin-top: 15px;
+        height: 500px;
+        width: 100%;
+        box-shadow: 0px 0px 6px rgba(#000, 0.25);
+    }
+
+    .form {
+        padding: 10px;
+
+        .catalog {
+            .card-title {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .card-body {
+                .mat-icon {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+}
