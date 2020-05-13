@@ -1,7 +1,66 @@
 <div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
-            
+    <div class="container-fluid container_check-cube">
+        <div class="search-box">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <mat-form-field appearance="outline">
+                        <mat-label>BBOX</mat-label>
+                        <input matInput placeholder="BBox (W, S, E, N)">
+                        <button mat-icon-button matSuffix>
+                            <mat-icon>map</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Start Date</mat-label>
+                        <input matInput [matDatepicker]="start_date" name="start_date">
+                        <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
+                        <mat-datepicker #start_date></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-6">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Last Date</mat-label>
+                        <input matInput [matDatepicker]="last_date" name="last_date">
+                        <mat-datepicker-toggle matSuffix [for]="last_date"></mat-datepicker-toggle>
+                        <mat-datepicker #last_date></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+            <button mat-raised-button color="primary">SEARCH</button>
+        </div>
+
+        <div class="tab-box">
+            <mat-tab-group>
+                <mat-tab label="089098">
+                    <div class="row" style="margin: 0">
+                        <div class="col-lg-3 col-md-4 col-sm-6" style="margin-top: 20px;" *ngFor="let i of [1,2,3,4,5]">
+                            <div class="card">
+                                <div class="card-header-success">
+                                    <img
+                                        src="http://brazildatacube.dpi.inpe.br/Repository/Mosaic/C4_64_16D_MED/083100/2019-12-19_2019-12-31/C4_64_16D_MED_083100_2019-12-19_2019-12-31.png" />
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-center">
+                                        C4_64_16D_MED_083100_2019-12-19_2019-12-31
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <button mat-raised-button>REPROCESS</button>
+                                    <button mat-raised-button color="primary">DETAILS</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </mat-tab>
+                <mat-tab label="087098"> Content ... </mat-tab>
+                <mat-tab label="089095"> Content ... </mat-tab>
+            </mat-tab-group>
         </div>
     </div>
 </div>

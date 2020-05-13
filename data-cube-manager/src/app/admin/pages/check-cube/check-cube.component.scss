@@ -1,16 +1,48 @@
-.container_progress {
-    justify-content: center;
-}
+.container_check-cube {
+    padding: 0 15px;
+    
+    .search-box {
+        background: #FFF;
+        padding: 20px 10px 0 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
-.container_map {
-    height: 500px;
-    width: 100%;
-    box-shadow: 0px 0px 6px rgba(#000, 0.25);
-}
+        .row {
+            margin: 0;
+            width: 100%;
+        }
 
-.btn-check {
-    display: block;
-    margin: 10px auto;
-    font-size: 1.2em;
-    width: 200px;
+        button {
+            margin-top: -20px;
+            margin-right: 10px;
+        }
+    }
+
+    .tab-box {
+        background: #FFF;
+        padding: 10px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        
+        .card-header-success {
+            padding: 0;
+            border-radius: 10px;
+            
+            img {
+                width: 100%;
+                border-radius: 10px;
+            }
+        }
+
+        .card-body {
+            padding-bottom: 0;
+        }
+
+        .card-footer {
+            border-top: 1px solid #DDD;
+            justify-content: space-around;
+            padding: 15px 0 10px 0;
+        }
+    }
 }

@@ -17,6 +17,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -58,6 +59,7 @@ import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate
     MatNativeDateModule,
     MatSnackBarModule,
     MatIconModule,
+    MatTabsModule,
     NgxPaginationModule,
     LeafletModule,
     LeafletDrawModule
