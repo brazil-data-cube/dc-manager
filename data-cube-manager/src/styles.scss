@@ -1,3 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~leaflet/dist/leaflet.css';
 @import '~leaflet-draw/dist/leaflet.draw.css';
+
+
+// ANGULAR MATERIAL - THEMES
+.app_snack-bar-success {
+    background: rgba(#339966, 0.9) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+.app_snack-bar-error {
+    background: rgba(#ff4d4d, 0.9) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}

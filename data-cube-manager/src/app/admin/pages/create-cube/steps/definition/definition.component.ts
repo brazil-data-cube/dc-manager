@@ -1,6 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON } from 'leaflet';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
+import { Component, OnInit } from '@angular/core'
+import { Store } from '@ngrx/store'
+import { MatDialog } from '@angular/material/dialog'
+
+import { showLoading, closeLoading } from 'app/app.action'
+import { AdminState } from 'app/admin/admin.state'
+import { TemporalComposition, CompositeFunction, Form } from './definition.interface'
+import { TemporalCompositionModal } from './temporal/temporal.component'
+import { CubeBuilderService } from 'app/admin/pages/cube-builder.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
 
 @Component({
   selector: 'app-create-cube-definition',
@@ -9,137 +17,83 @@ import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
 })
 export class CreateCubeDefinitionComponent implements OnInit {
 
-  /** pointer to reference map */
-  public map: MapLeaflet;
-  /** object with map settings */
-  public options: MapOptions;
-
-  public grids = [];
-  public action = 'select';
-  public bbox = ''
-  public form = {
-    name: '',
-    description: '',
-    meridian: null,
-    width: 1.5,
-    height: 1,
-  };
-  public grid = {
-    id: '',
-    description: '',
-    crs: ''
-  };
+  public temporalCompositions: TemporalComposition[]
+  public compositeFunctions: CompositeFunction[]
+  public form: Form
 
   constructor(
+    private store: Store<AdminState>,
     private cbs: CubeBuilderService,
-    private ref: ChangeDetectorRef) { }
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
-    this.options = {
-      zoom: 4,
-      layers: [
-        tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-        })
-      ],
-      center: latLng(-16, -52)
-    }
-    this.getGrids()
+    this.reset()
+    this.getTemporalCompositions()
+    this.getCompositeFunctions()
   }
 
-  async getGrids() {
+  reset() {
+    this.form = {
+      name: '',
+      resolution: null,
+      temporalComposite: '',
+      compositeFunctions: ['IDENTITY', 'MED', 'STK'],
+      bands: [],
+      bandsQuicklook: []
+    }
+  }
+
+  async getTemporalCompositions() {
     try {
-      const response = await this.cbs.getGrids()
-      this.grids = response.filter(g => g.crs)
+      this.store.dispatch(showLoading())
+      const response = await this.cbs.getTemporalCompositions()
+      this.temporalCompositions = response
 
     } catch (err) {
-      console.log(err)
+      this.snackBar.open(err.error.toString(), '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading())
     }
   }
 
-  async selectGrid(grid) {
+  async getCompositeFunctions() {
     try {
-      this.removeGrid(this.grid.id)
-      
-      // plot grid in map
-      this.grid = grid;
-      const response = await this.cbs.getGrids(grid.id)
-      const features = response['tiles'].map(t => {
-        return { ...t['geom_wgs84'], id: t['id'] }
-      })
-      const layer = geoJSON(features, {
-        attribution: `BDC-${grid.id}`
-      }).setStyle({
-        fillOpacity: 0.1
-      })
-      this.map.addLayer(layer)
-      this.bbox = layer.getBounds().toBBoxString()
-      this.map.fitBounds(layer.getBounds())
+      this.store.dispatch(showLoading())
+      const response = await this.cbs.getCompositeFunctions()
+      this.compositeFunctions = response
 
     } catch (err) {
-      console.log(err)
+      this.snackBar.open(err.error.toString(), '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading())
     }
   }
 
-  removeGrid(grid) {
-    this.map.eachLayer(l => {
-      if (l.getAttribution() === `BDC-${grid}`) {
-        this.map.removeLayer(l)
-      }
+  openModalTemporal() {
+    const dialogRef = this.dialog.open(TemporalCompositionModal, {
+      width: '450px',
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.getTemporalCompositions()
     })
   }
 
-  /**
-   * set Draw control of the map
-   */
-  private setDrawControl() {
-    const drawControl = new Control.Draw({
-      draw: {
-        marker: false,
-        circle: false,
-        polyline: false,
-        polygon: false,
-        circlemarker: false,
-        rectangle: {
-          shapeOptions: {
-            color: '#FFF'
-          }
-        }
-      }
-    });
-    this.map.addControl(drawControl);
-
-    // remove last bbox
-    this.map.on(Draw.Event.DRAWSTART, _ => {
-      this.map.eachLayer(l => {
-        if (l['options'].className === 'previewBbox') {
-          this.map.removeLayer(l);
-        }
-      });
-    });
-
-    // add bbox in the map
-    this.map.on(Draw.Event.CREATED, e => {
-      const layer: any = e['layer'];
-      const newLayer = rectangle(layer.getBounds(), {
-        color: '#FFF',
-        weight: 3,
-        fill: false,
-        dashArray: '10',
-        interactive: false,
-        className: 'previewBbox'
-      });
-
-      this.map.addLayer(newLayer);
-      this.ref.detectChanges();
-    });
-  }
-
-  /**
-  * event used when change Map
-  */
-  onMapReady(map: MapLeaflet) {
-    this.map = map;
-    this.setDrawControl();
+  openModalCost() {
+    const dialogRef = this.dialog.open(EstimateCostModal, {
+      width: '600px'
+    })
   }
 }

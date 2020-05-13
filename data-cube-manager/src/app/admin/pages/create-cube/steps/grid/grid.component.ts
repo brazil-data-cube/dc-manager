@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON } from 'leaflet';
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
-import { FormGrid, Grid } from './form.interface';
+import { FormGrid, Grid } from './grid.interface';
 import { AdminState } from 'app/admin/admin.state';
 import { Store, select } from '@ngrx/store';
 import { setGrid } from 'app/admin/admin.action';

@@ -82,4 +82,34 @@ export class CubeBuilderService {
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
     }
+
+    /**
+     * get temporal compositions
+     */
+    public async getTemporalCompositions(token=null): Promise<any> {
+        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+        const urlSuffix = `/temporal-composition`;
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
+        return response;
+    }
+
+    /**
+     * create temporal compositions
+     */
+    public async createTemporalComposition(data, token=null): Promise<any> {
+        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+        const urlSuffix = `/create-temporal-composition`;
+        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
+        return response;
+    }
+
+    /**
+     * get composite functions
+     */
+    public async getCompositeFunctions(token=null): Promise<any> {
+        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+        const urlSuffix = `/composite-functions`;
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
+        return response;
+    }
 }

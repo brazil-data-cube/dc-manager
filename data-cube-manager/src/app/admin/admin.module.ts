@@ -16,6 +16,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -36,6 +37,8 @@ import { CreateCubeGridComponent } from './pages/create-cube/steps/grid/grid.com
 import { CreateCubeDefinitionComponent } from './pages/create-cube/steps/definition/definition.component';
 import { CreateCubeMetadataComponent } from './pages/create-cube/steps/metadata/metadata.component';
 import { CreateCubePreviewComponent } from './pages/create-cube/steps/preview/preview.component';
+import { TemporalCompositionModal } from './pages/create-cube/steps/definition/temporal/temporal.component';
+import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate-cost/estimate-cost.component';
 
 @NgModule({
   imports: [
@@ -53,6 +56,7 @@ import { CreateCubePreviewComponent } from './pages/create-cube/steps/preview/pr
     MatExpansionModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSnackBarModule,
     MatIconModule,
     NgxPaginationModule,
     LeafletModule,
@@ -74,8 +78,16 @@ import { CreateCubePreviewComponent } from './pages/create-cube/steps/preview/pr
     FooterComponent,
     NavbarComponent,
     SidebarComponent,
+    TemporalCompositionModal,
+    EstimateCostModal
   ],
-  providers: [AdminGuardService],
+  providers: [
+    AdminGuardService
+  ],
+  entryComponents: [
+    TemporalCompositionModal,
+    EstimateCostModal
+  ]
 })
 
 export class AdminModule {}
