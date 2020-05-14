@@ -1,0 +1,16 @@
+<h3 mat-dialog-title>
+    <mat-icon>lock</mat-icon>
+    Token
+</h3>
+
+<div mat-dialog-content>
+    <p>Please, insert your token:</p>
+    <mat-form-field appearance="outline">
+        <mat-label>Token</mat-label>
+        <input matInput [(ngModel)]="token">
+    </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-raised-button (click)="verify()" color="primary">ENTRAR</button>
+</div>

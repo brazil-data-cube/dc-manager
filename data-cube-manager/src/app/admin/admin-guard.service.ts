@@ -7,11 +7,10 @@ import { Observable } from 'rxjs';
 })
 export class AdminGuardService implements CanActivateChild {
 
-  private isAuthenticated: boolean = true;
-
   canActivateChild(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | boolean {
-    return this.isAuthenticated;
+      const token = sessionStorage.getItem('dc_manager_api_token')
+      return token ? true : false;
   }
 }

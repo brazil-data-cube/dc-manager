@@ -11,14 +11,26 @@ export class CubeBuilderService {
     constructor(private http: HttpClient) { }
 
     /**
+     * verify token
+     */
+    public async verifyToken(token=null): Promise<any> {
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        let urlSuffix = '/'
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
+        return response;
+    }
+
+    /**
      * get cube metadata
      */
     public async getCubes(id=null): Promise<any> {
-        let urlSuffix = '/cubes';
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        let urlSuffix = '/cubes'
         if (id) {
             urlSuffix += `/${id}`
         }
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`).toPromise();
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
         return response;
     }
 
@@ -26,28 +38,33 @@ export class CubeBuilderService {
      * get cube geojson (tiles)
      */
     public async getGeoJSON(id): Promise<any> {
-        let urlSuffix = `/cubes/${id}/tiles`;
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`).toPromise();
-        return response;
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        let urlSuffix = `/cubes/${id}/tiles`
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
+        return response
     }
 
     /**
      * get grids metadata
      */
     public async getGrids(id=null): Promise<any> {
-        let urlSuffix = '/grs';
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        let urlSuffix = '/grs'
         if (id) {
             urlSuffix += `/${id}`
         }
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`).toPromise();
-        return response;
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
+        return response
     }
 
     /**
      * create cube metadata
      */
-    public async create(data, token): Promise<any> {
-        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    public async create(data): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = '/cubes/create';
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
@@ -56,8 +73,9 @@ export class CubeBuilderService {
     /**
      * start cube proccesses
      */
-    public async start(data, token): Promise<any> {
-        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    public async start(data): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = '/cubes/process';
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
@@ -66,8 +84,9 @@ export class CubeBuilderService {
     /**
      * list merges by blend
      */
-    public async listMerges(cube, startDate, lastDate, tileID, token): Promise<any> {
-        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    public async listMerges(cube, startDate, lastDate, tileID): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/cubes/list-merges?datacube=${cube}&start_date=${startDate}&last_date=${lastDate}&tile=${tileID}`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
@@ -76,8 +95,9 @@ export class CubeBuilderService {
     /**
      * get cube timeline
      */
-    public async getTimeline(startDate, lastDate, schema, step, token): Promise<any> {
-        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    public async getTimeline(startDate, lastDate, schema, step): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/cubes/list-periods?start_date=${startDate}&last_date=${lastDate}&schema=${schema}&step=${step}`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
@@ -86,8 +106,9 @@ export class CubeBuilderService {
     /**
      * get temporal compositions
      */
-    public async getTemporalCompositions(token=null): Promise<any> {
-        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    public async getTemporalCompositions(): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/temporal-composition`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
@@ -96,8 +117,9 @@ export class CubeBuilderService {
     /**
      * create temporal compositions
      */
-    public async createTemporalComposition(data, token=null): Promise<any> {
-        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    public async createTemporalComposition(data): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/create-temporal-composition`;
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
@@ -106,8 +128,9 @@ export class CubeBuilderService {
     /**
      * get composite functions
      */
-    public async getCompositeFunctions(token=null): Promise<any> {
-        const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    public async getCompositeFunctions(): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/composite-functions`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;

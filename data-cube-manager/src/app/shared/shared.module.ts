@@ -4,6 +4,11 @@ import { FormsModule } from '@angular/forms';
 
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoadingComponent } from './loading/loading.component';
+import { TokenModal } from './token/token.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 /**
  * Shared Module
@@ -12,6 +17,7 @@ import { LoadingComponent } from './loading/loading.component';
 @NgModule({
   declarations: [
     LoadingComponent,
+    TokenModal
   ],
   exports: [
     LoadingComponent,
@@ -19,7 +25,14 @@ import { LoadingComponent } from './loading/loading.component';
   imports: [
     CommonModule,
     FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    MatSnackBarModule,
     NgxSpinnerModule
+  ],
+  entryComponents: [
+    TokenModal
   ]
 })
 export class SharedModule { }

@@ -2,4 +2,5 @@
 export interface AppState {
     /** status visible - loading component */
     readonly loading: boolean;
+    readonly token: string;
 }

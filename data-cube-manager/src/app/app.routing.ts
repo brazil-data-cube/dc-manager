@@ -9,7 +9,7 @@ const routes: Routes =[
     path: '',
     redirectTo: 'list-cubes',
     pathMatch: 'full',
-  }, 
+  },
   {
     path: '',
     component: AdminLayoutComponent,

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
-import { Store, select } from '@ngrx/store';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { Component, OnInit } from '@angular/core'
+import { Location } from '@angular/common'
+import { Store, select } from '@ngrx/store'
+import { NgxSpinnerService } from 'ngx-spinner'
 
-import { AppState } from './app.state';
+import { AppState } from './app.state'
+import { TokenModal } from './shared/token/token.component'
+import { MatDialog } from '@angular/material/dialog'
 
 @Component({
   selector: 'app-root',
@@ -11,31 +13,37 @@ import { AppState } from './app.state';
 })
 export class AppComponent implements OnInit {
 
-    constructor(
-      public location: Location,
-      private store: Store<AppState>,
-      private spinner: NgxSpinnerService) {
+  public token: string = null
 
-        this.store.pipe(select('app' as any)).subscribe(res => {
-          if (res.loading) {
-            this.spinner.show();
-          } else {
-            this.spinner.hide();
-          }
-        });
-    }
+  constructor(
+    public location: Location,
+    private store: Store<AppState>,
+    private spinner: NgxSpinnerService,
+    public dialog: MatDialog) {
 
-    ngOnInit(){
-    }
-
-    isMap(path){
-      var titlee = this.location.prepareExternalUrl(this.location.path());
-      titlee = titlee.slice( 1 );
-      if(path == titlee){
-        return false;
+    this.store.pipe(select('app' as any)).subscribe(res => {
+      if (res.loading) {
+        this.spinner.show()
+      } else {
+        this.spinner.hide()
       }
-      else {
-        return true;
+
+      if (res.token) {
+        this.token = res.token
       }
+    });
+  }
+
+  ngOnInit() {
+    if (!this.token) {
+      this.openTokenModal()
     }
+  }
+
+  openTokenModal() {
+    const dialogRef = this.dialog.open(TokenModal, {
+      width: '450px',
+      disableClose: true
+    })
+  }
 }
