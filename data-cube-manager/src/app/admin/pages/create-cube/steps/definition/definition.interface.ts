@@ -1,4 +1,5 @@
 export interface Form {
+    bucket: string;
     name: string;
     resolution: number;
     temporalComposite: string;

@@ -3,55 +3,66 @@
         <mat-icon>border_outer</mat-icon>
         <span style="margin-left: 10px;">Select Region</span>
     </h3>
-    
+
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12">
-            <div leaflet 
-                class="container_map" 
-                [leafletOptions]="options"
-                (leafletMapReady)="onMapReady($event)"></div>
+            <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)"></div>
         </div>
-    
-        <div class="col-lg-4 col-md-4 col-sm-12 form">
-            <mat-form-field appearance="outline">
-                <mat-label>STAC</mat-label>
-                <input matInput placeholder="URL STAC" [(ngModel)]="urlSTAC">
-            </mat-form-field>
+
+        <form class="col-lg-4 col-md-4 col-sm-12 form" (ngSubmit)="searchImages()" [formGroup]="formSearchImages">
+            <div style="display: flex; justify-content: space-between;">
+                <mat-form-field appearance="outline" style="width: 70%">
+                    <mat-label>URL STAC</mat-label>
+                    <input matInput placeholder="URL STAC" [(ngModel)]="form.urlSTAC" formControlName="urlSTAC">
+                    <mat-error *ngIf="formSearchImages.get('urlSTAC').status === 'INVALID'">
+                        <form-field-error [errors]="formSearchImages.get('urlSTAC').errors"></form-field-error>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" style="width: 25%">
+                    <mat-label>VERSION</mat-label>
+                    <input matInput placeholder="VERSION" [value]="form.stacVersion" disabled>
+                </mat-form-field>
+            </div>
 
             <mat-form-field appearance="outline">
                 <mat-label>Related Collection</mat-label>
-                <mat-select [(value)]="form.collection">
-                    <mat-option *ngFor="let collection of collections" [value]="collection">{{ collection }}</mat-option>
+                <mat-select [(value)]="form.collection" formControlName="collection">
+                    <mat-option *ngFor="let collection of collections" [value]="collection">
+                        {{ collection }}
+                    </mat-option>
                 </mat-select>
+                <mat-error *ngIf="formSearchImages.get('collection').status === 'INVALID'">
+                    <form-field-error [errors]="formSearchImages.get('collection').errors"></form-field-error>
+                </mat-error>
             </mat-form-field>
 
             <div style="display: flex;">
                 <mat-form-field appearance="outline" style="width: 48%">
                     <mat-label>Start Date</mat-label>
-                    <input matInput
-                        [matDatepicker]="start_date"
-                        name="start_date"
-                        [(ngModel)]="form.startDate">
+                    <input matInput [matDatepicker]="start_date" name="start_date" [(ngModel)]="form.startDate" formControlName="startDate">
                     <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
                     <mat-datepicker #start_date></mat-datepicker>
+                    <mat-error *ngIf="formSearchImages.get('startDate').status === 'INVALID'">
+                        <form-field-error [errors]="formSearchImages.get('startDate').errors"></form-field-error>
+                    </mat-error>
                 </mat-form-field>
-    
+
                 <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
                     <mat-label>Last Date</mat-label>
-                    <input matInput
-                        [matDatepicker]="last_date"
-                        name="last_date"
-                        [(ngModel)]="form.lastDate">
+                    <input matInput [matDatepicker]="last_date" name="last_date" [(ngModel)]="form.lastDate" formControlName="lastDate">
                     <mat-datepicker-toggle matSuffix [for]="last_date"></mat-datepicker-toggle>
                     <mat-datepicker #last_date></mat-datepicker>
+                    <mat-error *ngIf="formSearchImages.get('lastDate').status === 'INVALID'">
+                        <form-field-error [errors]="formSearchImages.get('lastDate').errors"></form-field-error>
+                    </mat-error>
                 </mat-form-field>
 
             </div>
 
             <div style="display: flex; margin-bottom: 40px;">
-                <button mat-raised-button disabled style="display: block; margin: 0 auto;">SEARCH</button>
+                <button mat-raised-button type="submit" style="display: block; margin: 0 auto;">SEARCH</button>
             </div>
-            
+
             <div class="catalog">
                 <div class="card card-chart">
                     <div class="card-header-success">
@@ -68,8 +79,8 @@
                             </p>
                         </div>
                     </div>
-                </div>       
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>

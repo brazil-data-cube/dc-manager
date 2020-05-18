@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,12 +40,14 @@ import { CreateCubeMetadataComponent } from './pages/create-cube/steps/metadata/
 import { CreateCubePreviewComponent } from './pages/create-cube/steps/preview/preview.component';
 import { TemporalCompositionModal } from './pages/create-cube/steps/definition/temporal/temporal.component';
 import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate-cost/estimate-cost.component';
+import { MapModal } from './components/map-modal/map-modal.component';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule.forChild(AdminRoutes),
     FormsModule,
+    ReactiveFormsModule,
     SharedModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -81,14 +83,16 @@ import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate
     NavbarComponent,
     SidebarComponent,
     TemporalCompositionModal,
-    EstimateCostModal
+    EstimateCostModal,
+    MapModal
   ],
   providers: [
     AdminGuardService
   ],
   entryComponents: [
     TemporalCompositionModal,
-    EstimateCostModal
+    EstimateCostModal,
+    MapModal
   ]
 })
 

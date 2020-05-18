@@ -19,6 +19,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
   public temporalCompositions: TemporalComposition[]
   public compositeFunctions: CompositeFunction[]
+  public buckets: object[]
   public form: Form
 
   constructor(
@@ -31,10 +32,12 @@ export class CreateCubeDefinitionComponent implements OnInit {
     this.reset()
     this.getTemporalCompositions()
     this.getCompositeFunctions()
+    this.getBuckets()
   }
 
   reset() {
     this.form = {
+      bucket: '',
       name: '',
       resolution: null,
       temporalComposite: '',
@@ -49,6 +52,24 @@ export class CreateCubeDefinitionComponent implements OnInit {
       this.store.dispatch(showLoading())
       const response = await this.cbs.getTemporalCompositions()
       this.temporalCompositions = response
+
+    } catch (err) {
+      this.snackBar.open(err.error.toString(), '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading())
+    }
+  }
+
+  async getBuckets() {
+    try {
+      this.store.dispatch(showLoading())
+      const response = await this.cbs.getBuckets()
+      this.buckets = response
 
     } catch (err) {
       this.snackBar.open(err.error.toString(), '', {

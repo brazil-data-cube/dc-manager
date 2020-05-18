@@ -1,6 +1,7 @@
 export interface FormImages {
-    satellite: string;
+    urlSTAC: string;
     collection: string;
     startDate: string;
     lastDate: string;
+    stacVersion: string;
 }

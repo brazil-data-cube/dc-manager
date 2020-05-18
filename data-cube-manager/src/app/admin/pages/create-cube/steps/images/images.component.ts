@@ -7,6 +7,8 @@ import { FormImages } from './images.interface';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store, select } from '@ngrx/store';
 import { AdminState } from 'app/admin/admin.state';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -27,20 +29,28 @@ export class CreateCubeImagesComponent implements OnInit {
   public options: MapOptions;
 
   public collections: string[];
-  public urlSTAC: string;
   public form: FormImages;
+  public formSearchImages: FormGroup;
 
   constructor(
     private cbs: CubeBuilderService,
     private store: Store<AdminState>,
-    private ref: ChangeDetectorRef) {}
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar,
+    private ref: ChangeDetectorRef) {
+    this.formSearchImages = this.fb.group({
+      collection: ['', [Validators.required]],
+      urlSTAC: ['', [Validators.required]],
+      startDate: ['', [Validators.required]],
+      lastDate: ['', [Validators.required]]
+    });
+  }
 
   ngOnInit() {
     this.initializeVariables()
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
       if (res.grid) {
-        console.log(res.grid)
         this.selectGrid(res.grid)
       }
     })
@@ -57,12 +67,12 @@ export class CreateCubeImagesComponent implements OnInit {
       center: latLng(-16, -52)
     }
     this.form = {
-      satellite: '',
+      urlSTAC: '',
       collection: '',
       startDate: '',
-      lastDate: ''
+      lastDate: '',
+      stacVersion: '0.8.0'
     }
-    this.urlSTAC = ''
     this.collections = []
   }
 
@@ -75,7 +85,7 @@ export class CreateCubeImagesComponent implements OnInit {
           this.map.removeLayer(l)
         }
       })
-      
+
       // plot grid in map
       const response = await this.cbs.getGrids(grid)
       const features = response['tiles'].map(t => {
@@ -89,13 +99,44 @@ export class CreateCubeImagesComponent implements OnInit {
       this.map.addLayer(layer)
       this.map.fitBounds(layer.getBounds())
 
-    } catch (err) {
-      console.log(err)
+    } catch (_) {
+      this.snackBar.open(`Grid ${grid} not found!`, '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
 
     } finally {
       this.store.dispatch(closeLoading());
     }
   }
+
+  async createGrid() {
+    try {
+      if (this.formSearchImages.status !== 'VALID') {
+        this.snackBar.open('Fill in all fields correctly!', '', {
+          duration: 4000,
+          verticalPosition: 'top',
+          panelClass: 'app_snack-bar-error'
+        });
+      } else {
+        this.store.dispatch(showLoading());
+        
+        alert('search ...')
+      }
+
+    } catch (err) {
+      this.snackBar.open('Error when searching as images', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading())
+    }
+  }
+
 
   /**
    * set Draw control of the map
