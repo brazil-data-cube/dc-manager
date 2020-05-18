@@ -1,5 +1,10 @@
 <div class="main-content">
     <div class="container-fluid">
+        <app-alert 
+            type="warning" 
+            *ngIf="cubes.length == 0"
+            message="You have no cubes created. Create your first now!"></app-alert>
+
         <div class="row">
             <div class="col-md-3"
                 *ngFor="let cube of cubes">

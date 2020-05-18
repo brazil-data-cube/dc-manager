@@ -62,8 +62,8 @@
                     (leafletMapReady)="onMapReady($event)">
                 </div>
                 
-                <div class="btns-check">
-                    <a *ngIf="cube.finished" mat-raised-button color="success" [routerLink]="['/update-cube', cube.id]">
+                <div class="btns-check" *ngIf="cubeStatus">
+                    <a *ngIf="cubeStatus.finished" mat-raised-button color="success" [routerLink]="['/update-cube', cube.id]">
                         UPDATE CUBE
                     </a>
                     <a mat-raised-button color="primary" [routerLink]="['/check-cube', cube.id]">
@@ -73,34 +73,34 @@
             </div>
         </div>
 
-        <div class="row container_progress">
+        <div class="row container_progress" *ngIf="cubeStatus">
             <div class="col-10 bar">
-                <mat-progress-bar mode="buffer" [value]="cube.finished ? 100 : 70" color="blue" bufferValue="0">
+                <mat-progress-bar mode="buffer" [value]="getPercentage(cubeStatus)" color="blue" bufferValue="0">
                 </mat-progress-bar>
-                <img *ngIf="!cube.finished" src="/assets/img/loading.gif" alt="loading">
+                <img *ngIf="!cubeStatus.finished" src="/assets/img/loading.gif" alt="loading">
             </div>
         </div>
 
-        <div class="row container_cards">
+        <div class="row container_cards" *ngIf="cubeStatus">
             <div class="col-lg-4 col-md-6 col-sm-6">
-                <app-mini-card category="Tasks - TOTAL" title="300" icon="list" class="card-header-gray"></app-mini-card>
+                <app-mini-card category="Tasks - TOTAL" [title]="getTotalTasks(cubeStatus)" icon="list" class="card-header-gray"></app-mini-card>
             </div>
 
             <div class="col-lg-4 col-md-6 col-sm-6">
-                <div *ngIf="!cube.finished">
-                    <app-mini-card category="Tasks - FINISHED" title="200" icon="check" class="card-header-success"></app-mini-card>
+                <div *ngIf="!cubeStatus.finished">
+                    <app-mini-card category="Tasks - FINISHED" [title]="cubeStatus.done" icon="check" class="card-header-success"></app-mini-card>
                 </div>
-                <div *ngIf="cube.finished">
-                    <app-mini-card category="Time" title="30min 50seg" icon="access_alarm" class="card-header-success"></app-mini-card>
+                <div *ngIf="cubeStatus.finished">
+                    <app-mini-card category="Processing Time" [title]="cubeStatus.duration" icon="access_alarm" class="card-header-success"></app-mini-card>
                 </div>
             </div>
 
             <div class="col-lg-4 col-md-6 col-sm-6">
-                <div *ngIf="!cube.finished">
-                    <app-mini-card category="Tasks - PENDING" title="100" icon="warning" class="card-header-warning"></app-mini-card>
+                <div *ngIf="!cubeStatus.finished">
+                    <app-mini-card category="Tasks - PENDING" [title]="cubeStatus.not_done" icon="warning" class="card-header-warning"></app-mini-card>
                 </div>
-                <div *ngIf="cube.finished">
-                    <app-mini-card category="Collection - ITEM" title="550" icon="check" class="card-header-success"></app-mini-card>
+                <div *ngIf="cubeStatus.finished">
+                    <app-mini-card category="Collection - ITEM" [title]="cubeStatus.collection_item" icon="check" class="card-header-success"></app-mini-card>
                 </div>
             </div>
         </div>

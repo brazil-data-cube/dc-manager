@@ -35,6 +35,17 @@ export class CubeBuilderService {
     }
 
     /**
+     * get cube status
+     */
+    public async getCubeStatus(datacube): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        let urlSuffix = `/cube-status?datacube=${datacube}`
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
+        return response
+    }
+
+    /**
      * get cube geojson (tiles)
      */
     public async getGeoJSON(id): Promise<any> {
@@ -133,6 +144,28 @@ export class CubeBuilderService {
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/composite-functions`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
+        return response;
+    }
+
+    /**
+     * get buckets
+     */
+    public async getBuckets(): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = `/list-buckets`;
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
+        return response;
+    }
+
+    /**
+     * create grid (grs_schema)
+     */
+    public async createGrid(data): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = `/create-grs`;
+        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
     }
 }

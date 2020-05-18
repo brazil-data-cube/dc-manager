@@ -5,6 +5,7 @@ import { AppState } from 'app/app.state';
 import { CubeBuilderService } from '../cube-builder.service';
 import { ActivatedRoute } from '@angular/router';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, geoJSON } from 'leaflet';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-details-cube',
@@ -14,6 +15,7 @@ import { latLng, MapOptions, Map as MapLeaflet, tileLayer, geoJSON } from 'leafl
 export class DetailsCubeComponent implements OnInit {
 
     public cube;
+    public cubeStatus;
 
     /** pointer to reference map */
     public map: MapLeaflet;
@@ -23,12 +25,14 @@ export class DetailsCubeComponent implements OnInit {
     constructor(
         private cbs: CubeBuilderService,
         private route: ActivatedRoute,
+        private snackBar: MatSnackBar,
         private store: Store<AppState>) { }
 
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
-            this.getCubes(params['params']['cube']);
-        });
+            this.getCube(params['params']['cube'])
+            this.getCubesStatus(params['params']['cube'])
+        })
 
         this.options = {
             zoom: 4,
@@ -41,17 +45,40 @@ export class DetailsCubeComponent implements OnInit {
         };
     }
 
-    async getCubes(cubeName) {
+    async getCube(cubeName) {
         try {
-            this.store.dispatch(showLoading());
-            const response = await this.cbs.getCubes(cubeName);
-            this.cube = { ...response, finished: response.id.indexOf('S2_10_') < 0 }
+            this.store.dispatch(showLoading())
+            const response = await this.cbs.getCubes(cubeName)
+            this.cube = response
 
         } catch (err) {
-            console.log(err);
+            this.snackBar.open('Error when listing cube information', '', {
+                duration: 4000,
+                verticalPosition: 'top',
+                panelClass: 'app_snack-bar-error'
+            });
 
         } finally {
-            this.store.dispatch(closeLoading());
+            this.store.dispatch(closeLoading())
+        }
+    }
+
+    async getCubesStatus(cubeName) {
+        try {
+            this.store.dispatch(showLoading())
+            const response = await this.cbs.getCubeStatus(cubeName)
+            console.log(response)
+            this.cubeStatus = response
+
+        } catch (err) {
+            this.snackBar.open('Error when querying the cube status', '', {
+                duration: 4000,
+                verticalPosition: 'top',
+                panelClass: 'app_snack-bar-error'
+            });
+
+        } finally {
+            this.store.dispatch(closeLoading())
         }
     }
 
@@ -64,13 +91,34 @@ export class DetailsCubeComponent implements OnInit {
             })
             this.map.addLayer(layer);
             this.map.fitBounds(layer.getBounds());
-            // this.map.setZoom(this.map.getZoom() - 1);
 
         } catch (err) {
-            console.log(err);
+            this.snackBar.open('Error when listing cube geometries', '', {
+                duration: 4000,
+                verticalPosition: 'top',
+                panelClass: 'app_snack-bar-error'
+            });
 
         } finally {
             this.store.dispatch(closeLoading());
+        }
+    }
+
+    getTotalTasks (cubeStatus) {
+        const notDone = cubeStatus.not_done || 0
+        return cubeStatus.done + notDone
+    }
+
+    getPercentage (cubeStatus) {
+        if (cubeStatus) {
+            if (cubeStatus.finished) {
+                return 100
+            } else {
+                const all = cubeStatus.done + cubeStatus.not_done
+                return (cubeStatus.done * 100) / all
+            }
+        } else {
+            return 0
         }
     }
 
