@@ -1,0 +1,13 @@
+<h3 mat-dialog-title>
+    <mat-icon>map</mat-icon>
+    Select Region:
+</h3>
+
+<div mat-dialog-content class="container-map_modal">
+    <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)"></div>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-button (click)="close()">Close</button>
+    <button mat-raised-button (click)="save()" color="primary">Save</button>
+</div>
