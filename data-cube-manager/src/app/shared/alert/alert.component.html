@@ -1,0 +1,5 @@
+<div 
+    [ngClass]="type === 'error' ? 'alert error' : 'alert warning'" *ngIf="type">
+    <mat-icon>{{ getIcon(type) }}</mat-icon>
+    {{ message }}
+</div>

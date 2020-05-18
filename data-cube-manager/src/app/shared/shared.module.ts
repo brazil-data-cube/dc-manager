@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoadingComponent } from './loading/loading.component';
+import { AlertComponent } from './alert/alert.component';
 import { TokenModal } from './token/token.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormFieldErrorComponent } from './form-field-input/form-field-error.component';
 
 /**
  * Shared Module
@@ -17,10 +19,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 @NgModule({
   declarations: [
     LoadingComponent,
-    TokenModal
+    TokenModal,
+    AlertComponent,
+    FormFieldErrorComponent
   ],
   exports: [
     LoadingComponent,
+    AlertComponent,
+    FormFieldErrorComponent
   ],
   imports: [
     CommonModule,
