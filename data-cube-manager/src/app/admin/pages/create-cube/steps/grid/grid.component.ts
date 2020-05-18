@@ -3,9 +3,14 @@ import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Cont
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
 import { FormGrid, Grid } from './grid.interface';
 import { AdminState } from 'app/admin/admin.state';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { setGrid } from 'app/admin/admin.action';
 import { showLoading, closeLoading } from 'app/app.action';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
+import * as L from 'leaflet';
+import 'assets/plugins/Leaflet.Coordinates/Leaflet.Coordinates-0.1.5.min.js';
 
 @Component({
   selector: 'app-create-cube-grid',
@@ -24,11 +29,22 @@ export class CreateCubeGridComponent implements OnInit {
   public bbox = ''
   public form: FormGrid;
   public grid: Grid;
+  public formCreateGrid: FormGroup;
 
   constructor(
     private cbs: CubeBuilderService,
     private store: Store<AdminState>,
-    private ref: ChangeDetectorRef) { }
+    private snackBar: MatSnackBar,
+    private fb: FormBuilder,
+    private ref: ChangeDetectorRef) {
+    this.formCreateGrid = this.fb.group({
+      name: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      meridian: ['', [Validators.required]],
+      degreesx: ['', [Validators.required]],
+      degreesy: ['', [Validators.required]]
+    });
+  }
 
   ngOnInit() {
     this.initializeVariables()
@@ -49,8 +65,8 @@ export class CreateCubeGridComponent implements OnInit {
       name: '',
       description: '',
       meridian: null,
-      width: 1.5,
-      height: 1,
+      degreesx: 1.5,
+      degreesy: 1,
     }
     this.grid = {
       id: '',
@@ -65,15 +81,15 @@ export class CreateCubeGridComponent implements OnInit {
       this.grids = response.filter(g => g.crs)
 
     } catch (err) {
-      console.log(err)
+      this.grids = []
     }
   }
 
   async selectGrid(grid) {
     try {
-      this.store.dispatch(showLoading());
+      this.store.dispatch(showLoading())
       this.removeGrid(this.grid.id)
-      
+
       // plot grid in map
       this.grid = grid;
       const response = await this.cbs.getGrids(grid.id)
@@ -91,10 +107,14 @@ export class CreateCubeGridComponent implements OnInit {
       this.store.dispatch(setGrid({ grid: grid.id }))
 
     } catch (err) {
-      console.log(err)
+      this.snackBar.open('Error when selecting the grid', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
 
     } finally {
-      this.store.dispatch(closeLoading());
+      this.store.dispatch(closeLoading())
     }
   }
 
@@ -106,6 +126,59 @@ export class CreateCubeGridComponent implements OnInit {
     })
     this.initializeVariables()
     this.ref.detectChanges()
+  }
+
+  async createGrid() {
+    try {
+      if (this.formCreateGrid.status !== 'VALID') {
+        this.snackBar.open('Fill in all fields correctly!', '', {
+          duration: 4000,
+          verticalPosition: 'top',
+          panelClass: 'app_snack-bar-error'
+        });
+
+      } else {
+        if (this.bbox !== '') {
+          this.store.dispatch(showLoading())
+          const data = {
+            ...this.form,
+            projection: 'aea',
+            bbox: this.formatBBox(this.bbox)
+          }
+          const response = this.cbs.createGrid(data)
+          this.action = 'select'
+          this.getGrids()
+
+          this.snackBar.open('Grid created with successfully', '', {
+            duration: 4000,
+            verticalPosition: 'top',
+            panelClass: 'app_snack-bar-success'
+          });
+
+        } else {
+          this.snackBar.open('Select region in the map to create a new grid', '', {
+            duration: 4000,
+            verticalPosition: 'top',
+            panelClass: 'app_snack-bar-error'
+          });
+        }
+      }
+
+    } catch (err) {
+      this.snackBar.open('Error when creating the grid', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading())
+    }
+  }
+
+  private formatBBox(bbox) {
+    const parts = bbox.split(',')
+    return `${parts[0]},${parts[3]},${parts[2]},${parts[1]}`
   }
 
   /**
@@ -150,8 +223,25 @@ export class CreateCubeGridComponent implements OnInit {
       })
 
       this.map.addLayer(newLayer)
+      this.bbox = newLayer.getBounds().toBBoxString()
       this.ref.detectChanges()
     });
+  }
+
+  /**
+   * set Coordinates options in the map
+   */
+  private setCoordinatesControl() {
+    (L.control as any).coordinates({
+      position: 'bottomleft',
+      decimals: 0,
+      decimalSeperator: '.',
+      labelTemplateLat: '',
+      labelTemplateLng: 'MEDIRIAN: {x}',
+      enableUserInput: false,
+      useDMS: false,
+      useLatLngOrder: true,
+    }).addTo(this.map);
   }
 
   /**
@@ -160,5 +250,6 @@ export class CreateCubeGridComponent implements OnInit {
   onMapReady(map: MapLeaflet) {
     this.map = map
     this.setDrawControl()
+    this.setCoordinatesControl()
   }
 }

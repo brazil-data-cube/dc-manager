@@ -14,3 +14,19 @@
     color: #ffffff !important;
     font-weight: 700 !important;
 }
+
+// LEAFLET PLUGINS
+.leaflet-control-container .leaflet-control-coordinates .uiHidden {
+    display: none !important;
+}
+.leaflet-control-container .leaflet-control-coordinates .label {
+    border-radius: 5px;
+    background: rgba(#FFF, 1);
+    margin: 0px;
+
+    .labelFirst {
+        padding: 20px 7.5px;
+        font-size: 1.5em;
+        font-weight: 700;
+    }
+}

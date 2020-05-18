@@ -8,6 +8,6 @@ export interface FormGrid {
     name: string;
     description: string;
     meridian: number;
-    width: number;
-    height: number;
+    degreesx: number;
+    degreesy: number;
 }
