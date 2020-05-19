@@ -4,6 +4,11 @@
         <span style="margin-left: 10px;">Fill in the Information</span>
     </h3>
 
+    <app-alert 
+        type="warning" 
+        *ngIf="bandsAvailable.length == 0"
+        message="Select a region of interest in the REGION step!"></app-alert>
+
     <form class="row" [formGroup]="formCreateCube">
         <div class="col-lg-12 col-md-12 col-sm-12">
             <mat-form-field appearance="outline">
@@ -16,6 +21,9 @@
                 <button mat-icon-button matSuffix>
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('bucket').errors"></form-field-error>
+                </mat-error>
             </mat-form-field>
         </div>
 
@@ -24,18 +32,25 @@
                 <mat-label>Cube Name</mat-label>
                 <input matInput placeholder="Cube Name" formControlName="name">
                 <span matSuffix>
-                    <span style="color: green">Full Name:</span> 
-                    <b>{{ getCubeFullName() }}_<span style="color: red">FUNC</span></b>
+                    <span style="color: green">Full Name: </span>
+                    <b>{{ getCubeFullName() }}<span *ngIf="formCreateCube.get('temporalComposite').value !== 'Anull'"
+                            style="color: red">_FUNC</span></b>
                 </span>
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('name').errors"></form-field-error>
+                </mat-error>
             </mat-form-field>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12">
             <mat-form-field appearance="outline">
                 <mat-label>Resolution</mat-label>
                 <input matInput type="number" min="1" placeholder="Resolution" formControlName="resolution">
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('resolution').errors"></form-field-error>
+                </mat-error>
             </mat-form-field>
         </div>
-        
+
         <div class="col-lg-6 col-md-6 col-sm-12">
             <mat-form-field appearance="outline">
                 <mat-label>Temporal Composition</mat-label>
@@ -47,6 +62,9 @@
                 <button mat-icon-button matSuffix (click)="openModalTemporal()">
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('temporalComposite').errors"></form-field-error>
+                </mat-error>
             </mat-form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -57,28 +75,57 @@
                         {{ func.id }} ({{ func.description }})
                     </mat-option>
                 </mat-select>
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('compositeFunctions').errors"></form-field-error>
+                </mat-error>
             </mat-form-field>
         </div>
 
-        <div class="col-lg-8 col-md-8 col-sm-12">
+        <div class="col-lg-8 col-md-8 col-sm-12" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
                 <mat-label>Bands</mat-label>
                 <mat-select multiple formControlName="bands">
-                    <mat-option *ngFor="let band of []" [value]="band">
+                    <mat-option *ngFor="let band of bandsAvailable" [value]="band">
                         {{ band }}
                     </mat-option>
                 </mat-select>
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('bands').errors"></form-field-error>
+                </mat-error>
             </mat-form-field>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12">
-            <mat-form-field appearance="outline">
-                <mat-label>Bands Quicklook (R,G,B)</mat-label>
-                <mat-select multiple formControlName="bandsQuicklook">
-                    <mat-option *ngFor="let band of []" [value]="band">
-                        {{ band }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            <div class="box-rgb">
+                <p class="title">Bands Quicklook</p>
+
+                <div class="content">
+                    <mat-form-field appearance="outline" style="width: 30%;">
+                        <mat-label>R</mat-label>
+                        <mat-select formControlName="quicklookR">
+                            <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                                {{ band }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" style="width: 30%;">
+                        <mat-label>G</mat-label>
+                        <mat-select formControlName="quicklookG">
+                            <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                                {{ band }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" style="width: 30%;">
+                        <mat-label>B</mat-label>
+                        <mat-select formControlName="quicklookB">
+                            <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                                {{ band }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
         </div>
 
         <div class="col-12 box_btn">

@@ -1,6 +1,22 @@
 .container_definition {
     padding: 0 10px;
 
+    .box-rgb {
+        border-top: 3px solid blue;
+
+        .title {
+            margin-top: -13px;
+            background: #FFF;
+            width: 130px;
+            padding: 0 5px;
+        }
+        .content {
+            display: flex; 
+            justify-content: space-between;
+            margin-top: -15px;
+        }
+    }
+
     .box_btn {
         display: flex;
         justify-content: flex-end;

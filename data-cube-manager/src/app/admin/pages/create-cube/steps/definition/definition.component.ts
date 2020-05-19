@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { Store } from '@ngrx/store'
+import { Store, select } from '@ngrx/store'
 import { MatDialog } from '@angular/material/dialog'
 
 import { showLoading, closeLoading } from 'app/app.action'
@@ -22,23 +22,35 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public compositeFunctions: CompositeFunction[]
   public buckets: object[]
   public formCreateCube: FormGroup
+  public bandsAvailable: string[]
 
   constructor(
     private store: Store<AdminState>,
     private cbs: CubeBuilderService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
-    public dialog: MatDialog) { 
-      this.formCreateCube = this.fb.group({
-        bucket: ['', [Validators.required]],
-        name: ['', [Validators.required]],
-        resolution: ['', [Validators.required]],
-        temporalComposite: ['', [Validators.required]],
-        compositeFunctions: [{value: ['IDENTITY', 'MED', 'STK'], disabled: true}, [Validators.required]],
-        bands: [[''], [Validators.required]],
-        bandsQuicklook: [[''], [Validators.required]]
-      });
-    }
+    public dialog: MatDialog) {
+    this.formCreateCube = this.fb.group({
+      bucket: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      resolution: ['', [Validators.required]],
+      temporalComposite: ['', [Validators.required]],
+      compositeFunctions: [{ value: ['IDENTITY', 'MED', 'STK'], disabled: true }, [Validators.required]],
+      bands: [[''], [Validators.required]],
+      quicklookR: ['', [Validators.required]],
+      quicklookG: ['', [Validators.required]],
+      quicklookB: ['', [Validators.required]]
+    });
+
+    this.store.pipe(select('admin' as any)).subscribe(res => {
+      console.log(res)
+      if (res.bandsAvailable) {
+        const bands = res.bandsAvailable
+        this.bandsAvailable = bands
+        this.formCreateCube.get('bands').setValue(bands)
+      }
+    })
+  }
 
   ngOnInit() {
     this.getTemporalCompositions()
