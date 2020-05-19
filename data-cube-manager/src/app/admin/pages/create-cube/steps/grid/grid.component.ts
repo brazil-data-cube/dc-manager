@@ -39,9 +39,9 @@ export class CreateCubeGridComponent implements OnInit {
     this.formCreateGrid = this.fb.group({
       name: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      meridian: ['', [Validators.required]],
-      degreesx: ['', [Validators.required]],
-      degreesy: ['', [Validators.required]]
+      meridian: [null, [Validators.required]],
+      degreesx: [1.5, [Validators.required]],
+      degreesy: [1, [Validators.required]]
     });
   }
 

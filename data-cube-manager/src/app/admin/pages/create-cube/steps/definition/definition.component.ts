@@ -9,6 +9,7 @@ import { TemporalCompositionModal } from './temporal/temporal.component'
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
+import { FormGroup, FormBuilder, Validators } from '@angular/forms'
 
 @Component({
   selector: 'app-create-cube-definition',
@@ -20,31 +21,29 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public temporalCompositions: TemporalComposition[]
   public compositeFunctions: CompositeFunction[]
   public buckets: object[]
-  public form: Form
+  public formCreateCube: FormGroup
 
   constructor(
     private store: Store<AdminState>,
     private cbs: CubeBuilderService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog) { }
+    private fb: FormBuilder,
+    public dialog: MatDialog) { 
+      this.formCreateCube = this.fb.group({
+        bucket: ['', [Validators.required]],
+        name: ['', [Validators.required]],
+        resolution: ['', [Validators.required]],
+        temporalComposite: ['', [Validators.required]],
+        compositeFunctions: [{value: ['IDENTITY', 'MED', 'STK'], disabled: true}, [Validators.required]],
+        bands: [[''], [Validators.required]],
+        bandsQuicklook: [[''], [Validators.required]]
+      });
+    }
 
   ngOnInit() {
-    this.reset()
     this.getTemporalCompositions()
     this.getCompositeFunctions()
     this.getBuckets()
-  }
-
-  reset() {
-    this.form = {
-      bucket: '',
-      name: '',
-      resolution: null,
-      temporalComposite: '',
-      compositeFunctions: ['IDENTITY', 'MED', 'STK'],
-      bands: [],
-      bandsQuicklook: []
-    }
   }
 
   async getTemporalCompositions() {
@@ -98,6 +97,19 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
     } finally {
       this.store.dispatch(closeLoading())
+    }
+  }
+
+  getCubeFullName() {
+    const name = this.formCreateCube.get('name').value
+    const resolution = this.formCreateCube.get('resolution').value
+    const temporalComposite = this.formCreateCube.get('temporalComposite').value
+    let tcFormated = temporalComposite.substring(1)
+    tcFormated = tcFormated.replace('month', 'M').replace('day', 'D')
+    if (tcFormated === 'null') {
+      return `${name}_${resolution}`
+    } else {
+      return `${name}_${resolution}_${tcFormated}`
     }
   }
 
