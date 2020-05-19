@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON } from 'leaflet';
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
-import { FormGrid, Grid } from './grid.interface';
+import { Grid } from './grid.interface';
 import { AdminState } from 'app/admin/admin.state';
 import { Store } from '@ngrx/store';
 import { setGrid } from 'app/admin/admin.action';
@@ -27,7 +27,6 @@ export class CreateCubeGridComponent implements OnInit {
   public grids = [];
   public action = 'select';
   public bbox = ''
-  public form: FormGrid;
   public grid: Grid;
   public formCreateGrid: FormGroup;
 
@@ -61,18 +60,18 @@ export class CreateCubeGridComponent implements OnInit {
       ],
       center: latLng(-16, -52)
     }
-    this.form = {
-      name: '',
-      description: '',
-      meridian: null,
-      degreesx: 1.5,
-      degreesy: 1,
-    }
     this.grid = {
       id: '',
       description: '',
       crs: ''
     }
+    this.formCreateGrid.setValue({
+      name: '',
+      description: '',
+      meridian: null,
+      degreesx: 1.5,
+      degreesy: 1
+    })
   }
 
   async getGrids() {
@@ -141,11 +140,11 @@ export class CreateCubeGridComponent implements OnInit {
         if (this.bbox !== '') {
           this.store.dispatch(showLoading())
           const data = {
-            ...this.form,
+            ...this.formCreateGrid.value,
             projection: 'aea',
             bbox: this.formatBBox(this.bbox)
           }
-          const response = this.cbs.createGrid(data)
+          const response = await this.cbs.createGrid(data)
           this.action = 'select'
           this.getGrids()
 

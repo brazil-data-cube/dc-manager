@@ -43,40 +43,36 @@
                 <form [formGroup]="formCreateGrid" (ngSubmit)="createGrid()">
                     <mat-form-field appearance="outline">
                         <mat-label>Name</mat-label>
-                        <input matInput placeholder="Name" [(ngModel)]="form.name" formControlName="name">
-                        <mat-error *ngIf="formCreateGrid.get('name').status === 'INVALID'">
+                        <input matInput placeholder="Name" formControlName="name">
+                        <mat-error>
                             <form-field-error [errors]="formCreateGrid.get('name').errors"></form-field-error>
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Description</mat-label>
-                        <input matInput placeholder="Description" [(ngModel)]="form.description"
-                            formControlName="description">
-                        <mat-error *ngIf="formCreateGrid.get('description').status === 'INVALID'">
+                        <input matInput placeholder="Description" formControlName="description">
+                        <mat-error>
                             <form-field-error [errors]="formCreateGrid.get('description').errors"></form-field-error>
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Meridian</mat-label>
-                        <input matInput type="number" placeholder="Central Meridian" [(ngModel)]="form.meridian"
-                            formControlName="meridian">
-                        <mat-error *ngIf="formCreateGrid.get('meridian').status === 'INVALID'">
+                        <input matInput type="number" placeholder="Central Meridian" formControlName="meridian">
+                        <mat-error>
                             <form-field-error [errors]="formCreateGrid.get('meridian').errors"></form-field-error>
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Width (in graus)</mat-label>
-                        <input matInput type="number" placeholder="Width Tile" [(ngModel)]="form.degreesx"
-                            formControlName="degreesx">
-                        <mat-error *ngIf="formCreateGrid.get('degreesx').status === 'INVALID'">
+                        <input matInput type="number" placeholder="Width Tile" formControlName="degreesx">
+                        <mat-error>
                             <form-field-error [errors]="formCreateGrid.get('degreesx').errors"></form-field-error>
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Height (in graus)</mat-label>
-                        <input matInput type="number" placeholder="Height Tile" [(ngModel)]="form.degreesy"
-                            formControlName="degreesy">
-                        <mat-error *ngIf="formCreateGrid.get('degreesy').status === 'INVALID'">
+                        <input matInput type="number" placeholder="Height Tile" formControlName="degreesy">
+                        <mat-error>
                             <form-field-error [errors]="formCreateGrid.get('degreesy').errors"></form-field-error>
                         </mat-error>
                     </mat-form-field>
