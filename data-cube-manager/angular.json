@@ -24,7 +24,9 @@
             "styles": [
               "src/styles.scss",
               "node_modules/perfect-scrollbar/css/perfect-scrollbar.css",
-              "src/assets/scss/material-dashboard.scss"
+              "src/assets/scss/material-dashboard.scss",
+              "src/assets/plugins/Leaflet.Coordinates/Leaflet.Coordinates-0.1.5.css",
+              "src/assets/plugins/Leaflet.Coordinates/Leaflet.Coordinates-0.1.5.ie.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
@@ -34,9 +36,7 @@
               "node_modules/moment/moment.js",
               "node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js",
               "node_modules/bootstrap-notify/bootstrap-notify.js",
-              "node_modules/chartist/dist/chartist.js",
-              "src/assets/plugins/Leaflet.Coordinates/Leaflet.Coordinates-0.1.5.css",
-              "src/assets/plugins/Leaflet.Coordinates/Leaflet.Coordinates-0.1.5.ie.css"
+              "node_modules/chartist/dist/chartist.js"
             ]
           },
           "configurations": {

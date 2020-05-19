@@ -1,8 +1,10 @@
 import { NativeDateAdapter } from "@angular/material/core";
+import { Injectable } from "@angular/core";
 
 /**
  * adapter to parser and format dates of the input date
  */
+@Injectable({ providedIn: 'root' })
 export class AppDateAdapter extends NativeDateAdapter {
 
     /**
