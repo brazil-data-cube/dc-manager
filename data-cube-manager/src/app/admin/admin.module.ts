@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -64,7 +65,8 @@ import { MapModal } from './components/map-modal/map-modal.component';
     MatTabsModule,
     NgxPaginationModule,
     LeafletModule,
-    LeafletDrawModule
+    LeafletDrawModule,
+    MatPaginatorModule
   ],
   declarations: [
     AdminLayoutComponent,

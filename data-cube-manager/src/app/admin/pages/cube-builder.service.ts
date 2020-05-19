@@ -168,4 +168,34 @@ export class CubeBuilderService {
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
     }
+
+    /**
+     * get cube metadata
+     */
+    public async listItems(cube: string, bbox?: string, start?: string, end?: string, page?: number): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+
+        const options = {} as any;
+        if (token) {
+            options.headers = { 'x-api-key': token };
+        }
+
+        let urlSuffix = `/cubes/${cube}/items`;
+
+        page = page || 1;
+
+        options.params = { page };
+
+        if (bbox)
+            options.params.bbox = bbox;
+
+        if (start)
+            options.params.start = start;
+
+        if (end)
+            options.params.end = end;
+
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise()
+        return response;
+    }
 }
