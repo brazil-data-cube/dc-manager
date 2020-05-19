@@ -1,13 +1,13 @@
 <ng-container *ngIf="errors && errors['required']">
     {{ errorPrefix }} 
-    {{ 'shared.formField.required' | translate }}
+    {{ 'Field is required.' }}
 </ng-container>
 
 <ng-container *ngIf="errors && errors['notUnique']">
     {{ errorPrefix }} 
-    {{ 'shared.formField.notUnique' | translate }}
+    {{ 'Field needs to be unique.' }}
 </ng-container>
 
 <ng-container *ngIf="errors && errors['email']">
-    {{ 'shared.formField.email' | translate }}
+    {{ 'Invalid email.' }}
 </ng-container>
