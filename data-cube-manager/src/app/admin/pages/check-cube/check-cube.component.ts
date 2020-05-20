@@ -8,6 +8,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { MapModal } from 'app/admin/components/map-modal/map-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { SceneDetailsComponent } from './scene-details/scene-details.component';
+import * as moment from 'moment';
 
 
 @Component({
@@ -90,11 +92,11 @@ export class CheckCubeComponent implements OnInit {
 
         if (start) {
             // TODO: Use library like moment to get formatted date
-            start = start.toISOString().split('T')[0]
+            start = moment(start).utc().format('YYYY-MM-DD')
         }
 
         if (end) {
-            end = end.toISOString().split('T')[0]
+            end = moment(end).utc().format('YYYY-MM-DD')
         }
 
         // Always search for page 1
@@ -137,6 +139,40 @@ export class CheckCubeComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             this.form.patchValue({ bbox: result['bbox'] });
         })
+    }
+
+    async openDetails(item: any) {
+        try {
+            this.store.dispatch(showLoading());
+
+            const cubeName = this.cube.id;
+
+            let start = item.composite_start;
+            let end = item.composite_end;
+
+            if (cubeName.split('_').length === 2) {
+                start = moment(start).startOf('month').format('YYYY-MM-DD');
+                end = moment(start).endOf('month').format('YYYY-MM-DD');
+            }
+
+            const response = await this.cbs.listMerges(this.cube.id, start, end, item.tile_id);
+
+            const dialogRef = this.dialog.open(SceneDetailsComponent, {
+                width: '600px',
+                disableClose: true,
+                data: {
+                    cube: this.cube.id,
+                    merges: response,
+                    itemDate: item.item_date,
+                    tileId: item.tile_id
+                }
+            })
+
+            dialogRef.afterClosed();
+        } finally {
+            this.store.dispatch(closeLoading());
+        }
+
     }
 
 }

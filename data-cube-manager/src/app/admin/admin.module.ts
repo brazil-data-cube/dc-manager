@@ -42,6 +42,7 @@ import { CreateCubePreviewComponent } from './pages/create-cube/steps/preview/pr
 import { TemporalCompositionModal } from './pages/create-cube/steps/definition/temporal/temporal.component';
 import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate-cost/estimate-cost.component';
 import { MapModal } from './components/map-modal/map-modal.component';
+import { SceneDetailsComponent } from './pages/check-cube/scene-details/scene-details.component';
 
 @NgModule({
   imports: [
@@ -86,7 +87,8 @@ import { MapModal } from './components/map-modal/map-modal.component';
     SidebarComponent,
     TemporalCompositionModal,
     EstimateCostModal,
-    MapModal
+    MapModal,
+    SceneDetailsComponent
   ],
   providers: [
     AdminGuardService
