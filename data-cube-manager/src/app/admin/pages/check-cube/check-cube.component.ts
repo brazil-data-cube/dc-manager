@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SceneDetailsComponent } from './scene-details/scene-details.component';
 import * as moment from 'moment';
+import { ReprocessDialogComponent } from './reprocess-dialog/reprocess-dialog.component';
 
 
 @Component({
@@ -173,6 +174,23 @@ export class CheckCubeComponent implements OnInit {
             this.store.dispatch(closeLoading());
         }
 
+    }
+
+    async reprocess(item) {
+        const dialogRef = this.dialog.open(ReprocessDialogComponent, {
+            width: '450px',
+            disableClose: true,
+            data: {
+                cube: this.cube.id,
+                itemDate: item.item_date,
+                tiles: [item.tile_id],
+                editable: false,
+                start_date: item.composite_start,
+                end_date: item.composite_end
+            }
+        })
+
+        dialogRef.afterClosed();
     }
 
 }
