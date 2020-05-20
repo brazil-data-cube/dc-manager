@@ -58,7 +58,7 @@ export class CreateCubeImagesComponent implements OnInit {
     this.initializeVariables()
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
-      if (res.grid && res.grid !== this.grid) {
+      if (res.grid && res.grid !== '' && res.grid !== this.grid) {
         this.grid = res.grid
         this.selectGrid(res.grid)
       }
