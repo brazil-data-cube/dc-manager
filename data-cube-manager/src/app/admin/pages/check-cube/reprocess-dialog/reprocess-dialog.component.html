@@ -1,0 +1,44 @@
+<h3 mat-dialog-title>Reprocess {{ data.cube }}</h3>
+
+<div mat-dialog-content>
+    <form [formGroup]="form">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <mat-form-field appearance="outline">
+                    <mat-label>Start Date</mat-label>
+                    <input matInput formControlName="start_date" [matDatepicker]="start_date" name="start_date">
+                    <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
+                    <mat-datepicker #start_date></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <mat-form-field appearance="outline">
+                    <mat-label>Last Date</mat-label>
+                    <input matInput formControlName="end_date" [matDatepicker]="last_date" name="last_date">
+                    <mat-datepicker-toggle matSuffix [for]="last_date"></mat-datepicker-toggle>
+                    <mat-datepicker #last_date></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <mat-form-field appearance="outline">
+                    <mat-label>Tiles</mat-label>
+                    <input matInput formControlName="tiles">
+                </mat-form-field>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12">
+              <mat-form-field appearance="outline">
+                  <mat-label>Collections</mat-label>
+                  <input matInput formControlName="collections">
+              </mat-form-field>
+          </div>
+        </div>
+    </form>
+</div>
+
+<div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="close()">Close</button>
+    <button mat-raised-button color="primary">Confirm</button>
+</div>

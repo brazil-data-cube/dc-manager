@@ -95,11 +95,23 @@ export class CubeBuilderService {
     /**
      * list merges by blend
      */
-    public async listMerges(cube, startDate, lastDate, tileID): Promise<any> {
+    public async listMerges(datacube, start, end, tileID): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
-        const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = `/cubes/list-merges?datacube=${cube}&start_date=${startDate}&last_date=${lastDate}&tile=${tileID}`;
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
+
+        const options = {} as any;
+        if (token) {
+            options.headers = { 'x-api-key': token };
+        }
+
+        options.params = {
+            data_cube: datacube,
+            start,
+            end,
+            tile_id: tileID,
+        }
+
+        const urlSuffix = `/list-merges`;
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise();
         return response;
     }
 
@@ -166,6 +178,36 @@ export class CubeBuilderService {
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/create-grs`;
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
+        return response;
+    }
+
+    /**
+     * get cube metadata
+     */
+    public async listItems(cube: string, bbox?: string, start?: string, end?: string, page?: number): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+
+        const options = {} as any;
+        if (token) {
+            options.headers = { 'x-api-key': token };
+        }
+
+        let urlSuffix = `/cubes/${cube}/items`;
+
+        page = page || 1;
+
+        options.params = { page };
+
+        if (bbox)
+            options.params.bbox = bbox;
+
+        if (start)
+            options.params.start = start;
+
+        if (end)
+            options.params.end = end;
+
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise()
         return response;
     }
 }

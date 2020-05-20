@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -41,6 +42,8 @@ import { CreateCubePreviewComponent } from './pages/create-cube/steps/preview/pr
 import { TemporalCompositionModal } from './pages/create-cube/steps/definition/temporal/temporal.component';
 import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate-cost/estimate-cost.component';
 import { MapModal } from './components/map-modal/map-modal.component';
+import { SceneDetailsComponent } from './pages/check-cube/scene-details/scene-details.component';
+import { ReprocessDialogComponent } from './pages/check-cube/reprocess-dialog/reprocess-dialog.component';
 
 @NgModule({
   imports: [
@@ -64,7 +67,8 @@ import { MapModal } from './components/map-modal/map-modal.component';
     MatTabsModule,
     NgxPaginationModule,
     LeafletModule,
-    LeafletDrawModule
+    LeafletDrawModule,
+    MatPaginatorModule
   ],
   declarations: [
     AdminLayoutComponent,
@@ -84,7 +88,9 @@ import { MapModal } from './components/map-modal/map-modal.component';
     SidebarComponent,
     TemporalCompositionModal,
     EstimateCostModal,
-    MapModal
+    MapModal,
+    SceneDetailsComponent,
+    ReprocessDialogComponent
   ],
   providers: [
     AdminGuardService
