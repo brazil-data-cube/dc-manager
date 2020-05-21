@@ -23,17 +23,31 @@
                 </mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Related Collection</mat-label>
-                <mat-select formControlName="collection">
-                    <mat-option *ngFor="let collection of collections" [value]="collection">
-                        {{ collection }}
-                    </mat-option>
-                </mat-select>
-                <mat-error>
-                    <form-field-error [errors]="formSearchImages.get('collection').errors"></form-field-error>
-                </mat-error>
-            </mat-form-field>
+            <div style="display: flex;">
+                <mat-form-field appearance="outline" style="width: 48%">
+                    <mat-label>Related Collection</mat-label>
+                    <mat-select formControlName="collection">
+                        <mat-option *ngFor="let collection of collections" [value]="collection">
+                            {{ collection }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>
+                        <form-field-error [errors]="formSearchImages.get('collection').errors"></form-field-error>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
+                    <mat-label>Satellite</mat-label>
+                    <mat-select formControlName="satellite">
+                        <mat-option *ngFor="let satellite of satellites" [value]="satellite">
+                            {{ satellite }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>
+                        <form-field-error [errors]="formSearchImages.get('satellite').errors"></form-field-error>
+                    </mat-error>
+                </mat-form-field>
+            </div>
 
             <div style="display: flex;">
                 <mat-form-field appearance="outline" style="width: 48%">

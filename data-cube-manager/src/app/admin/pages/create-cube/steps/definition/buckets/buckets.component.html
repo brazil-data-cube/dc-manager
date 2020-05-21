@@ -1,12 +1,28 @@
-<h3 mat-dialog-title>New Bucket</h3>
+<form [formGroup]="formBucketCreate" (ngSubmit)="create()">
+    <h3 mat-dialog-title>New Bucket</h3>
 
-<div mat-dialog-content>
-    <p>Fill in the information to create a bucket</p>
+    <div mat-dialog-content>
+        <p>Fill in the information to create a bucket</p>
 
-    ...
-</div>
+        <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name">
+            <mat-error>
+                <form-field-error [errors]="formBucketCreate.get('name').errors"></form-field-error>
+            </mat-error>
+        </mat-form-field>
 
-<div mat-dialog-actions>
-    <button mat-button (click)="close()">Cancel</button>
-    <button mat-raised-button color="primary">Create</button>
-</div>
+        <mat-checkbox style="margin: 10px 10px 20px 10px;" color="primary" formControlName="requester">
+            <span style="font-size: 1.3em;">Enable
+                <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html" target="_blank">
+                    requester pays
+                </a>
+            </span>
+        </mat-checkbox>
+    </div>
+
+    <div mat-dialog-actions style="display: flex; justify-content: space-between;">
+        <button mat-button (click)="close()">Cancel</button>
+        <button mat-raised-button color="primary">Create</button>
+    </div>
+</form>

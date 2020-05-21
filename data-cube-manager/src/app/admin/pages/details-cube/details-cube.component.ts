@@ -93,11 +93,7 @@ export class DetailsCubeComponent implements OnInit {
             this.map.fitBounds(layer.getBounds());
 
         } catch (err) {
-            this.snackBar.open('Error when listing cube geometries', '', {
-                duration: 4000,
-                verticalPosition: 'top',
-                panelClass: 'app_snack-bar-error'
-            });
+            return
 
         } finally {
             this.store.dispatch(closeLoading());

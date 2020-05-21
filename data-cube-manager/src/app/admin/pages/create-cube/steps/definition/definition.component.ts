@@ -35,7 +35,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
     public dialog: MatDialog) {
     this.formCreateCube = this.fb.group({
       bucket: ['', [Validators.required]],
-      name: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9-]*$')]],
       resolution: ['', [Validators.required]],
       temporalComposite: ['', [Validators.required]],
       compositeFunctions: [{ value: ['IDENTITY', 'MED', 'STK'], disabled: true }, [Validators.required]],
@@ -164,7 +164,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
       disableClose: true
     })
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(_ => {
       this.getTemporalCompositions()
     })
   }
@@ -175,7 +175,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
       disableClose: true
     })
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(_ => {
       this.getBuckets()
     })
   }

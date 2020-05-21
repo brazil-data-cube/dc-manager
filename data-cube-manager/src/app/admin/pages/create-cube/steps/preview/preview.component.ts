@@ -24,6 +24,7 @@ export class CreateCubePreviewComponent implements OnInit {
   public tiles: string[]
   public urlSTAC: string
   public collection: string
+  public satellite: string
   public rangeDates: string[]
 
   constructor(
@@ -58,6 +59,9 @@ export class CreateCubePreviewComponent implements OnInit {
       if (res.collection) {
         this.collection = res.collection
       }
+      if (res.satellite) {
+        this.satellite = res.satellite
+      }
       if (res.startDate && res.lastDate) {
         this.rangeDates = [res.startDate, res.lastDate]
       }
@@ -75,6 +79,14 @@ export class CreateCubePreviewComponent implements OnInit {
     return func ? `${this.definition.name}_${func}` : `${parts[0]}_${parts[1]}`
   }
 
+  getCubeTypeDescription(func) {
+    switch (func) {
+      case 'STK': return 'Data cube using the STACK composition function'
+      case 'MED': return 'Data cube using the MED composition function'
+      default: return 'Irregular Data cube'
+    }
+  }
+
   async create() {
     if (this.formCreate.status !== 'VALID') {
       this.snackBar.open('Accept the terms of use', '', {
@@ -84,6 +96,8 @@ export class CreateCubePreviewComponent implements OnInit {
       });
     } else {
       try {
+        this.store.dispatch(showLoading());
+        
         // CREATE RASTER SIZE SCHEMA
         const rasterSchema = {
           grs_schema: this.grid,
@@ -113,6 +127,7 @@ export class CreateCubePreviewComponent implements OnInit {
           datacube: this.definition.name,
           tiles: this.tiles,
           collections: this.collection,
+          satellite: this.satellite,
           start_date: this.rangeDates[0],
           end_date: this.rangeDates[1]
         }

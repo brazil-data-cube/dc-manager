@@ -15,6 +15,11 @@ export const setCollection = createAction(
     props<object>()
 );
 
+export const setSatellite = createAction(
+    '[Loading Component] setSatellite',
+    props<object>()
+);
+
 export const setRangeTemporal = createAction(
     '[Loading Component] setRangeTemporal',
     props<object>()
