@@ -33,5 +33,14 @@ export class STACService {
         const response = await this.http.get(`${url}${urlSuffix}`).toPromise()
         return response;
     }
+
+    /**
+     * get collection informations
+     */
+    public async getCollectionInfo(url, collection): Promise<any> {
+        let urlSuffix = `/collections/${collection}`
+        const response = await this.http.get(`${url}${urlSuffix}`).toPromise()
+        return response;
+    }
     
 }
