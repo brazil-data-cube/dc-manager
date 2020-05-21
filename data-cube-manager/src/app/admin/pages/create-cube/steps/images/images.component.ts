@@ -123,12 +123,14 @@ export class CreateCubeImagesComponent implements OnInit {
     try {
       this.store.dispatch(showLoading());
       const urlSTAC = this.formSearchImages.get('urlSTAC').value
-      const respVersion = await this.ss.getVersion(urlSTAC)
-      const stacVersion = respVersion['stac_version'].substring(0, 3)
-
-      const response = await this.ss.getCollections(urlSTAC)
-      this.stacVersion = stacVersion
-      this.collections = collectionsByVersion(response, stacVersion)
+      if (urlSTAC && urlSTAC !== '') {
+        const respVersion = await this.ss.getVersion(urlSTAC)
+        const stacVersion = respVersion['stac_version'].substring(0, 3)
+  
+        const response = await this.ss.getCollections(urlSTAC)
+        this.stacVersion = stacVersion
+        this.collections = collectionsByVersion(response, stacVersion)
+      }
 
     } catch (_) {
       this.snackBar.open(

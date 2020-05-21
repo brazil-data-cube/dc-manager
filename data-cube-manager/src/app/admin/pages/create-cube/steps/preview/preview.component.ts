@@ -96,6 +96,8 @@ export class CreateCubePreviewComponent implements OnInit {
       });
     } else {
       try {
+        this.store.dispatch(showLoading());
+        
         // CREATE RASTER SIZE SCHEMA
         const rasterSchema = {
           grs_schema: this.grid,
