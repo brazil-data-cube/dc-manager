@@ -4,12 +4,14 @@ import { MatDialog } from '@angular/material/dialog'
 
 import { showLoading, closeLoading } from 'app/app.action'
 import { AdminState } from 'app/admin/admin.state'
-import { TemporalComposition, CompositeFunction, Form } from './definition.interface'
+import { TemporalComposition, CompositeFunction } from './definition.interface'
 import { TemporalCompositionModal } from './temporal/temporal.component'
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
 import { FormGroup, FormBuilder, Validators } from '@angular/forms'
+import { setDefinition } from 'app/admin/admin.action'
+import { BucketsModal } from './buckets/buckets.component'
 
 @Component({
   selector: 'app-create-cube-definition',
@@ -18,11 +20,12 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms'
 })
 export class CreateCubeDefinitionComponent implements OnInit {
 
+  public formCreateCube: FormGroup
   public temporalCompositions: TemporalComposition[]
   public compositeFunctions: CompositeFunction[]
   public buckets: object[]
-  public formCreateCube: FormGroup
   public bandsAvailable: string[]
+  public definitonCompleted: boolean
 
   constructor(
     private store: Store<AdminState>,
@@ -43,7 +46,6 @@ export class CreateCubeDefinitionComponent implements OnInit {
     });
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
-      console.log(res)
       if (res.bandsAvailable) {
         const bands = res.bandsAvailable
         this.bandsAvailable = bands
@@ -53,6 +55,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.definitonCompleted = false
     this.getTemporalCompositions()
     this.getCompositeFunctions()
     this.getBuckets()
@@ -112,6 +115,29 @@ export class CreateCubeDefinitionComponent implements OnInit {
     }
   }
 
+  saveInfosInStore() {
+    if (this.formCreateCube.status !== 'VALID') {
+      this.snackBar.open('Fill in all fields correctly', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+    } else {
+      this.store.dispatch(setDefinition({
+        definition: {
+          bucket: this.formCreateCube.get('bucket').value,
+          name: this.getCubeFullName(),
+          resolution: this.formCreateCube.get('resolution').value,
+          temporal: this.formCreateCube.get('temporalComposite').value,
+          functions: this.formCreateCube.get('compositeFunctions').value,
+          bands: this.formCreateCube.get('bands').value,
+          bandsQuicklook: this.getBandsQuicklook()
+        }
+      }))
+      this.definitonCompleted = true
+    }
+  }
+
   getCubeFullName() {
     const name = this.formCreateCube.get('name').value
     const resolution = this.formCreateCube.get('resolution').value
@@ -125,6 +151,13 @@ export class CreateCubeDefinitionComponent implements OnInit {
     }
   }
 
+  getBandsQuicklook() {
+    const r = this.formCreateCube.get('quicklookR').value
+    const g = this.formCreateCube.get('quicklookG').value
+    const b = this.formCreateCube.get('quicklookB').value
+    return [r, g, b]
+  }
+
   openModalTemporal() {
     const dialogRef = this.dialog.open(TemporalCompositionModal, {
       width: '450px',
@@ -133,6 +166,17 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.getTemporalCompositions()
+    })
+  }
+
+  openModalBuckets() {
+    const dialogRef = this.dialog.open(BucketsModal, {
+      width: '450px',
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.getBuckets()
     })
   }
 

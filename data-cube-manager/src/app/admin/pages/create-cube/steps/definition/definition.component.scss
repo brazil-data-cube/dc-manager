@@ -1,6 +1,22 @@
 .container_definition {
     padding: 0 10px;
 
+    .box_input_with_button {
+        display: flex;
+        width: 100%;
+        align-items: center;
+
+        .mat-form-field {
+            width: 100% !important;
+        }
+        
+        .btn_suffix {
+            margin-left: 5px;
+            width: 40px;
+            margin-top: -20px;
+        }
+    }
+
     .box-rgb {
         border-top: 3px solid blue;
 

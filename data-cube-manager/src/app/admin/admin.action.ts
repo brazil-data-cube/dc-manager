@@ -24,3 +24,18 @@ export const setTiles = createAction(
     '[Loading Component] setTiles',
     props<object>()
 );
+
+export const setDefinition = createAction(
+    '[Loading Component] setDefinition',
+    props<object>()
+);
+
+export const setMetadata = createAction(
+    '[Loading Component] setMetadata',
+    props<object>()
+);
+
+export const setUrlSTAC = createAction(
+    '[Loading Component] setUrlSTAC',
+    props<object>()
+);

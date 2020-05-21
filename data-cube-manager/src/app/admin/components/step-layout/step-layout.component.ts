@@ -9,6 +9,7 @@ export class StepLayerComponent implements OnInit {
 
     @Input('first') public first = false;
     @Input('titleNext') public titleNext = 'Next';
+    @Input('removeNext') public removeNext = false;
 
     constructor() { }
 

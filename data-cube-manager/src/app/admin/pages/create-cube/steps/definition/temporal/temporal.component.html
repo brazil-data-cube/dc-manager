@@ -1,31 +1,33 @@
-<h3 mat-dialog-title>Temporal Composition Schema</h3>
-
-<div mat-dialog-content>
-    <p>Fill in the information to create a new schema</p>
-
-    <mat-form-field appearance="outline">
-        <mat-label>Schema</mat-label>
-        <mat-select [(value)]="form.temporal_schema">
-            <mat-option *ngFor="let schema of ['A', 'M']" [value]="schema">
-                {{ schema }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>T</mat-label>
-        <input type="number" min="1" matInput [(ngModel)]="form.temporal_composite_t">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Unit</mat-label>
-        <mat-select [(value)]="form.temporal_composite_unit">
-            <mat-option *ngFor="let unit of ['day', 'month']" [value]="unit">
-                {{ unit }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-
-<div mat-dialog-actions>
-    <button mat-button (click)="close()">Cancel</button>
-    <button mat-raised-button (click)="create()" color="primary">Create</button>
-</div>
+<form [formGroup]="formTemporalCreate" (ngSubmit)="create()">
+    <h3 mat-dialog-title>Temporal Composition Schema</h3>
+    
+    <div mat-dialog-content>
+        <p>Fill in the information to create a new schema</p>
+    
+        <mat-form-field appearance="outline">
+            <mat-label>Schema</mat-label>
+            <mat-select formControlName="temporalSchema">
+                <mat-option *ngFor="let schema of ['A', 'M']" [value]="schema">
+                    {{ schema }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>T</mat-label>
+            <input type="number" min="1" matInput formControlName="temporalCompositeT">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Unit</mat-label>
+            <mat-select formControlName="temporalCompositeUnit">
+                <mat-option *ngFor="let unit of ['day', 'month']" [value]="unit">
+                    {{ unit }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    
+    <div mat-dialog-actions>
+        <button mat-button type="button" (click)="close()">Cancel</button>
+        <button mat-raised-button type="submit" color="primary">Create</button>
+    </div>
+</form>

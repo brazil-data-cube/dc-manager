@@ -13,7 +13,7 @@ export class CubeBuilderService {
     /**
      * verify token
      */
-    public async verifyToken(token=null): Promise<any> {
+    public async verifyToken(token = null): Promise<any> {
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         let urlSuffix = '/'
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
@@ -23,7 +23,7 @@ export class CubeBuilderService {
     /**
      * get cube metadata
      */
-    public async getCubes(id=null): Promise<any> {
+    public async getCubes(id = null): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         let urlSuffix = '/cubes'
@@ -59,7 +59,7 @@ export class CubeBuilderService {
     /**
      * get grids metadata
      */
-    public async getGrids(id=null): Promise<any> {
+    public async getGrids(id = null): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         let urlSuffix = '/grs'
@@ -76,7 +76,7 @@ export class CubeBuilderService {
     public async create(data): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = '/cubes/create';
+        const urlSuffix = '/create';
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
     }
@@ -87,7 +87,18 @@ export class CubeBuilderService {
     public async start(data): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = '/cubes/process';
+        const urlSuffix = '/start';
+        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
+        return response;
+    }
+
+    /**
+     * create raster size schema
+     */
+    public async createRasterSchema(data): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = '/create-raster-size';
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
     }
@@ -191,19 +202,15 @@ export class CubeBuilderService {
         if (token) {
             options.headers = { 'x-api-key': token };
         }
-
         let urlSuffix = `/cubes/${cube}/items`;
 
         page = page || 1;
-
         options.params = { page };
 
         if (bbox)
             options.params.bbox = bbox;
-
         if (start)
             options.params.start = start;
-
         if (end)
             options.params.end = end;
 

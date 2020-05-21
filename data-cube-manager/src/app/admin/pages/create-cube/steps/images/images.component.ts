@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { STACService } from 'app/admin/pages/stac.service';
 import { collectionsByVersion, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
-import { setBandsAvailable, setCollection, setRangeTemporal, setTiles } from 'app/admin/admin.action';
+import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC } from 'app/admin/admin.action';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -188,6 +188,7 @@ export class CreateCubeImagesComponent implements OnInit {
                 lastDate: formatDateUSA(lastDate)
               }))
               this.store.dispatch(setTiles({ tiles: this.tiles }))
+              this.store.dispatch(setUrlSTAC({ url: urlSTAC }))
   
               const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
               await Object.keys(respCollection['properties']).forEach(props => {
