@@ -4,33 +4,80 @@
         <span style="margin-left: 10px;">Preview</span>
     </h3>
 
-    <div class="row accordion">
+    <app-alert 
+        type="warning" 
+        *ngIf="!gridCompleted"
+        message="Select a grid in the GRID step!"></app-alert>
+
+        <app-alert 
+        type="warning" 
+        *ngIf="!regionCompleted"
+        message="Select a region of interest in the REGION step!"></app-alert>
+
+    <app-alert 
+        type="warning" 
+        *ngIf="!definitionCompleted"
+        message="Fill in all the information in the DEFINITION step and click on the SAVE button!"></app-alert>
+
+    <div class="row accordion" *ngIf="gridCompleted && regionCompleted && definitionCompleted">
+    <!-- <div class="row accordion"> -->
         <mat-accordion class="col-12">
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        CUBE
+                        {{ getCubeName() }}
                     </mat-panel-title>
                     <mat-panel-description>
-                        description
+                        Irregular Data cube
                     </mat-panel-description>
                 </mat-expansion-panel-header>
 
-                content ...
+                <div class="cubes-box">
+                    <div class="description_box">DESCRIPTION:</div>
+                    <div class="cost_box">COST:</div> 
+                </div>
             </mat-expansion-panel>
 
             <mat-expansion-panel>
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        COST
+                        {{ getCubeName('STK') }}
                     </mat-panel-title>
                     <mat-panel-description>
-                        description
+                       Data cube using the STACK composition function
                     </mat-panel-description>
                 </mat-expansion-panel-header>
 
-                content ...
+                <div class="cubes-box">
+                    <div class="description_box">DESCRIPTION:</div>
+                    <div class="cost_box">COST:</div> 
+                </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{ getCubeName('MED') }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        Data cube using the MEDIAN composition function
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="cubes-box">
+                    <div class="description_box">DESCRIPTION:</div>
+                    <div class="cost_box">COST:</div> 
+                </div>
             </mat-expansion-panel>
         </mat-accordion>
+        
+        <form class="col-12 box_btn" [formGroup]="formCreate" (ngSubmit)="create()">
+            <mat-checkbox style="margin-top: 10px;" color="primary" formControlName="agree">
+                <span style="font-size: 1.3em;">I agree with the creation of the cubes!</span>
+            </mat-checkbox>
+            <button type="submit" mat-raised-button color="primary">
+                CREATE CUBE
+            </button>
+        </form>
     </div>
 </div>

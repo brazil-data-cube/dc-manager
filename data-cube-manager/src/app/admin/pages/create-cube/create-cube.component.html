@@ -28,7 +28,7 @@
                 </mat-step>
                 <mat-step>
                     <ng-template matStepLabel>PREVIEW</ng-template>
-                    <app-step-layout titleNext="CREATE">
+                    <app-step-layout [removeNext]="true">
                         <app-create-cube-preview></app-create-cube-preview>
                     </app-step-layout>
                 </mat-step>

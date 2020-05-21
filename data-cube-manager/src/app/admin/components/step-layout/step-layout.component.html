@@ -3,6 +3,6 @@
 
     <div class="row footer">
         <button mat-raised-button [disabled]="first" matStepperPrevious>Back</button>
-        <button mat-raised-button color="primary" matStepperNext>{{ titleNext }}</button>
+        <button mat-raised-button color="primary" *ngIf="!removeNext" matStepperNext>{{ titleNext }}</button>
     </div>
 </section>

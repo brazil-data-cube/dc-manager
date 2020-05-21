@@ -19,6 +19,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -44,6 +45,7 @@ import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate
 import { MapModal } from './components/map-modal/map-modal.component';
 import { SceneDetailsComponent } from './pages/check-cube/scene-details/scene-details.component';
 import { ReprocessDialogComponent } from './pages/check-cube/reprocess-dialog/reprocess-dialog.component';
+import { BucketsModal } from './pages/create-cube/steps/definition/buckets/buckets.component';
 
 @NgModule({
   imports: [
@@ -68,7 +70,8 @@ import { ReprocessDialogComponent } from './pages/check-cube/reprocess-dialog/re
     NgxPaginationModule,
     LeafletModule,
     LeafletDrawModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatCheckboxModule
   ],
   declarations: [
     AdminLayoutComponent,
@@ -90,7 +93,8 @@ import { ReprocessDialogComponent } from './pages/check-cube/reprocess-dialog/re
     EstimateCostModal,
     MapModal,
     SceneDetailsComponent,
-    ReprocessDialogComponent
+    ReprocessDialogComponent,
+    BucketsModal
   ],
   providers: [
     AdminGuardService
@@ -98,7 +102,8 @@ import { ReprocessDialogComponent } from './pages/check-cube/reprocess-dialog/re
   entryComponents: [
     TemporalCompositionModal,
     EstimateCostModal,
-    MapModal
+    MapModal,
+    BucketsModal
   ]
 })
 
