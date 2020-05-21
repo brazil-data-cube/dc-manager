@@ -104,6 +104,17 @@ export class CubeBuilderService {
     }
 
     /**
+     * create raster size schema
+     */
+    public async createBucket(data): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = '/create-bucket';
+        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
+        return response;
+    }
+
+    /**
      * list merges by blend
      */
     public async listMerges(datacube, start, end, tileID): Promise<any> {

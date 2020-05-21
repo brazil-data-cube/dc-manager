@@ -40,8 +40,8 @@ export class CreateCubeGridComponent implements OnInit {
       name: ['', [Validators.required]],
       description: ['', [Validators.required]],
       meridian: [null, [Validators.required]],
-      degreesx: [1.5, [Validators.required]],
-      degreesy: [1, [Validators.required]]
+      degreesx: [{value: 1.5, disabled: true}, [Validators.required]],
+      degreesy: [{value: 1, disabled: true}, [Validators.required]]
     });
   }
 

@@ -3,6 +3,7 @@ export interface AdminState {
     readonly urlSTAC: String;
     readonly bandsAvailable: string[];
     readonly collection: String;
+    readonly satellite: String;
     readonly startDate: String;
     readonly lastDate: String;
     readonly tiles: String[];

@@ -1,6 +1,6 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import {
-  setGrid, setBandsAvailable, setCollection, setRangeTemporal, setTiles, setDefinition, setMetadata, setUrlSTAC
+  setGrid, setBandsAvailable, setCollection, setRangeTemporal, setTiles, setDefinition, setMetadata, setUrlSTAC, setSatellite
 } from './admin.action';
 import { AdminState } from './admin.state';
 
@@ -10,6 +10,7 @@ const initialState: AdminState = {
   urlSTAC: '',
   bandsAvailable: [],
   collection: '',
+  satellite: '',
   startDate: null,
   lastDate: null,
   tiles: [],
@@ -42,6 +43,9 @@ const reducerAdmin = createReducer(initialState,
   }),
   on(setCollection, (state, payload) => {
     return { ...state, collection: payload['collection'] };
+  }),
+  on(setSatellite, (state, payload) => {
+    return { ...state, satellite: payload['satellite'] };
   }),
   on(setRangeTemporal, (state, payload) => {
     return { ...state, startDate: payload['startDate'], lastDate: payload['lastDate'] };

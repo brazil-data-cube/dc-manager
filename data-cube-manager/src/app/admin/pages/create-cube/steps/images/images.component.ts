@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { STACService } from 'app/admin/pages/stac.service';
 import { collectionsByVersion, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
-import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC } from 'app/admin/admin.action';
+import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC, setSatellite } from 'app/admin/admin.action';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -32,6 +32,7 @@ export class CreateCubeImagesComponent implements OnInit {
   public options: MapOptions
 
   public collections: string[]
+  public satellites: string[]
   public formSearchImages: FormGroup
   public bbox: string
   public stacVersion: string
@@ -49,6 +50,7 @@ export class CreateCubeImagesComponent implements OnInit {
     this.formSearchImages = this.fb.group({
       collection: ['', [Validators.required]],
       urlSTAC: ['', [Validators.required]],
+      satellite: ['', [Validators.required]],
       startDate: ['', [Validators.required]],
       lastDate: ['', [Validators.required]]
     });
@@ -76,6 +78,7 @@ export class CreateCubeImagesComponent implements OnInit {
       center: latLng(-16, -52)
     }
     this.collections = []
+    this.satellites = ['CBERS-4-MUX', 'CBERS-4-WFI', 'LANDSAT', 'MODIS', 'SENTINEL-2']
     this.totalImages = 0
     this.tiles = []
   }
@@ -170,6 +173,7 @@ export class CreateCubeImagesComponent implements OnInit {
             this.store.dispatch(showLoading());
             const urlSTAC = this.formSearchImages.get('urlSTAC').value
             const collection = this.formSearchImages.get('collection').value
+            const satellite = this.formSearchImages.get('satellite').value
             const startDate = this.formSearchImages.get('startDate').value
             const lastDate = this.formSearchImages.get('lastDate').value
             let query = `bbox=${this.stacVersion === '0.6' ? '['+this.bbox+']' : this.bbox}`
@@ -183,6 +187,7 @@ export class CreateCubeImagesComponent implements OnInit {
             } else {
               this.totalImages = total
               this.store.dispatch(setCollection({ collection }))
+              this.store.dispatch(setSatellite({ satellite }))
               this.store.dispatch(setRangeTemporal({ 
                 startDate: formatDateUSA(startDate),
                 lastDate: formatDateUSA(lastDate)

@@ -1,13 +1,17 @@
 <ng-container *ngIf="errors && errors['required']">
     {{ errorPrefix }} 
-    {{ 'Field is required.' }}
+    Field is required.
 </ng-container>
 
 <ng-container *ngIf="errors && errors['notUnique']">
     {{ errorPrefix }} 
-    {{ 'Field needs to be unique.' }}
+    Field needs to be unique.
 </ng-container>
 
 <ng-container *ngIf="errors && errors['email']">
-    {{ 'Invalid email.' }}
+    Invalid email.
+</ng-container>
+
+<ng-container *ngIf="errors && errors['pattern']">
+    Only letters and numbers are accepted.
 </ng-container>
