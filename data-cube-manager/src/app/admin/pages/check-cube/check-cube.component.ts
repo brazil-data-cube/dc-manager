@@ -23,14 +23,13 @@ export class CheckCubeComponent implements OnInit {
 
     public bbox = ''
 
-    public itemsResponse = {
-        page: 1,
-        items: [],
-        total_items: 0
-    };
-
     public pageEvent: PageEvent;
     public pageIndex = 0;
+    public perPage = 10;
+    public timeline: string[] = [];
+    public tiles: string[] = [];
+    public currentTab: string = '';
+    public items = {} as any;
 
     public form: FormGroup;
 
@@ -54,18 +53,40 @@ export class CheckCubeComponent implements OnInit {
                 this.pageIndex = params['params']['page'];
 
             await this.getCubes(params['params']['cube']);
-
-            // list items
-            await this.listItems(params['params']['cube']);
         });
+    }
+
+    async onTabChanged(event) {
+        const tile = this.tiles[event.index];
+
+        this.currentTab = tile;
+
+        if (!this.items[tile]) {
+            const items = await this.getAllItems(this.currentTab);
+            const features = this.getAllFeatures(items);
+            this.items[this.currentTab] = features;
+        }
     }
 
     async getCubes(cubeName) {
         try {
             this.store.dispatch(showLoading())
             const response = await this.cbs.getCubes(cubeName)
-            this.cube = response
+            this.cube = response;
+            this.tiles = await this.cbs.listItemsTiles(cubeName) as any;
+            this.currentTab = this.tiles[0];
 
+            if (response.temporal.length !== 0) {
+                if (!response.temporal_composition.schema) {
+                    // TODO: Retrieve a timeline for IDENTITY data cube?
+                    return;
+                }
+
+                const [start, end] = response.temporal;
+                const { step, schema } = response.temporal_composition as any;
+
+                this.timeline = await this.cbs.getTimeline(start, end, schema, step);
+            }
         } catch (err) {
             console.log(err)
 
@@ -74,55 +95,84 @@ export class CheckCubeComponent implements OnInit {
         }
     }
 
-    getItemsByTile() {
-        const result = {};
-
-        for(let item of this.itemsResponse.items) {
-            if (!result[item.tile_id]) {
-                result[item.tile_id] = [];
-            }
-
-            result[item.tile_id].push(item);
-        }
-
-        return result;
-    }
-
-    search() {
+    async search() {
         let { bbox, start, end } = this.form.value;
 
         if (start) {
             // TODO: Use library like moment to get formatted date
-            start = moment(start).utc().format('YYYY-MM-DD')
+            start = moment(start).utc().format('YYYY-MM-DD');
+        } else {
+            start = '';
         }
 
         if (end) {
-            end = moment(end).utc().format('YYYY-MM-DD')
+            end = moment(end).utc().format('YYYY-MM-DD');
+        } else {
+            end = moment().utc().format('YYYY-MM-DD');
         }
 
         // Always search for page 1
-        this.listItems(this.cube.id, bbox, start, end, 1);
+        const foundItems = await this.getAllItems(null, bbox, start, end);
+
+        const tilesFound = foundItems.map(item => item.tile_id).filter((tile, index, self) => self.indexOf(tile) === index);
+
+        this.tiles = tilesFound;
+        const allItemsExpected = this.getAllFeatures(foundItems);
+
+        for(let tile of this.tiles) {
+            this.items[tile] = allItemsExpected.filter(item => item.tile_id === tile && item.item_date >= start && item.item_date <= end);
+        }
+
     }
 
-    async getServerData(event: PageEvent) {
-        this.listItems(this.cube.id, null, null, null, event.pageIndex + 1);
+    getAllFeatures(features) {
+        if (this.timeline.length) {
+            const dates = this.timeline.map(t => {
+                return features.filter(f => f['item_date'] === t).length ? null : t;
+            }).filter(t => t).map(t => { return { id: t, item_date: t, notFound: true, ...this.parseSceneID(features[0]['id']) } });
+            return [...dates, ...features];
+        }
+
+        return features;
     }
 
-    getTiles() {
-        // Get all tiles in scenes
-        const tiles = this.itemsResponse.items.map(item => item.tile_id);
-        // Get unique tiles
-        return tiles.filter((value, index, self) => self.indexOf(value) === index);
+    parseSceneID(sceneID) {
+        const parts = sceneID.split('_');
+        return {
+            cube: parts.slice(0, 4).join('_'),
+            tile_id: parts[4],
+            startDate: parts[5],
+            lastDate: parts[6]
+        }
     }
 
-    async listItems(cube: string, bbox?: string, start?: string, end?: string, page?: number) {
+    /** Retrieve all items from cube builder associated with cube context. */
+    async getAllItems(tileId?: string, bbox?: string, start?: string, end?: string) {
+        const result = await this.listItems(this.cube.id, bbox, null, null, this.pageIndex + 1, tileId);
+
+        const total = result.total_items;
+
+        let container = [...result.items];
+        let pageRef = 1;
+
+        while (container.length < total) {
+            const res = await this.listItems(this.cube.id, bbox, null, null, ++pageRef, tileId);
+
+            container = [...container, ...res.items];
+        }
+
+        return container;
+    }
+
+    async listItems(cube: string, bbox?: string, start?: string, end?: string, page?: number, tiles?: string) {
         try {
             this.store.dispatch(showLoading())
-            const response = await this.cbs.listItems(cube, bbox, start, end, page);
-            this.itemsResponse = response;
+            const response = await this.cbs.listItems(cube, bbox, start, end, tiles, page);
+
+            return response;
         } catch (err) {
             console.log(err)
-
+            throw err;
         } finally {
             this.store.dispatch(closeLoading())
         }

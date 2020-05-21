@@ -121,7 +121,7 @@ export class CubeBuilderService {
     public async getTimeline(startDate, lastDate, schema, step): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = `/cubes/list-periods?start_date=${startDate}&last_date=${lastDate}&schema=${schema}&step=${step}`;
+        const urlSuffix = `/timeline?start=${startDate}&end=${lastDate}&schema=${schema}&step=${step}`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
     }
@@ -184,7 +184,7 @@ export class CubeBuilderService {
     /**
      * get cube metadata
      */
-    public async listItems(cube: string, bbox?: string, start?: string, end?: string, page?: number): Promise<any> {
+    public async listItems(cube: string, bbox?: string, start?: string, end?: string, tiles?: string, page?: number): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
 
         const options = {} as any;
@@ -207,7 +207,24 @@ export class CubeBuilderService {
         if (end)
             options.params.end = end;
 
+        if (tiles)
+            options.params.tiles = tiles;
+
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise()
+        return response;
+    }
+
+    public async listItemsTiles(cube: string) {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+
+        const options = {} as any;
+        if (token) {
+            options.headers = { 'x-api-key': token };
+        }
+
+        let urlSuffix = `/cubes/${cube}/items/tiles`;
+
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise();
         return response;
     }
 }
