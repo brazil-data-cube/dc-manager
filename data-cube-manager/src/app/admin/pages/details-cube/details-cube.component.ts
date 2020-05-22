@@ -67,7 +67,6 @@ export class DetailsCubeComponent implements OnInit {
         try {
             this.store.dispatch(showLoading())
             const response = await this.cbs.getCubeStatus(cubeName)
-            console.log(response)
             this.cubeStatus = response
 
         } catch (err) {

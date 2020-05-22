@@ -1,18 +1,18 @@
-<h3 mat-dialog-title>Details</h3>
+<h3 mat-dialog-title>
+    <b>Merges Details</b>
+</h3>
 
-<div mat-dialog-content>
-    <p>
-        <b>Date: {{ data.itemDate }}</b>
-    </p>
-    <p>
-        <b>Tile: {{ data.tileId }}</b>
-    </p>
+<div mat-dialog-content class="merges">
+    <header>
+        <p><b>Date:</b> {{ data.itemDate }}</p>
+        <p><b>Tile:</b> {{ data.tileId }}</p>
+    </header>
 
     <mat-accordion *ngIf="merges">
         <mat-expansion-panel *ngFor="let date of getMergeDates()">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                {{ date }}
+                    {{ date }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
 
@@ -20,31 +20,22 @@
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header" style="padding: 0">
-                            <img src="/assets/img/not_found.svg" style="width: 100%; height: 100%;" />
+                            <img [src]="getMergeFile(date)" onerror="this.onerror=null; this.src='/assets/img/not_found.svg'"
+                                style="width: 100%; height: 100%;" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <span>Images used:</span>
-
-            <div class="row">
-                <div class="col-md-3" *ngFor="let image of getImagesFromMerge(date)">
-                    <div class="card">
-                        <div class="card-header" style="padding: 0">
-                            <img src="/assets/img/not_found.svg" style="width: 100%; height: 100%;" />
-                            <!-- <img [src]="image" style="width: 100%; height: 100%;" /> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <span><b>Images used:</b></span>
+            <ol class="merges-used">
+                <li *ngFor="let image of getImagesFromMerge(date)">
+                    {{ getScenePath(image) }}
+                </li>
+            </ol>
 
             <span><b>Errors:</b> {{ countErrors(date) }} </span>
 
         </mat-expansion-panel>
     </mat-accordion>
-</div>
-
-<div mat-dialog-actions class="dialog-actions mat-dialog-actions">
-    <button mat-button (click)="close()">Close</button>
 </div>

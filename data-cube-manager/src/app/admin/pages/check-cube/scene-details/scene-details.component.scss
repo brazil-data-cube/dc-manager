@@ -1,0 +1,25 @@
+.merges {
+  header {
+    padding: 10px;
+    border: 2px dotted #CCC;
+    border-radius: 10px;
+    margin: 15px 0;
+    background: #EEE;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .merges-used {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px !important;
+    margin: 0px; 
+
+    li {
+      margin-bottom: 5px;
+      word-wrap: break-word;
+    }
+  }
+}

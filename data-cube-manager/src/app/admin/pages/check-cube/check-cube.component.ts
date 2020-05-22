@@ -3,7 +3,7 @@ import { showLoading, closeLoading } from 'app/app.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
 import { CubeBuilderService } from '../cube-builder.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { MapModal } from 'app/admin/components/map-modal/map-modal.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,26 +19,25 @@ import { ReprocessDialogComponent } from './reprocess-dialog/reprocess-dialog.co
     styleUrls: ['./check-cube.component.scss']
 })
 export class CheckCubeComponent implements OnInit {
+    
     public cube
-
     public bbox = ''
-
-    public pageEvent: PageEvent;
-    public pageIndex = 0;
-    public perPage = 10;
-    public timeline: string[] = [];
-    public tiles: string[] = [];
-    public currentTab: string = '';
-    public items = {} as any;
-
-    public form: FormGroup;
+    public pageEvent: PageEvent
+    public pageIndex = 0
+    public perPage = 10
+    public timeline: string[] = []
+    public tiles: string[] = []
+    public currentTab: string = ''
+    public items = {} as any
+    public form: FormGroup
 
     constructor(
         private cbs: CubeBuilderService,
         private route: ActivatedRoute,
         private store: Store<AppState>,
         public dialog: MatDialog,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        private router: Router
     ) { }
 
     ngOnInit() {
@@ -49,26 +48,25 @@ export class CheckCubeComponent implements OnInit {
         })
 
         this.route.paramMap.subscribe(async params => {
-            if (params['params'].page)
-                this.pageIndex = params['params']['page'];
-
-            await this.getCubes(params['params']['cube']);
-        });
+            if (params['params'].page) {
+                this.pageIndex = params['params']['page']
+            }
+            await this.getCube(params['params']['cube'])
+        })
     }
 
     async onTabChanged(event) {
-        const tile = this.tiles[event.index];
-
-        this.currentTab = tile;
+        const tile = this.tiles[event.index]
+        this.currentTab = tile
 
         if (!this.items[tile]) {
-            const items = await this.getAllItems(this.currentTab);
-            const features = this.getAllFeatures(items);
-            this.items[this.currentTab] = features;
+            const items = await this.getAllItems(this.currentTab)
+            const features = this.getAllFeatures(items)
+            this.items[this.currentTab] = features
         }
     }
 
-    async getCubes(cubeName) {
+    async getCube(cubeName) {
         try {
             this.store.dispatch(showLoading())
             const response = await this.cbs.getCubes(cubeName)
@@ -78,17 +76,14 @@ export class CheckCubeComponent implements OnInit {
 
             if (response.temporal.length !== 0) {
                 if (!response.temporal_composition.schema) {
-                    // TODO: Retrieve a timeline for IDENTITY data cube?
                     return;
                 }
-
                 const [start, end] = response.temporal;
                 const { step, schema } = response.temporal_composition as any;
-
                 this.timeline = await this.cbs.getTimeline(start, end, schema, step);
             }
         } catch (err) {
-            console.log(err)
+            this.router.navigate(['/list-cubes'])
 
         } finally {
             this.store.dispatch(closeLoading())
@@ -96,33 +91,19 @@ export class CheckCubeComponent implements OnInit {
     }
 
     async search() {
-        let { bbox, start, end } = this.form.value;
-
-        if (start) {
-            // TODO: Use library like moment to get formatted date
-            start = moment(start).utc().format('YYYY-MM-DD');
-        } else {
-            start = '';
-        }
-
-        if (end) {
-            end = moment(end).utc().format('YYYY-MM-DD');
-        } else {
-            end = moment().utc().format('YYYY-MM-DD');
-        }
+        let { bbox, start, end } = this.form.value
+        start = start ? moment(start).utc().format('YYYY-MM-DD') : ''
+        end = end ? moment(end).utc().format('YYYY-MM-DD') : moment().utc().format('YYYY-MM-DD')
 
         // Always search for page 1
-        const foundItems = await this.getAllItems(null, bbox, start, end);
+        const foundItems = await this.getAllItems(null, bbox, start, end)
+        const tilesFound = foundItems.map(item => item.tile_id).filter((tile, index, self) => self.indexOf(tile) === index)
 
-        const tilesFound = foundItems.map(item => item.tile_id).filter((tile, index, self) => self.indexOf(tile) === index);
-
-        this.tiles = tilesFound;
-        const allItemsExpected = this.getAllFeatures(foundItems);
-
+        this.tiles = tilesFound
+        const allItemsExpected = this.getAllFeatures(foundItems)
         for(let tile of this.tiles) {
-            this.items[tile] = allItemsExpected.filter(item => item.tile_id === tile && item.item_date >= start && item.item_date <= end);
+            this.items[tile] = allItemsExpected.filter(item => item.tile_id === tile && item.item_date >= start && item.item_date <= end)
         }
-
     }
 
     getAllFeatures(features) {
@@ -151,13 +132,11 @@ export class CheckCubeComponent implements OnInit {
         const result = await this.listItems(this.cube.id, bbox, null, null, this.pageIndex + 1, tileId);
 
         const total = result.total_items;
-
         let container = [...result.items];
         let pageRef = 1;
 
         while (container.length < total) {
             const res = await this.listItems(this.cube.id, bbox, null, null, ++pageRef, tileId);
-
             container = [...container, ...res.items];
         }
 
@@ -168,14 +147,20 @@ export class CheckCubeComponent implements OnInit {
         try {
             this.store.dispatch(showLoading())
             const response = await this.cbs.listItems(cube, bbox, start, end, tiles, page);
-
             return response;
+
         } catch (err) {
-            console.log(err)
             throw err;
+            
         } finally {
             this.store.dispatch(closeLoading())
         }
+    }
+
+    getUrl(item) {
+        const qk = item.quicklook
+        const bucket = qk.split('/')[0]
+        return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
     }
 
     openMapModal() {
@@ -186,9 +171,8 @@ export class CheckCubeComponent implements OnInit {
                 bbox: this.bbox
             }
         })
-
         dialogRef.afterClosed().subscribe(result => {
-            this.form.patchValue({ bbox: result['bbox'] });
+            this.form.patchValue({ bbox: result['bbox'] })
         })
     }
 
@@ -197,7 +181,6 @@ export class CheckCubeComponent implements OnInit {
             this.store.dispatch(showLoading());
 
             const cubeName = this.cube.id;
-
             let start = item.composite_start;
             let end = item.composite_end;
 
@@ -207,10 +190,10 @@ export class CheckCubeComponent implements OnInit {
             }
 
             const response = await this.cbs.listMerges(this.cube.id, start, end, item.tile_id);
-
             const dialogRef = this.dialog.open(SceneDetailsComponent, {
                 width: '600px',
-                disableClose: true,
+                height: '90%',
+                maxHeight: '700px',
                 data: {
                     cube: this.cube.id,
                     merges: response,
@@ -218,7 +201,6 @@ export class CheckCubeComponent implements OnInit {
                     tileId: item.tile_id
                 }
             })
-
             dialogRef.afterClosed();
         } finally {
             this.store.dispatch(closeLoading());
@@ -239,7 +221,6 @@ export class CheckCubeComponent implements OnInit {
                 end_date: item.composite_end
             }
         })
-
         dialogRef.afterClosed();
     }
 
