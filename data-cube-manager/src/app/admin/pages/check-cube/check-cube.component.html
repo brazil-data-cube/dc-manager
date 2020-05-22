@@ -39,40 +39,36 @@
         </form>
 
         <div class="tab-box">
-            <mat-tab-group>
-                <mat-tab *ngFor="let tile of getTiles()" label="{{ tile }}">
+            <mat-tab-group (selectedTabChange)="onTabChanged($event)">
+                <mat-tab *ngFor="let tile of tiles" label="{{ tile }}">
                     <div class="row" style="margin: 0">
-                        <ng-container *ngFor="let item of itemsResponse.items">
-                            <ng-template [ngIf]="item.tile_id === tile">
-                                <div class="col-lg-3 col-md-4 col-sm-6" style="margin-top: 20px;">
-                                    <div class="card">
-                                        <div class="card-header card-header-image">
-                                            <img [src]="getUrl(item)" 
-                                                onerror="this.onerror=null; this.src='/assets/img/not_found.svg'" />
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="text-center">
-                                                {{ item.id }}
-                                            </p>
-                                        </div>
-                                        <div class="card-footer">
-                                            <button mat-raised-button (click)="reprocess(item)">REPROCESS</button>
-                                            <button mat-raised-button color="primary" (click)="openDetails(item)">DETAILS</button>
-                                        </div>
+                        <ng-template [ngIf]="currentTab === tile">
+                            <div class="col-lg-3 col-md-4 col-sm-6" style="margin-top: 20px;" *ngFor="let item of items[tile] | paginate: { itemsPerPage: perPage, currentPage: pageIndex+1 }">
+                                <div class="card">
+                                    <div class="card-header-success">
+                                        <img src="/assets/img/not_found.svg" />
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-center" [ngStyle]="{'color': item.notFound ? 'red': 'inherit'}">
+                                            {{ item.id }}
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button mat-raised-button (click)="reprocess(item)">REPROCESS</button>
+                                        <button mat-raised-button *ngIf="!item.notFound" color="primary" (click)="openDetails(item)">DETAILS</button>
                                     </div>
                                 </div>
-                            </ng-template>
-                        </ng-container>
+                            </div>
+                        </ng-template>
                     </div>
+
+                    <mat-paginator [pageSize]="perPage"
+                        [length]="items[tile]?.length"
+                        [pageIndex]="pageIndex"
+                        (page)="pageEvent = $event;pageIndex = pageEvent.pageIndex">
+                    </mat-paginator>
                 </mat-tab>
             </mat-tab-group>
         </div>
-
-        <mat-paginator [pageSize]="10"
-              [length]="itemsResponse.total_items"
-              [pageIndex]="pageIndex"
-              (page)="pageEvent = getServerData($event)">
-        </mat-paginator>
-
     </div>
 </div>
