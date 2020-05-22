@@ -142,6 +142,8 @@ export class CreateCubeGridComponent implements OnInit {
           const data = {
             ...this.formCreateGrid.value,
             projection: 'aea',
+            degreesx: 1.5,
+            degreesy: 1,
             bbox: this.formatBBox(this.bbox)
           }
           const response = await this.cbs.createGrid(data)
