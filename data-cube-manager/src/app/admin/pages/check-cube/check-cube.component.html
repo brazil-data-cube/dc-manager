@@ -1,6 +1,6 @@
 <div class="main-content">
     <div class="container-fluid container_check-cube">
-        <app-alert type="warning" *ngIf="itemsResponse.items.length == 0"
+        <app-alert type="warning" *ngIf="tiles.length == 0"
             message="Items not Found!"></app-alert>
 
         <form [formGroup]="form">
@@ -43,10 +43,12 @@
                 <mat-tab *ngFor="let tile of tiles" label="{{ tile }}">
                     <div class="row" style="margin: 0">
                         <ng-template [ngIf]="currentTab === tile">
-                            <div class="col-lg-3 col-md-4 col-sm-6" style="margin-top: 20px;" *ngFor="let item of items[tile] | paginate: { itemsPerPage: perPage, currentPage: pageIndex+1 }">
+                            <div class="col-lg-3 col-md-4 col-sm-6" style="margin-top: 20px;"
+                                *ngFor="let item of items[tile] | paginate: { itemsPerPage: perPage, currentPage: pageIndex+1 }">
                                 <div class="card">
-                                    <div class="card-header-success">
-                                        <img src="/assets/img/not_found.svg" />
+                                    <div class="card-header card-header-image">
+                                        <img [src]="getUrl(item)" 
+                                            onerror="this.onerror=null; this.src='/assets/img/not_found.svg'" />
                                     </div>
                                     <div class="card-body">
                                         <p class="text-center" [ngStyle]="{'color': item.notFound ? 'red': 'inherit'}">

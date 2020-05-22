@@ -209,40 +209,25 @@ export class CubeBuilderService {
     public async listItems(cube: string, bbox?: string, start?: string, end?: string, tiles?: string, page?: number): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
 
-        const options = {} as any;
-        if (token) {
-            options.headers = { 'x-api-key': token };
-        }
-        let urlSuffix = `/cubes/${cube}/items`;
-
         page = page || 1;
+        const options = {} as any;
         options.params = { page };
-
-        if (bbox)
-            options.params.bbox = bbox;
-        if (start)
-            options.params.start = start;
-        if (end)
-            options.params.end = end;
-
-        if (tiles)
-            options.params.tiles = tiles;
-
+        if (token) options.headers = { 'x-api-key': token };
+        if (bbox) options.params.bbox = bbox;
+        if (start) options.params.start = start;
+        if (end) options.params.end = end;
+        if (tiles) options.params.tiles = tiles;
+        
+        let urlSuffix = `/cubes/${cube}/items`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise()
         return response;
     }
 
     public async listItemsTiles(cube: string) {
         const token = sessionStorage.getItem('dc_manager_api_token')
-
-        const options = {} as any;
-        if (token) {
-            options.headers = { 'x-api-key': token };
-        }
-
-        let urlSuffix = `/cubes/${cube}/items/tiles`;
-
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise();
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = `/cubes/${cube}/items/tiles`;
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
     }
 }
