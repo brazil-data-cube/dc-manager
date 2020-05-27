@@ -217,7 +217,7 @@ export class CubeBuilderService {
         if (start) options.params.start = start;
         if (end) options.params.end = end;
         if (tiles) options.params.tiles = tiles;
-        
+
         let urlSuffix = `/cubes/${cube}/items`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, options).toPromise()
         return response;
@@ -227,6 +227,14 @@ export class CubeBuilderService {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/cubes/${cube}/items/tiles`;
+        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
+        return response;
+    }
+
+    public async getCubeMeta(cube: string) {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = `/cubes/${cube}/meta`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
     }

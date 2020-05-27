@@ -6,6 +6,8 @@ import { CubeBuilderService } from '../cube-builder.service';
 import { ActivatedRoute } from '@angular/router';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, geoJSON } from 'leaflet';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
 
 @Component({
     selector: 'app-details-cube',
@@ -26,7 +28,8 @@ export class DetailsCubeComponent implements OnInit {
         private cbs: CubeBuilderService,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
-        private store: Store<AppState>) { }
+        private store: Store<AppState>,
+        public dialog: MatDialog) { }
 
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
@@ -115,6 +118,22 @@ export class DetailsCubeComponent implements OnInit {
         } else {
             return 0
         }
+    }
+
+    openModalUpdateCube() {
+        const dialogRef = this.dialog.open(ReprocessDialogComponent, {
+            width: '450px',
+            disableClose: true,
+            data: {
+                cube: this.cube.id,
+                itemDate: this.cube.temporal[1],
+                tiles: [],
+                editable: true,
+                start_date: this.cube.temporal[1],
+                end_date: null
+            }
+        })
+        dialogRef.afterClosed();
     }
 
     /**

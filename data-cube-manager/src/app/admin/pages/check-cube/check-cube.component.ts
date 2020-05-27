@@ -7,10 +7,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { MapModal } from 'app/admin/components/map-modal/map-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { SceneDetailsComponent } from './scene-details/scene-details.component';
 import * as moment from 'moment';
-import { ReprocessDialogComponent } from './reprocess-dialog/reprocess-dialog.component';
+import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
 
 
 @Component({
@@ -19,7 +19,7 @@ import { ReprocessDialogComponent } from './reprocess-dialog/reprocess-dialog.co
     styleUrls: ['./check-cube.component.scss']
 })
 export class CheckCubeComponent implements OnInit {
-    
+
     public cube
     public bbox = ''
     public pageEvent: PageEvent
@@ -151,7 +151,7 @@ export class CheckCubeComponent implements OnInit {
 
         } catch (err) {
             throw err;
-            
+
         } finally {
             this.store.dispatch(closeLoading())
         }
