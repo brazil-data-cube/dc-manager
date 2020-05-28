@@ -209,19 +209,29 @@ export class CheckCubeComponent implements OnInit {
     }
 
     async reprocess(item) {
-        const dialogRef = this.dialog.open(ReprocessDialogComponent, {
-            width: '450px',
-            disableClose: true,
-            data: {
-                cube: this.cube.id,
-                itemDate: item.item_date,
-                tiles: [item.tile_id],
-                editable: false,
-                start_date: item.composite_start,
-                end_date: item.composite_end
-            }
-        })
-        dialogRef.afterClosed();
+        try {
+            this.store.dispatch(showLoading());
+            const meta = await this.cbs.getCubeMeta(this.cube.id);
+
+            const dialogRef = this.dialog.open(ReprocessDialogComponent, {
+                width: '450px',
+                disableClose: true,
+                data: {
+                    ...meta,
+                    cube: this.cube.id,
+                    itemDate: item.item_date,
+                    tiles: [item.tile_id],
+                    editable: false,
+                    start_date: item.composite_start,
+                    end_date: item.composite_end
+                }
+            })
+            dialogRef.afterClosed();
+        } catch (err) {
+            console.log('Error in getting information to reprocess.');
+        } finally {
+            this.store.dispatch(closeLoading());
+        }
     }
 
 }

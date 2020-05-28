@@ -120,20 +120,26 @@ export class DetailsCubeComponent implements OnInit {
         }
     }
 
-    openModalUpdateCube() {
-        const dialogRef = this.dialog.open(ReprocessDialogComponent, {
-            width: '450px',
-            disableClose: true,
-            data: {
-                cube: this.cube.id,
-                itemDate: this.cube.temporal[1],
-                tiles: [],
-                editable: true,
-                start_date: this.cube.temporal[1],
-                end_date: null
-            }
-        })
-        dialogRef.afterClosed();
+    async openModalUpdateCube() {
+        try {
+            this.store.dispatch(showLoading());
+            const meta = await this.cbs.getCubeMeta(this.cube.id);
+            const dialogRef = this.dialog.open(ReprocessDialogComponent, {
+                width: '450px',
+                disableClose: true,
+                data: {
+                    ...meta,
+                    cube: this.cube.id,
+                    itemDate: this.cube.temporal[1],
+                    tiles: [],
+                    editable: true,
+                    end_date: null
+                }
+            })
+            dialogRef.afterClosed();
+        } finally {
+            this.store.dispatch(closeLoading());
+        }
     }
 
     /**

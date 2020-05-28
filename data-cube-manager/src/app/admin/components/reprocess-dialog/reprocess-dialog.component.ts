@@ -7,6 +7,7 @@ import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
 import { showLoading, closeLoading } from 'app/app.action';
+import { defer, from } from 'rxjs';
 
 @Component({
   selector: 'app-reprocess-dialog',
@@ -35,9 +36,6 @@ export class ReprocessDialogComponent implements OnInit {
     if (this.data.hasOwnProperty('editable')) {
       this.editable = !!this.data.editable;
     }
-
-    this.getDataCubeMeta(this.data.cube)
-      .then(values => this.form.patchValue(values));
 
     this.form = this.fb.group({
       tiles: [{ value: '', disabled: !this.editable }, [Validators.required]],
