@@ -120,18 +120,30 @@ export class DetailsCubeComponent implements OnInit {
         }
     }
 
+    async getTiles() {
+        try {
+            return await this.cbs.listItemsTiles(this.cube.id);
+        } catch {
+            return [];
+        }
+    }
+
     async openModalUpdateCube() {
         try {
             this.store.dispatch(showLoading());
+
+            const tiles = await this.getTiles();
+
             const meta = await this.cbs.getCubeMeta(this.cube.id);
             const dialogRef = this.dialog.open(ReprocessDialogComponent, {
-                width: '450px',
+                width: '600px',
                 disableClose: true,
                 data: {
                     ...meta,
+                    grid: this.cube.grs_schema_id,
                     cube: this.cube.id,
                     itemDate: this.cube.temporal[1],
-                    tiles: [],
+                    tiles: tiles,
                     editable: true,
                     end_date: null
                 }

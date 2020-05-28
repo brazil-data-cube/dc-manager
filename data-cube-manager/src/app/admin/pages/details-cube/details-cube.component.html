@@ -63,7 +63,7 @@
                 </div>
 
                 <div class="btns-check" *ngIf="cubeStatus">
-                    <button *ngIf="cubeStatus.finished" mat-raised-button color="success" (click)="openModalUpdateCube()">
+                    <button *ngIf="cubeStatus.finished && cube.composite_function_schema_id !== 'IDENTITY'" mat-raised-button color="success" (click)="openModalUpdateCube()">
                         UPDATE CUBE
                     </button>
                     <a mat-raised-button color="primary" [routerLink]="['/check-cube', cube.id]">

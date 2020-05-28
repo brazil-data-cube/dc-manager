@@ -218,6 +218,7 @@ export class CheckCubeComponent implements OnInit {
                 disableClose: true,
                 data: {
                     ...meta,
+                    grid: this.cube.grs_schema_id,
                     cube: this.cube.id,
                     itemDate: item.item_date,
                     tiles: [item.tile_id],
