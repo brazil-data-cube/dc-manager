@@ -83,12 +83,17 @@
 
         <div class="row container_cards" *ngIf="cubeStatus">
             <div class="col-lg-4 col-md-6 col-sm-6">
-                <app-mini-card category="Tasks - TOTAL" [title]="getTotalTasks(cubeStatus)" icon="list" class="card-header-gray"></app-mini-card>
+                <div *ngIf="!cubeStatus.finished">
+                    <app-mini-card category="Tasks - FINISHED" [title]="cubeStatus.done" icon="check" class="card-header-success"></app-mini-card>
+                </div>
+                <div *ngIf="cubeStatus.finished">
+                    <app-mini-card category="Tasks - TOTAL" [title]="getTotalTasks(cubeStatus)" icon="list" class="card-header-gray"></app-mini-card>
+                </div>
             </div>
 
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div *ngIf="!cubeStatus.finished">
-                    <app-mini-card category="Tasks - FINISHED" [title]="cubeStatus.done" icon="check" class="card-header-success"></app-mini-card>
+                    <app-mini-card category="Tasks - PENDING" [title]="cubeStatus.not_done" icon="warning" class="card-header-warning"></app-mini-card>
                 </div>
                 <div *ngIf="cubeStatus.finished">
                     <app-mini-card category="Processing Time" [title]="cubeStatus.duration" icon="access_alarm" class="card-header-success"></app-mini-card>
@@ -97,7 +102,7 @@
 
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div *ngIf="!cubeStatus.finished">
-                    <app-mini-card category="Tasks - PENDING" [title]="cubeStatus.not_done" icon="warning" class="card-header-warning"></app-mini-card>
+                    <app-mini-card category="Tasks - ERROR" [title]="cubeStatus.error" icon="error" class="card-header-danger"></app-mini-card>
                 </div>
                 <div *ngIf="cubeStatus.finished">
                     <app-mini-card category="Collection - ITEM" [title]="cubeStatus.collection_item" icon="check" class="card-header-success"></app-mini-card>

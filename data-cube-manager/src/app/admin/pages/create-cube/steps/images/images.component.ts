@@ -108,11 +108,7 @@ export class CreateCubeImagesComponent implements OnInit {
       this.map.fitBounds(layer.getBounds())
 
     } catch (_) {
-      this.snackBar.open(`Grid ${grid} not found!`, '', {
-        duration: 4000,
-        verticalPosition: 'top',
-        panelClass: 'app_snack-bar-error'
-      });
+      this.grid = ''
 
     } finally {
       this.store.dispatch(closeLoading());

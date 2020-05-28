@@ -27,7 +27,7 @@ export class ListCubesComponent implements OnInit {
             this.store.dispatch(showLoading());
             const response = await this.cbs.getCubes();
             this.cubes = response.map(c => {
-                return { ...c, status: c.finished ? 'success' : 'warning' }
+                return { ...c, status: c.status.toLowerCase() === 'error' ? 'danger' : c.status }
             })
 
         } catch (err) {
