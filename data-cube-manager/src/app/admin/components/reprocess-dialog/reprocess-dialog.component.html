@@ -1,4 +1,4 @@
-<h3 mat-dialog-title>Reprocess {{ data.cube }}</h3>
+<h3 mat-dialog-title>{{ getTitle() }}</h3>
 
 <div mat-dialog-content>
     <form [formGroup]="form">
@@ -30,7 +30,7 @@
 
             <ng-template #mapTemplate>
                 <div class="col-lg-12 col-md-12 col-sm-12">
-                    <app-map-field [form]="form" [grid]="data.grid" [tiles]="data.tiles"></app-map-field>
+                    <app-map-field [form]="form" [grid]="grid" [tiles]="data.tiles"></app-map-field>
                 </div>
             </ng-template>
         </div>

@@ -7,14 +7,14 @@ import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
 import { showLoading, closeLoading } from 'app/app.action';
-import { defer, from } from 'rxjs';
+import * as moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-reprocess-dialog',
   templateUrl: './reprocess-dialog.component.html',
   styleUrls: ['./reprocess-dialog.component.scss'],
   providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     { provide: DateAdapter, useClass: AppDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS }
   ]
@@ -23,6 +23,7 @@ export class ReprocessDialogComponent implements OnInit {
 
   form: FormGroup;
   editable: boolean = true;
+  grid: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<ReprocessDialogComponent>,
@@ -30,12 +31,15 @@ export class ReprocessDialogComponent implements OnInit {
     private fb: FormBuilder,
     private service: CubeBuilderService,
     private store: Store<AppState>,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
     if (this.data.hasOwnProperty('editable')) {
       this.editable = !!this.data.editable;
     }
+
+    this.grid = this.data.grid;
 
     this.form = this.fb.group({
       tiles: [{ value: '', disabled: !this.editable }, [Validators.required]],
@@ -48,7 +52,12 @@ export class ReprocessDialogComponent implements OnInit {
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
     });
 
-    this.form.patchValue({ ...this.data, datacube: this.data.cube });
+    this.form.patchValue({ ...this.data });
+    this.form.patchValue({ collections: this.data.collections });
+  }
+
+  getTitle() {
+    return this.data.title ? this.data.title : `Reprocess ${this.data.datacube}`;
   }
 
   close() {
@@ -76,8 +85,34 @@ export class ReprocessDialogComponent implements OnInit {
 
     this.store.dispatch(showLoading());
 
+    const data = this.form.value;
+    data.start_date = moment(data.start_date).utc().format('YYYY-MM-DD');
+    data.end_date = moment(data.end_date).utc().format('YYYY-MM-DD');
+    data.collections = this.data.collections;
+    data.datacube = data.datacube.split('_').slice(0, -1).join('_');
+    data.force = !!this.data.force;
+
     try {
-      // await this.service.start(this.form.value);
+      await this.service.start(data);
+
+      this.snackBar.open('Update datacube has been successfully triggered.', '', {
+          duration: 4000,
+          verticalPosition: 'top',
+          panelClass: 'app_snack-bar-success'
+      });
+
+    } catch (err) {
+      let message = err.error;
+
+      if (err.status === 0) {
+        message = 'Server error. Please contact the system administrator';
+      }
+
+      this.snackBar.open(message, '', {
+          duration: 4000,
+          verticalPosition: 'top',
+          panelClass: 'app_snack-bar-error'
+      });
     } finally {
       this.store.dispatch(closeLoading());
     }

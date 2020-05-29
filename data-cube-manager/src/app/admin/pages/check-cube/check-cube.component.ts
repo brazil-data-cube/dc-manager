@@ -158,9 +158,13 @@ export class CheckCubeComponent implements OnInit {
     }
 
     getUrl(item) {
-        const qk = item.quicklook
-        const bucket = qk.split('/')[0]
-        return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
+        const qk = item.quicklook;
+
+        if (qk) {
+            const bucket = qk.split('/')[0]
+            return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
+        }
+        return '';
     }
 
     openMapModal() {
@@ -219,12 +223,12 @@ export class CheckCubeComponent implements OnInit {
                 data: {
                     ...meta,
                     grid: this.cube.grs_schema_id,
-                    cube: this.cube.id,
-                    itemDate: item.item_date,
+                    datacube: this.cube.id,
                     tiles: [item.tile_id],
                     editable: false,
                     start_date: item.composite_start,
-                    end_date: item.composite_end
+                    end_date: item.composite_end,
+                    force: true,
                 }
             })
             dialogRef.afterClosed();
@@ -233,6 +237,10 @@ export class CheckCubeComponent implements OnInit {
         } finally {
             this.store.dispatch(closeLoading());
         }
+    }
+
+    isIdentity() {
+        return this.cube && this.cube.id.split('_').length === 2;
     }
 
 }

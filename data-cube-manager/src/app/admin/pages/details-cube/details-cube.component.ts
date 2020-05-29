@@ -140,12 +140,13 @@ export class DetailsCubeComponent implements OnInit {
                 disableClose: true,
                 data: {
                     ...meta,
+                    title: `Update Cube ${this.cube.id}`,
                     grid: this.cube.grs_schema_id,
-                    cube: this.cube.id,
-                    itemDate: this.cube.temporal[1],
+                    datacube: this.cube.id,
                     tiles: tiles,
                     editable: true,
-                    end_date: null
+                    end_date: null,
+                    force: false
                 }
             })
             dialogRef.afterClosed();

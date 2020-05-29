@@ -115,7 +115,7 @@ export class MapFieldComponent implements OnInit {
         })
 
         if (this.form) {
-          this.form.patchValue({ tiles: this.tiles.join() });
+          this.form.patchValue({ tiles: this.tiles });
         }
 
         this.bbox = newLayer.getBounds().toBBoxString()
@@ -153,7 +153,7 @@ export class MapFieldComponent implements OnInit {
                   if (feature['feature']['geometry']['id'] === tile) {
                     (feature as any).setStyle({
                       fillOpacity: 0.5,
-                      fillColor: '#7fff80'
+                      fillColor: '#FFFFFF'
                     });
                     break;
                   }
