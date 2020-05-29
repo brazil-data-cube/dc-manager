@@ -26,6 +26,10 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public buckets: object[]
   public bandsAvailable: string[]
   public definitonCompleted: boolean
+  public satellite: string
+  public rangeDates: string[]
+  public tiles: string[]
+  public grid: string
 
   constructor(
     private store: Store<AdminState>,
@@ -50,6 +54,18 @@ export class CreateCubeDefinitionComponent implements OnInit {
         const bands = res.bandsAvailable
         this.bandsAvailable = bands
         this.formCreateCube.get('bands').setValue(bands)
+      }
+      if (res.tiles && res.tiles.length > 0) {
+        this.tiles = res.tiles
+      }
+      if (res.satellite) {
+        this.satellite = res.satellite
+      }
+      if (res.startDate && res.lastDate) {
+        this.rangeDates = [res.startDate, res.lastDate]
+      }
+      if (res.grid && res.grid !== '') {
+        this.grid = res.grid
       }
     })
   }
@@ -180,9 +196,40 @@ export class CreateCubeDefinitionComponent implements OnInit {
     })
   }
 
-  openModalCost() {
-    const dialogRef = this.dialog.open(EstimateCostModal, {
-      width: '600px'
-    })
+  async openModalCost() {
+    try {
+      this.store.dispatch(showLoading())
+      const temporal_schema = this.temporalCompositions
+        .filter(t => t.id === this.formCreateCube.get('temporalComposite').value)
+      const data = {
+        start_date: this.rangeDates[0],
+        last_date: this.rangeDates[1],
+        satellite: this.satellite,
+        resolution: this.formCreateCube.get('resolution').value,
+        grid: this.grid,
+        quantity_bands: this.formCreateCube.get('bands').value.length,
+        quantity_tiles: this.tiles.length,
+        t_schema: temporal_schema[0].temporal_schema,
+        t_step: parseInt(temporal_schema[0].temporal_composite_t)
+      }
+
+      const response = await this.cbs.estimateCost(data)
+      const dialogRef = this.dialog.open(EstimateCostModal, {
+        width: '600px',
+        data: {
+          ...response
+        }
+      })
+
+    } catch(err) {
+      this.snackBar.open('It was not possible to calculate the cost, review the information!', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading())
+    }
   }
 }

@@ -6,6 +6,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { showLoading, closeLoading } from 'app/app.action';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Cost } from '../definition/estimate-cost/cost.interface';
 
 @Component({
   selector: 'app-create-cube-preview',
@@ -26,6 +27,7 @@ export class CreateCubePreviewComponent implements OnInit {
   public collection: string
   public satellite: string
   public rangeDates: string[]
+  public cost: Cost
 
   constructor(
     private store: Store<AdminState>,
@@ -65,6 +67,10 @@ export class CreateCubePreviewComponent implements OnInit {
       if (res.startDate && res.lastDate) {
         this.rangeDates = [res.startDate, res.lastDate]
       }
+
+      if (this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
+        this.getCost()
+      }
     })
   }
 
@@ -72,6 +78,59 @@ export class CreateCubePreviewComponent implements OnInit {
     this.gridCompleted = false
     this.regionCompleted = false
     this.definitionCompleted = false
+  }
+
+  async getCost() {
+    try {
+      this.store.dispatch(showLoading())
+      const temporalCompositions = await this.cbs.getTemporalCompositions()
+      const temporalSchema = temporalCompositions.filter(t => t.id === this.definition.temporal)
+      const data = {
+        start_date: this.rangeDates[0],
+        last_date: this.rangeDates[1],
+        satellite: this.satellite,
+        resolution: this.definition.resolution,
+        grid: this.grid,
+        quantity_bands: this.definition.bands.length,
+        quantity_tiles: this.tiles.length,
+        t_schema: temporalSchema[0].temporal_schema,
+        t_step: parseInt(temporalSchema[0].temporal_composite_t)
+      }
+      
+      const response = await this.cbs.estimateCost(data)
+      const funcs = ['', 'STK', 'MED']
+      funcs.forEach(func => {
+        if (!func) {
+          this.cost[func] = {
+            tasks: response['build']['quantity_merges'] + response['build']['quantity_merges'],
+            items: response['build']['collection_items_irregular'],
+            assets: response['build']['quantity_merges'],
+            price: response['build']['price_merges'] + response['build']['price_publish'],
+            priceStorage: response['storage']['price_irregular_cube'],
+            size: response['storage']['size_irregular_cube']
+          }
+        } else {
+          this.cost[func] = {
+            tasks: response['build']['quantity_blends'] + response['build']['quantity_publish'],
+            items: response['build']['collection_items'] / 2,
+            assets: response['build']['quantity_blends'] / 2,
+            price: (response['build']['price_blends'] + response['build']['price_publish']) / 2,
+            priceStorage: response['storage']['price_cubes'] / 2,
+            size: response['storage']['size_cubes'] / 2
+          }
+        }
+      })
+
+    } catch(err) {
+      this.snackBar.open('It was not possible to calculate the cost, review the information!', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading())
+    }
   }
 
   getCubeName(func) {

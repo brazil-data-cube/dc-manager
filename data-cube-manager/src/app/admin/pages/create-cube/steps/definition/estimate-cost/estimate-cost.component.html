@@ -1,21 +1,20 @@
 <h3 mat-dialog-title>
     <mat-icon>attach_money</mat-icon>
-    Estimate Cost
+    Estimated Cost
 </h3>
 
 <div mat-dialog-content class="container_estimate_cost">
     <div class="box">
         <p class="title">GENERATION</p>
-        <p><mat-icon>access_alarm</mat-icon> <b>Time:</b> ~35min</p>
-        <p><mat-icon>build</mat-icon> <b>Tasks:</b> 1500</p>
-        <p><mat-icon>map</mat-icon> <b>Collection Items:</b> 2350</p>
-        <p><mat-icon>file_copy</mat-icon> <b>Assets:</b> 4020</p>
-        <p><mat-icon>attach_money</mat-icon> <b>Price:</b> U$ ~85.4</p>
+        <p><mat-icon>build</mat-icon> <b>Tasks:</b> {{ tasks }}</p>
+        <p><mat-icon>map</mat-icon> <b>Collection Items:</b> {{ items }}</p>
+        <p><mat-icon>file_copy</mat-icon> <b>Assets:</b> {{ assets }}</p>
+        <p><mat-icon>attach_money</mat-icon> <b>Price:</b> U$ ~{{ priceBuild }}</p>
     </div>
     <div class="box">
         <p class="title">STORAGE</p>
-        <p><mat-icon>storage</mat-icon> <b>Bucket (S3):</b> ~335GB</p>
-        <p><mat-icon>attach_money</mat-icon> <b>Price:</b> U$ ~4/month</p>
+        <p><mat-icon>storage</mat-icon> <b>Bucket (S3):</b> ~{{ size }}GB</p>
+        <p><mat-icon>attach_money</mat-icon> <b>Price:</b> U$ ~{{ priceStorage }}/month</p>
     </div>
 </div>
 
