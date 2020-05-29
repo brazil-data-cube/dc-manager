@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON, polygon, Layer } from 'leaflet';
+import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON, featureGroup, Layer } from 'leaflet';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
@@ -34,11 +34,11 @@ export class CreateCubeImagesComponent implements OnInit {
   public collections: string[]
   public satellites: string[]
   public formSearchImages: FormGroup
-  public bbox: string
   public stacVersion: string
   public grid: string
   public totalImages: number
   public tiles: string[]
+  public featuresSelected: any[]
 
   constructor(
     private cbs: CubeBuilderService,
@@ -159,7 +159,7 @@ export class CreateCubeImagesComponent implements OnInit {
           panelClass: 'app_snack-bar-error'
         });
       } else {
-        if (!this.bbox || !this.tiles) {
+        if (this.featuresSelected.length <= 0 || !this.tiles) {
           this.snackBar.open('Select the region of interest in the grid', '', {
             duration: 4000,
             verticalPosition: 'top',
@@ -169,12 +169,14 @@ export class CreateCubeImagesComponent implements OnInit {
 
           try {
             this.store.dispatch(showLoading());
+            const bbox = featureGroup(this.featuresSelected).getBounds().toBBoxString()
+
             const urlSTAC = this.formSearchImages.get('urlSTAC').value
             const collection = this.formSearchImages.get('collection').value
             const satellite = this.formSearchImages.get('satellite').value
             const startDate = this.formSearchImages.get('startDate').value
             const lastDate = this.formSearchImages.get('lastDate').value
-            let query = `bbox=${this.stacVersion === '0.6' ? '['+this.bbox+']' : this.bbox}`
+            let query = `bbox=${this.stacVersion === '0.6' ? '['+bbox+']' : bbox}`
             query += `&time=${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`
             query += '&limit=1'
 
@@ -266,6 +268,7 @@ export class CreateCubeImagesComponent implements OnInit {
       const layer = e.layer;
       const newLayer = rectangle(layer.getBounds())
       this.tiles = []
+      this.featuresSelected = []
 
       this.map.eachLayer(l => {
         if (l.getAttribution() && l.getAttribution().indexOf('BDC-') >= 0) {
@@ -276,13 +279,13 @@ export class CreateCubeImagesComponent implements OnInit {
                 fillOpacity: 0.5,
                 fillColor: '#FFFFFF'
               })
+              this.featuresSelected.push(layer)
               this.tiles.push(layer['feature']['geometry']['id'])
             }
           }
         }
       })
-
-      this.bbox = newLayer.getBounds().toBBoxString()
+      
       this.ref.detectChanges()
     });
   }
