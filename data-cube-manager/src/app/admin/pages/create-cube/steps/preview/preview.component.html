@@ -65,13 +65,13 @@
                                 <mat-icon>attach_money</mat-icon> Cost:
                             </p>
                             <div class="box_content">
-                                <p><b>Tasks:</b> 300</p>
-                                <p><b>Collection Items:</b> 100</p>
-                                <p><b>Assets:</b> 600</p>
-                                <p><b>Price to generate:</b> U$ ~85.4</p>
+                                <p><b>Tasks:</b> {{ this.cost[func]['tasks'] }}</p>
+                                <p><b>Collection Items:</b> {{ this.cost[func]['items'] }}</p>
+                                <p><b>Assets:</b> {{ this.cost[func]['assets'] }}</p>
+                                <p><b>Price to generate:</b> U$ ~{{ this.cost[func]['price'] }}</p>
                                 <hr />
-                                <p><b>Storage:</b> 5TB</p>
-                                <p><b>Price to store the cube:</b> U$ ~5/month</p>
+                                <p><b>Storage:</b> {{ this.cost[func]['size'] }}GB</p>
+                                <p><b>Price to store the cube:</b> U$ ~{{ this.cost[func]['priceStorage'] }}/month</p>
                             </div>
                         </div>
                     </div>

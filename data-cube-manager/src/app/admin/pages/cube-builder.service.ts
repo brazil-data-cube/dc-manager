@@ -238,4 +238,12 @@ export class CubeBuilderService {
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
     }
+
+    public async estimateCost(data) {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = `/estimate-cost`;
+        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
+        return response;
+    }
 }
