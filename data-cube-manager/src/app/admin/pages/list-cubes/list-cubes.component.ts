@@ -38,7 +38,13 @@ export class ListCubesComponent implements OnInit {
     }
 
     public getCubeClass(cube) {
-        return `card-header-${cube.status}`;
+        const result = {
+            error: 'danger',
+            pending: 'warning',
+            finished: 'success'
+        };
+
+        return `card-header-${result[cube.status.toLowerCase()]}`;
     }
 
 }

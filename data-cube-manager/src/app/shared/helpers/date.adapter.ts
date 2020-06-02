@@ -1,5 +1,6 @@
 import { NativeDateAdapter } from "@angular/material/core";
 import { Injectable } from "@angular/core";
+import * as moment from 'moment';
 
 /**
  * adapter to parser and format dates of the input date
@@ -28,26 +29,16 @@ export class AppDateAdapter extends NativeDateAdapter {
      */
     format(date: Date, displayFormat: string): string {
         // tslint:disable-next-line
+        const momentDate = moment(date).utc();
+
         if (displayFormat == 'input') {
-            const day = date.getDate();
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-            return year + '/' + this._to2digit(month) + '/' +  this._to2digit(day);
+            return momentDate.format('YYYY-MM-DD');
         // tslint:disable-next-line
         } else if (displayFormat == 'inputMonth') {
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-            return this._to2digit(month) + '/' + year;
+            return momentDate.format('MM-YYYY');
         } else {
-            return date.toDateString();
+            return momentDate.format('MMMM Do YYYY');
         }
-    }
-
-    /**
-     * add 0 before number if day or month < 10
-     */
-    private _to2digit(n: number) {
-        return ('00' + n).slice(-2);
     }
 }
 

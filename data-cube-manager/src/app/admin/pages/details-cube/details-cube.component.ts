@@ -6,6 +6,8 @@ import { CubeBuilderService } from '../cube-builder.service';
 import { ActivatedRoute } from '@angular/router';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, geoJSON } from 'leaflet';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
 
 @Component({
     selector: 'app-details-cube',
@@ -26,7 +28,8 @@ export class DetailsCubeComponent implements OnInit {
         private cbs: CubeBuilderService,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
-        private store: Store<AppState>) { }
+        private store: Store<AppState>,
+        public dialog: MatDialog) { }
 
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
@@ -114,6 +117,41 @@ export class DetailsCubeComponent implements OnInit {
             }
         } else {
             return 0
+        }
+    }
+
+    async getTiles() {
+        try {
+            return await this.cbs.listItemsTiles(this.cube.id);
+        } catch {
+            return [];
+        }
+    }
+
+    async openModalUpdateCube() {
+        try {
+            this.store.dispatch(showLoading());
+
+            const tiles = await this.getTiles();
+
+            const meta = await this.cbs.getCubeMeta(this.cube.id);
+            const dialogRef = this.dialog.open(ReprocessDialogComponent, {
+                width: '600px',
+                disableClose: true,
+                data: {
+                    ...meta,
+                    title: `Update Cube ${this.cube.id}`,
+                    grid: this.cube.grs_schema_id,
+                    datacube: this.cube.id,
+                    tiles: tiles,
+                    editable: true,
+                    end_date: null,
+                    force: false
+                }
+            })
+            dialogRef.afterClosed();
+        } finally {
+            this.store.dispatch(closeLoading());
         }
     }
 

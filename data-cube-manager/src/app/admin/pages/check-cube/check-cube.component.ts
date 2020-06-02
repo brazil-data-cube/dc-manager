@@ -7,10 +7,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { MapModal } from 'app/admin/components/map-modal/map-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { SceneDetailsComponent } from './scene-details/scene-details.component';
 import * as moment from 'moment';
-import { ReprocessDialogComponent } from './reprocess-dialog/reprocess-dialog.component';
+import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
 
 
 @Component({
@@ -19,7 +19,7 @@ import { ReprocessDialogComponent } from './reprocess-dialog/reprocess-dialog.co
     styleUrls: ['./check-cube.component.scss']
 })
 export class CheckCubeComponent implements OnInit {
-    
+
     public cube
     public bbox = ''
     public pageEvent: PageEvent
@@ -151,16 +151,20 @@ export class CheckCubeComponent implements OnInit {
 
         } catch (err) {
             throw err;
-            
+
         } finally {
             this.store.dispatch(closeLoading())
         }
     }
 
     getUrl(item) {
-        const qk = item.quicklook
-        const bucket = qk.split('/')[0]
-        return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
+        const qk = item.quicklook;
+
+        if (qk) {
+            const bucket = qk.split('/')[0]
+            return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
+        }
+        return '';
     }
 
     openMapModal() {
@@ -209,19 +213,34 @@ export class CheckCubeComponent implements OnInit {
     }
 
     async reprocess(item) {
-        const dialogRef = this.dialog.open(ReprocessDialogComponent, {
-            width: '450px',
-            disableClose: true,
-            data: {
-                cube: this.cube.id,
-                itemDate: item.item_date,
-                tiles: [item.tile_id],
-                editable: false,
-                start_date: item.composite_start,
-                end_date: item.composite_end
-            }
-        })
-        dialogRef.afterClosed();
+        try {
+            this.store.dispatch(showLoading());
+            const meta = await this.cbs.getCubeMeta(this.cube.id);
+
+            const dialogRef = this.dialog.open(ReprocessDialogComponent, {
+                width: '450px',
+                disableClose: true,
+                data: {
+                    ...meta,
+                    grid: this.cube.grs_schema_id,
+                    datacube: this.cube.id,
+                    tiles: [item.tile_id],
+                    editable: false,
+                    start_date: item.composite_start,
+                    end_date: item.composite_end,
+                    force: true,
+                }
+            })
+            dialogRef.afterClosed();
+        } catch (err) {
+            console.log('Error in getting information to reprocess.');
+        } finally {
+            this.store.dispatch(closeLoading());
+        }
+    }
+
+    isIdentity() {
+        return this.cube && this.cube.id.split('_').length === 2;
     }
 
 }

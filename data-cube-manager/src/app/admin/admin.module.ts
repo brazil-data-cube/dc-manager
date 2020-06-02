@@ -44,8 +44,9 @@ import { TemporalCompositionModal } from './pages/create-cube/steps/definition/t
 import { EstimateCostModal } from './pages/create-cube/steps/definition/estimate-cost/estimate-cost.component';
 import { MapModal } from './components/map-modal/map-modal.component';
 import { SceneDetailsComponent } from './pages/check-cube/scene-details/scene-details.component';
-import { ReprocessDialogComponent } from './pages/check-cube/reprocess-dialog/reprocess-dialog.component';
+import { ReprocessDialogComponent } from './components/reprocess-dialog/reprocess-dialog.component';
 import { BucketsModal } from './pages/create-cube/steps/definition/buckets/buckets.component';
+import { MapFieldComponent } from './components/map-field/map-field.component';
 
 @NgModule({
   imports: [
@@ -94,7 +95,8 @@ import { BucketsModal } from './pages/create-cube/steps/definition/buckets/bucke
     MapModal,
     SceneDetailsComponent,
     ReprocessDialogComponent,
-    BucketsModal
+    BucketsModal,
+    MapFieldComponent
   ],
   providers: [
     AdminGuardService

@@ -1,6 +1,6 @@
 <div class="main-content cube-detais">
     <div class="container-fluid" *ngIf="cube">
-        
+
         <div class="row container_details">
             <div class="col-lg-6 col-md-12">
                 <div class="card">
@@ -56,16 +56,16 @@
             </div>
 
             <div class="col-lg-6 col-md-12">
-                <div leaflet 
-                    class="container_map" 
+                <div leaflet
+                    class="container_map"
                     [leafletOptions]="options"
                     (leafletMapReady)="onMapReady($event)">
                 </div>
-                
+
                 <div class="btns-check" *ngIf="cubeStatus">
-                    <a *ngIf="cubeStatus.finished" mat-raised-button color="success" [routerLink]="['/update-cube', cube.id]">
+                    <button *ngIf="cubeStatus.finished && cube.composite_function_schema_id !== 'IDENTITY'" mat-raised-button color="success" (click)="openModalUpdateCube()">
                         UPDATE CUBE
-                    </a>
+                    </button>
                     <a mat-raised-button color="primary" [routerLink]="['/check-cube', cube.id]">
                         CHECK CUBE
                     </a>

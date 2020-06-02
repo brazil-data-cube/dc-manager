@@ -1,4 +1,4 @@
-<h3 mat-dialog-title>Reprocess {{ data.cube }}</h3>
+<h3 mat-dialog-title>{{ getTitle() }}</h3>
 
 <div mat-dialog-content>
     <form [formGroup]="form">
@@ -21,24 +21,23 @@
                 </mat-form-field>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="!editable; else mapTemplate">
                 <mat-form-field appearance="outline">
                     <mat-label>Tiles</mat-label>
                     <input matInput formControlName="tiles">
                 </mat-form-field>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12">
-              <mat-form-field appearance="outline">
-                  <mat-label>Collections</mat-label>
-                  <input matInput formControlName="collections">
-              </mat-form-field>
-          </div>
+            <ng-template #mapTemplate>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <app-map-field [form]="form" [grid]="grid" [tiles]="data.tiles"></app-map-field>
+                </div>
+            </ng-template>
         </div>
     </form>
 </div>
 
 <div mat-dialog-actions class="dialog-actions">
     <button mat-button (click)="close()">Close</button>
-    <button mat-raised-button color="primary">Confirm</button>
+    <button mat-raised-button color="primary" (click)="dispatch()" [disabled]="form.invalid">Confirm</button>
 </div>
