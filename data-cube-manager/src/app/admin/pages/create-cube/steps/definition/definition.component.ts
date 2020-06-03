@@ -221,7 +221,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
         }
       })
 
-    } catch(err) {
+    } catch(_) {
       this.snackBar.open('It was not possible to calculate the cost, review the information!', '', {
         duration: 4000,
         verticalPosition: 'top',

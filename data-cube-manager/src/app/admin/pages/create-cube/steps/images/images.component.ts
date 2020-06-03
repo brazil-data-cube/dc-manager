@@ -159,7 +159,7 @@ export class CreateCubeImagesComponent implements OnInit {
           panelClass: 'app_snack-bar-error'
         });
       } else {
-        if (this.featuresSelected.length <= 0 || !this.tiles) {
+        if (!this.featuresSelected || this.featuresSelected.length <= 0 || !this.tiles) {
           this.snackBar.open('Select the region of interest in the grid', '', {
             duration: 4000,
             verticalPosition: 'top',

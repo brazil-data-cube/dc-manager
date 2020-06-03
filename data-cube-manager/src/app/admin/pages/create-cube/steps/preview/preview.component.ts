@@ -27,7 +27,7 @@ export class CreateCubePreviewComponent implements OnInit {
   public collection: string
   public satellite: string
   public rangeDates: string[]
-  public cost: Cost
+  public cost = {}
 
   constructor(
     private store: Store<AdminState>,
@@ -100,8 +100,8 @@ export class CreateCubePreviewComponent implements OnInit {
       const response = await this.cbs.estimateCost(data)
       const funcs = ['', 'STK', 'MED']
       funcs.forEach(func => {
-        if (!func) {
-          this.cost[func] = {
+        if (!func || func === '') {
+          this.cost['IDENTITY'] = {
             tasks: response['build']['quantity_merges'] + response['build']['quantity_merges'],
             items: response['build']['collection_items_irregular'],
             assets: response['build']['quantity_merges'],
@@ -122,12 +122,6 @@ export class CreateCubePreviewComponent implements OnInit {
       })
 
     } catch(err) {
-      this.snackBar.open('It was not possible to calculate the cost, review the information!', '', {
-        duration: 4000,
-        verticalPosition: 'top',
-        panelClass: 'app_snack-bar-error'
-      });
-
     } finally {
       this.store.dispatch(closeLoading())
     }

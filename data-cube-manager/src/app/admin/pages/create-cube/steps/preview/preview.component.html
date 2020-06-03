@@ -60,18 +60,18 @@
                     </div>
 
                     <div class="col-lg-4 col-md-12 col-sm-12 box">
-                        <div class="container">
+                        <div class="container" *ngIf="cost[func || 'IDENTITY']">
                             <p class="title">
                                 <mat-icon>attach_money</mat-icon> Cost:
                             </p>
                             <div class="box_content">
-                                <p><b>Tasks:</b> {{ this.cost[func]['tasks'] }}</p>
-                                <p><b>Collection Items:</b> {{ this.cost[func]['items'] }}</p>
-                                <p><b>Assets:</b> {{ this.cost[func]['assets'] }}</p>
-                                <p><b>Price to generate:</b> U$ ~{{ this.cost[func]['price'] }}</p>
+                                <p><b>Tasks:</b> {{ cost[func || 'IDENTITY']['tasks'] }}</p>
+                                <p><b>Collection Items:</b> {{ cost[func || 'IDENTITY']['items'] }}</p>
+                                <p><b>Assets:</b> {{ cost[func || 'IDENTITY']['assets'] }}</p>
+                                <p><b>Price to generate:</b> U$ ~{{ cost[func || 'IDENTITY']['price'] }}</p>
                                 <hr />
-                                <p><b>Storage:</b> {{ this.cost[func]['size'] }}GB</p>
-                                <p><b>Price to store the cube:</b> U$ ~{{ this.cost[func]['priceStorage'] }}/month</p>
+                                <p><b>Storage:</b> {{ cost[func || 'IDENTITY']['size'] }}GB</p>
+                                <p><b>Price to store the cube:</b> U$ ~{{ cost[func || 'IDENTITY']['priceStorage'] }}/month</p>
                             </div>
                         </div>
                     </div>
