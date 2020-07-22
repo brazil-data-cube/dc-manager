@@ -21,7 +21,9 @@ const initialState: AdminState = {
     temporal: '',
     functions: [],
     bands: [],
-    bandsQuicklook: []
+    bandsQuicklook: [],
+    indexes: [],
+    qualityBand: ''
   },
   metadata: {
     license: '',

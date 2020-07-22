@@ -197,12 +197,12 @@ export class CreateCubeImagesComponent implements OnInit {
   
               const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
               await Object.keys(respCollection['properties']).forEach(props => {
-                if (props.indexOf('bands') >= 0) {
+                if (props === 'bdc:bands' || props === 'bands') {
                   if (!respCollection['properties'][props]['0']) {
                     const bands = Object.keys(respCollection['properties'][props])
                     this.store.dispatch(setBandsAvailable({ bands }))
                   } else {
-                    const bands = respCollection['properties'][props].map(b => b['common_name'])
+                    const bands = respCollection['properties'][props].map(b => b['name'])
                     this.store.dispatch(setBandsAvailable({ bands }))
                   }
                 }

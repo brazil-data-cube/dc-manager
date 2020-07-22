@@ -25,6 +25,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public compositeFunctions: CompositeFunction[]
   public buckets: object[]
   public bandsAvailable: string[]
+  public indexesAvailable: string[]
   public definitonCompleted: boolean
   public satellite: string
   public rangeDates: string[]
@@ -42,18 +43,22 @@ export class CreateCubeDefinitionComponent implements OnInit {
       name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9-]*$')]],
       resolution: ['', [Validators.required]],
       temporalComposite: ['', [Validators.required]],
-      compositeFunctions: [{ value: ['IDENTITY', 'MED', 'STK'], disabled: true }, [Validators.required]],
+      compositeFunctions: [['IDENTITY', 'MED', 'STK'], [Validators.required]],
       bands: [[''], [Validators.required]],
       quicklookR: ['', [Validators.required]],
       quicklookG: ['', [Validators.required]],
-      quicklookB: ['', [Validators.required]]
+      quicklookB: ['', [Validators.required]],
+      indexes: [['']],
+      qualityBand: ['', [Validators.required]]
     });
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
       if (res.bandsAvailable) {
         const bands = res.bandsAvailable
         this.bandsAvailable = bands
-        this.formCreateCube.get('bands').setValue(bands)
+        if (this.formCreateCube.get('bands').value.length === 0) {
+          this.formCreateCube.get('bands').setValue(bands)
+        }
       }
       if (res.tiles && res.tiles.length > 0) {
         this.tiles = res.tiles
@@ -75,6 +80,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
     this.getTemporalCompositions()
     this.getCompositeFunctions()
     this.getBuckets()
+    this.getIndexesAvailable()
   }
 
   async getTemporalCompositions() {
@@ -147,7 +153,9 @@ export class CreateCubeDefinitionComponent implements OnInit {
           temporal: this.formCreateCube.get('temporalComposite').value,
           functions: this.formCreateCube.get('compositeFunctions').value,
           bands: this.formCreateCube.get('bands').value,
-          bandsQuicklook: this.getBandsQuicklook()
+          bandsQuicklook: this.getBandsQuicklook(),
+          indexes: this.formCreateCube.get('indexes').value,
+          qualityBand: this.formCreateCube.get('qualityBand').value
         }
       }))
       this.definitonCompleted = true
@@ -185,6 +193,10 @@ export class CreateCubeDefinitionComponent implements OnInit {
     })
   }
 
+  getIndexesAvailable() {
+    this.indexesAvailable = ['NDVI', 'EVI']
+  }
+
   openModalBuckets() {
     const dialogRef = this.dialog.open(BucketsModal, {
       width: '450px',
@@ -209,6 +221,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
         grid: this.grid,
         quantity_bands: this.formCreateCube.get('bands').value.length,
         quantity_tiles: this.tiles.length,
+        quantity_indexes: this.formCreateCube.get('indexes').value.length,
         t_schema: temporal_schema[0].temporal_schema,
         t_step: parseInt(temporal_schema[0].temporal_composite_t)
       }

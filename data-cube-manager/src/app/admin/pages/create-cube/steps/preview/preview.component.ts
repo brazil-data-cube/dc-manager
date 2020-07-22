@@ -93,6 +93,7 @@ export class CreateCubePreviewComponent implements OnInit {
         grid: this.grid,
         quantity_bands: this.definition.bands.length,
         quantity_tiles: this.tiles.length,
+        quantity_indexes: this.definition.indexes.length,
         t_schema: temporalSchema[0].temporal_schema,
         t_step: parseInt(temporalSchema[0].temporal_composite_t)
       }
@@ -166,23 +167,32 @@ export class CreateCubePreviewComponent implements OnInit {
           grs: this.grid,
           resolution: this.definition.resolution,
           temporal_schema: this.definition.temporal,
-          bands: this.definition.bands,
+          composite_function: this.definition.functions,
+          bands: this.definition.bands.map(b => { 
+            return {'name': b, 'common_name': b, 'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8'} 
+          }),
           bands_quicklook: this.definition.bandsQuicklook,
+          indexes: this.definition.indexes.map(i => { 
+            return {'name': i, 'common_name': i, 'data_type': 'int16'} 
+          }),
           license: this.metadata.license,
-          description: this.metadata.description
+          description: this.metadata.description,
+          quality_band: this.definition.qualityBand
         }
+        console.log(cube)
         const respCube = await this.cbs.create(cube)
 
         // START CUBE CREATION
         const process = {
+          process_id: respCube['cubes']['process_id'],
           url_stac: this.urlSTAC,
           bucket: this.definition.bucket,
-          datacube: this.definition.name,
           tiles: this.tiles,
           collections: this.collection,
           satellite: this.satellite,
           start_date: this.rangeDates[0],
-          end_date: this.rangeDates[1]
+          end_date: this.rangeDates[1],
+          force: false
         }
         const respStart = await this.cbs.start(process)
 

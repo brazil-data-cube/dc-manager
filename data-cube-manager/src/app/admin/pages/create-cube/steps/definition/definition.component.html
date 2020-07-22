@@ -123,7 +123,33 @@
                     </mat-form-field>
                 </div>
             </div>
+        </div>
 
+        <div class="col-lg-8 col-md-8 col-sm-12" style="margin-top: 15px;">
+            <mat-form-field appearance="outline">
+                <mat-label>Indexes</mat-label>
+                <mat-select multiple formControlName="indexes">
+                    <mat-option *ngFor="let index of indexesAvailable" [value]="index">
+                        {{ index }}
+                    </mat-option>
+                </mat-select>
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('indexes').errors"></form-field-error>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12" style="margin-top: 15px;">
+            <mat-form-field appearance="outline">
+                <mat-label>Quality Band</mat-label>
+                <mat-select formControlName="qualityBand">
+                    <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                        {{ band }}
+                    </mat-option>
+                </mat-select>
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('qualityBand').errors"></form-field-error>
+                </mat-error>
+            </mat-form-field>
         </div>
 
         <div class="col-12 box_btn">

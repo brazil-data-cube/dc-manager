@@ -2,6 +2,6 @@
     window.__env = window.__env || {};
 
     // API url cube-builder
-    window.__env.urlCubeBuilder = 'https://9kd1b9mcr3.execute-api.us-east-1.amazonaws.com/dev';
+    window.__env.urlCubeBuilder = 'https://w78r5y3sy7.execute-api.us-east-1.amazonaws.com/prod';
 
 }(this));

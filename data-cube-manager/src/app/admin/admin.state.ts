@@ -19,6 +19,8 @@ export interface DefinitionCube {
     functions: string[];
     bands: string[];
     bandsQuicklook: string[];
+    indexes: string[];
+    qualityBand: string;
 }
 
 export interface MetadataCube {
