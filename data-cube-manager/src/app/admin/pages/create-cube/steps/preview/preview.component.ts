@@ -179,7 +179,6 @@ export class CreateCubePreviewComponent implements OnInit {
           description: this.metadata.description,
           quality_band: this.definition.qualityBand
         }
-        console.log(cube)
         const respCube = await this.cbs.create(cube)
 
         // START CUBE CREATION

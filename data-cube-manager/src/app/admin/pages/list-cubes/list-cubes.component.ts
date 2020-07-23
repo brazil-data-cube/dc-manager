@@ -39,7 +39,7 @@ export class ListCubesComponent implements OnInit {
 
     public getCubeClass(cube) {
         const result = {
-            error: 'danger',
+            danger: 'danger',
             pending: 'warning',
             finished: 'success'
         };

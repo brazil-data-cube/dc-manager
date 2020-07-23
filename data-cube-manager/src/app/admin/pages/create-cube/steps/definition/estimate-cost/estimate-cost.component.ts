@@ -22,11 +22,11 @@ export class EstimateCostModal {
             this.tasks = b['quantity_merges'] + b['quantity_blends'] + b['quantity_publish']
             this.items = b['collection_items_irregular'] + b['collection_items']
             this.assets = b['quantity_merges'] + (2 * b['quantity_blends'])
-            this.priceBuild = b['price_merges'] + b['price_blends'] + b['price_publish']
+            this.priceBuild = (b['price_merges'] + b['price_blends'] + b['price_publish']).toFixed(2)
 
             const s = data['storage']
-            this.size = s['size_cubes'] + s['size_irregular_cube']
-            this.priceStorage = s['price_cubes'] + s['price_irregular_cube']
+            this.size = (s['size_cubes'] + s['size_irregular_cube']).toFixed(2)
+            this.priceStorage = (s['price_cubes'] + s['price_irregular_cube']).toFixed(2)
         }
 
     close(): void {
