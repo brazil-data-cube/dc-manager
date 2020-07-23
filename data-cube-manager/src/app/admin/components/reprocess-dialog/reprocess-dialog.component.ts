@@ -101,6 +101,8 @@ export class ReprocessDialogComponent implements OnInit {
           panelClass: 'app_snack-bar-success'
       });
 
+      this.close();
+
     } catch (err) {
       let message = err.error;
 
