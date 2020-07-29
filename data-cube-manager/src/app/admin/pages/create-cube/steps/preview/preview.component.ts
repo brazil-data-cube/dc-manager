@@ -6,7 +6,6 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { showLoading, closeLoading } from 'app/app.action';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Cost } from '../definition/estimate-cost/cost.interface';
 
 @Component({
   selector: 'app-create-cube-preview',
@@ -28,6 +27,8 @@ export class CreateCubePreviewComponent implements OnInit {
   public satellite: string
   public rangeDates: string[]
   public cost = {}
+
+  public environmentVersion = window['__env'].environmentVersion
 
   constructor(
     private store: Store<AdminState>,
@@ -68,7 +69,8 @@ export class CreateCubePreviewComponent implements OnInit {
         this.rangeDates = [res.startDate, res.lastDate]
       }
 
-      if (this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
+      if (this.environmentVersion === 'cloud' &&
+          this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
         this.getCost()
       }
     })
@@ -192,6 +194,11 @@ export class CreateCubePreviewComponent implements OnInit {
           start_date: this.rangeDates[0],
           end_date: this.rangeDates[1],
           force: false
+        }
+        if (this.environmentVersion === 'local') {
+          delete process['bucket']
+          delete process['process_id']
+          process['datacube'] = this.definition.name
         }
         const respStart = await this.cbs.start(process)
 

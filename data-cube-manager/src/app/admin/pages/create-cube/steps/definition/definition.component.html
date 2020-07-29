@@ -8,7 +8,7 @@
         message="Select a region of interest in the REGION step!"></app-alert>
 
     <form class="row" [formGroup]="formCreateCube" (ngSubmit)="saveInfosInStore()">
-        <div class="col-12 box_input_with_button">
+        <div class="col-12 box_input_with_button" *ngIf="environmentVersion === 'cloud'">
             <mat-form-field appearance="outline">
                 <mat-label>BUCKET NAME</mat-label>
                 <mat-select formControlName="bucket">
@@ -157,7 +157,8 @@
                 SAVE
             </button>
             <button type="button" mat-raised-button color="primary" [disabled]="!definitonCompleted"
-                (click)="openModalCost()">
+                (click)="openModalCost()"
+                *ngIf="environmentVersion === 'cloud'">
                 ESTIMATE COST ($)
             </button>
         </div>

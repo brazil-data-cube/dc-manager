@@ -35,6 +35,7 @@ func main() {
 	}
 
 	new_content := strings.ReplaceAll(string(data), "URL_CUBE_BUILDER", "'"+os.Getenv("URL_CUBE_BUILDER")+"'")
+	new_content = strings.ReplaceAll(new_content, "ENVIRONMENT_VERSION", "'"+os.Getenv("ENVIRONMENT_VERSION")+"'")
 	err = ioutil.WriteFile(file_url+"assets/env.js", []byte(new_content), 0644)
 	if err != nil {
 		log.Fatalln(err)

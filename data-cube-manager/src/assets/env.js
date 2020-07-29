@@ -4,4 +4,7 @@
     // API url cube-builder
     window.__env.urlCubeBuilder = 'https://w78r5y3sy7.execute-api.us-east-1.amazonaws.com/prod';
 
+    // Environment Version (allow: 'cloud' or 'local')
+    window.__env.environmentVersion = 'local';
+
 }(this));

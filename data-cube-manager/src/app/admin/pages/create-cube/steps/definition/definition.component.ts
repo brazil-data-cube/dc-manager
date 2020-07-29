@@ -32,6 +32,8 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public tiles: string[]
   public grid: string
 
+  public environmentVersion = window['__env'].environmentVersion
+
   constructor(
     private store: Store<AdminState>,
     private cbs: CubeBuilderService,
@@ -39,7 +41,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
     private fb: FormBuilder,
     public dialog: MatDialog) {
     this.formCreateCube = this.fb.group({
-      bucket: ['', [Validators.required]],
+      bucket: ['', this.environmentVersion === 'cloud' ? [Validators.required] : []],
       name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9-]*$')]],
       resolution: ['', [Validators.required]],
       temporalComposite: ['', [Validators.required]],
