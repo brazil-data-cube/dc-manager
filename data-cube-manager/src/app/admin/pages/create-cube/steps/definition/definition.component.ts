@@ -81,7 +81,9 @@ export class CreateCubeDefinitionComponent implements OnInit {
     this.definitonCompleted = false
     this.getTemporalCompositions()
     this.getCompositeFunctions()
-    this.getBuckets()
+    if (this.environmentVersion === 'cloud') {
+      this.getBuckets();
+    }
     this.getIndexesAvailable()
   }
 
