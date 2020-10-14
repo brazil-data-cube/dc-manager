@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
@@ -48,6 +48,12 @@ export class ReprocessDialogComponent implements OnInit {
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
     });
+
+    if (window['__env'].environmentVersion === 'cloud') {
+      this.form.addControl('url_stac', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
+      this.form.addControl('satellite', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
+      this.form.addControl('bucket', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
+    }
 
     this.form.patchValue({ ...this.data });
     this.form.patchValue({ collections: this.data.collections });
