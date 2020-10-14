@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
 import { Store } from '@ngrx/store';
@@ -46,9 +46,6 @@ export class ReprocessDialogComponent implements OnInit {
       collections: [{ value: '', disabled: true }, [Validators.required]], // You cannot change collection
       start_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      url_stac: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      bucket: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      satellite: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
     });
 
@@ -57,25 +54,11 @@ export class ReprocessDialogComponent implements OnInit {
   }
 
   getTitle() {
-    return this.data.title ? this.data.title : `Reprocess ${this.data.datacube}`;
+    return this.data.title;
   }
 
   close() {
     this.dialogRef.close()
-  }
-
-  async getDataCubeMeta(cubeId: string) {
-    this.store.dispatch(showLoading());
-
-    try {
-      const meta = await this.service.getCubeMeta(cubeId) as any;
-
-      return meta;
-    } catch (err) {
-      console.error(err);
-    } finally {
-      this.store.dispatch(closeLoading());
-    }
   }
 
   async dispatch() {
@@ -89,7 +72,7 @@ export class ReprocessDialogComponent implements OnInit {
     data.start_date = moment(data.start_date).utc().format('YYYY-MM-DD');
     data.end_date = moment(data.end_date).utc().format('YYYY-MM-DD');
     data.collections = this.data.collections;
-    data.datacube = data.datacube.split('_').slice(0, -1).join('_');
+    data.datacube = data.datacube;
     data.force = !!this.data.force;
 
     try {

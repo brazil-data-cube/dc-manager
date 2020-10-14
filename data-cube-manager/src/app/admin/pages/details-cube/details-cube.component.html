@@ -5,7 +5,7 @@
             <div class="col-lg-6 col-md-12">
                 <div class="card">
                     <div class="card-header card-header-" style="background: #999">
-                        <h4 class="card-title">Cube Details</h4>
+                        <h4 class="card-title">{{ cube.title }}</h4>
                         <p class="card-category">{{ cube.description }}</p>
                     </div>
                     <div class="card-body table-responsive">
@@ -13,41 +13,37 @@
                             <tbody>
                                 <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
                                     <td class="text-success">Range Time:</td>
-                                    <td>{{ cube.temporal[0] }} / {{ cube.temporal[1] }}</td>
+                                    <td>{{ cube.start_date }} / {{ cube.end_date }}</td>
                                 </tr>
                                 <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
                                     <td class="text-success">Bands:</td>
                                     <td>
                                         <mat-chip-list>
                                             <mat-chip *ngFor="let band of cube.bands">
-                                                {{ band.name.toUpperCase() }}</mat-chip>
+                                                {{ band.name }}</mat-chip>
                                         </mat-chip-list>
                                     </td>
                                 </tr>
                                 <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
                                     <td class="text-success">Grid:</td>
-                                    <td>{{ cube.grs_schema_id }}</td>
+                                    <td>{{ cube.grid }}</td>
                                 </tr>
                                 <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
                                     <td class="text-success">Bands Quicklook:</td>
                                     <td>
                                         <mat-chip-list>
-                                            <mat-chip *ngFor="let band of cube.bands_quicklook.split(',')">
-                                                {{ band.toUpperCase() }}</mat-chip>
+                                            <mat-chip *ngFor="let band of cube.quicklook">
+                                                {{ band }}</mat-chip>
                                         </mat-chip-list>
                                     </td>
                                 </tr>
                                 <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
                                     <td class="text-success">Composite Function:</td>
-                                    <td>{{ cube.composite_function_schema_id }}</td>
+                                    <td>{{ cube.composite_function }}</td>
                                 </tr>
                                 <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
                                     <td class="text-success">Temporal Composition:</td>
-                                    <td>{{ cube.temporal_composition_schema_id }}</td>
-                                </tr>
-                                <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
-                                    <td class="text-success">License:</td>
-                                    <td>{{ cube.license }}</td>
+                                    <td>{{ convertToString(cube.temporal_composition_schema) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -63,10 +59,10 @@
                 </div>
 
                 <div class="btns-check" *ngIf="cubeStatus">
-                    <button *ngIf="cubeStatus.finished && cube.composite_function_schema_id !== 'IDENTITY'" mat-raised-button color="success" (click)="openModalUpdateCube()">
+                    <button *ngIf="cubeStatus.finished && cube.composite_function.toUpperCase() !== 'IDENTITY'" mat-raised-button color="success" (click)="openModalUpdateCube()">
                         UPDATE CUBE
                     </button>
-                    <a mat-raised-button color="primary" [routerLink]="['/check-cube', cube.id]">
+                    <a mat-raised-button color="primary" [routerLink]="['/check-cube', getCubeFullName(cube)]">
                         CHECK CUBE
                     </a>
                 </div>
@@ -93,16 +89,16 @@
 
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div *ngIf="!cubeStatus.finished">
-                    <app-mini-card category="Tasks - PENDING" [title]="cubeStatus.not_done" icon="warning" class="card-header-warning"></app-mini-card>
+                    <app-mini-card category="Tasks - ERROR" [title]="cubeStatus.error" icon="error" class="card-header-danger"></app-mini-card>
                 </div>
                 <div *ngIf="cubeStatus.finished">
-                    <app-mini-card category="Processing Time" [title]="cubeStatus.duration" icon="access_alarm" class="card-header-success"></app-mini-card>
+                    <app-mini-card category="Tasks - ERROR" [title]="cubeStatus.error" icon="access_alarm" class="card-header-danger"></app-mini-card>
                 </div>
             </div>
 
             <div class="col-lg-4 col-md-6 col-sm-6">
                 <div *ngIf="!cubeStatus.finished">
-                    <app-mini-card category="Tasks - ERROR" [title]="cubeStatus.error" icon="error" class="card-header-danger"></app-mini-card>
+                    <app-mini-card category="Tasks - PENDING" [title]="cubeStatus.not_done" icon="warning" class="card-header-warning"></app-mini-card>
                 </div>
                 <div *ngIf="cubeStatus.finished">
                     <app-mini-card category="Collection - ITEM" [title]="cubeStatus.collection_item" icon="check" class="card-header-success"></app-mini-card>

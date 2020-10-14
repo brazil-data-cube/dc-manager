@@ -47,4 +47,8 @@ export class ListCubesComponent implements OnInit {
         return `card-header-${result[cube.status.toLowerCase()]}`;
     }
 
+    public getCubeFullName(cube) {
+        return `${cube.name}-${cube.version}:${cube.id}`
+    }
+
 }

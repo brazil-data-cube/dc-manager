@@ -8,10 +8,10 @@
         <div class="row">
             <div class="col-md-3"
                 *ngFor="let cube of cubes">
-                <a [routerLink]="['/details-cube', cube.id]">
+                <a [routerLink]="['/details-cube', getCubeFullName(cube)]">
                     <div class="card card-chart">
                         <div [ngClass]="['card-header', getCubeClass(cube)]">
-                            <h4 class="card-title text-center">{{ cube.id }}</h4>
+                            <h4 class="card-title text-center">{{ cube.name }}</h4>
                         </div>
                         <div class="card-body">
                             <p class="card-category text-justify">
