@@ -37,10 +37,10 @@ export class CubeBuilderService {
     /**
      * get cube status
      */
-    public async getCubeStatus(datacube): Promise<any> {
+    public async getCubeStatus(cubeFullName): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        let urlSuffix = `/cube-status?datacube=${datacube}`
+        let urlSuffix = `/cube-status?cube_name=${cubeFullName}`
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
         return response
     }
@@ -51,7 +51,7 @@ export class CubeBuilderService {
     public async getGeoJSON(id): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        let urlSuffix = `/cubes/${id}/tiles`
+        let urlSuffix = `/cubes/${id}/tiles/geom`
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
         return response
     }
@@ -117,7 +117,7 @@ export class CubeBuilderService {
     /**
      * list merges by blend
      */
-    public async listMerges(datacube, start, end, tileID): Promise<any> {
+    public async listMerges(cube_id, start_date, end_date, tileID): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
 
         const options = {} as any;
@@ -126,9 +126,9 @@ export class CubeBuilderService {
         }
 
         options.params = {
-            data_cube: datacube,
-            start,
-            end,
+            cube_id,
+            start_date,
+            end_date,
             tile_id: tileID,
         }
 
@@ -140,11 +140,11 @@ export class CubeBuilderService {
     /**
      * get cube timeline
      */
-    public async getTimeline(startDate, lastDate, schema, step): Promise<any> {
+    public async getTimeline(dataQuery): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = `/timeline?start=${startDate}&end=${lastDate}&schema=${schema}&step=${step}`;
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
+        const urlSuffix = `/list-periods`;
+        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, dataQuery, headers).toPromise();
         return response;
     }
 
@@ -210,8 +210,9 @@ export class CubeBuilderService {
         const token = sessionStorage.getItem('dc_manager_api_token')
 
         page = page || 1;
+        const perPage = 10000;
         const options = {} as any;
-        options.params = { page };
+        options.params = { page, 'per_page': perPage };
         if (token) options.headers = { 'x-api-key': token };
         if (bbox) options.params.bbox = bbox;
         if (start) options.params.start = start;
@@ -223,10 +224,10 @@ export class CubeBuilderService {
         return response;
     }
 
-    public async listItemsTiles(cube: string) {
+    public async listItemsTiles(id) {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = `/cubes/${cube}/items/tiles`;
+        const urlSuffix = `/cubes/${id}/tiles`;
         const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
         return response;
     }

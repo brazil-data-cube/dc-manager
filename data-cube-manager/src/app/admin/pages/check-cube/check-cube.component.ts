@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵConsole } from '@angular/core';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
@@ -25,7 +25,7 @@ export class CheckCubeComponent implements OnInit {
     public pageEvent: PageEvent
     public pageIndex = 0
     public perPage = 10
-    public timeline: string[] = []
+    public timeline = []
     public tiles: string[] = []
     public currentTab: string = ''
     public items = {} as any
@@ -48,9 +48,6 @@ export class CheckCubeComponent implements OnInit {
         })
 
         this.route.paramMap.subscribe(async params => {
-            if (params['params'].page) {
-                this.pageIndex = params['params']['page']
-            }
             await this.getCube(params['params']['cube'])
         })
     }
@@ -60,6 +57,7 @@ export class CheckCubeComponent implements OnInit {
         this.currentTab = tile
 
         if (!this.items[tile]) {
+            this.pageIndex = 0
             const items = await this.getAllItems(this.currentTab)
             const features = this.getAllFeatures(items)
             this.items[this.currentTab] = features
@@ -68,20 +66,24 @@ export class CheckCubeComponent implements OnInit {
 
     async getCube(cubeName) {
         try {
-            this.store.dispatch(showLoading())
-            const response = await this.cbs.getCubes(cubeName)
-            this.cube = response;
-            this.tiles = await this.cbs.listItemsTiles(cubeName) as any;
+            this.store.dispatch(showLoading());
+            const cubeId = cubeName.split(':')[1];
+            
+            this.cube = await this.cbs.getCubes(cubeId);
+
+            this.tiles = await this.cbs.listItemsTiles(cubeId) as any;
             this.currentTab = this.tiles[0];
 
-            if (response.temporal.length !== 0) {
-                if (!response.temporal_composition.schema) {
-                    return;
+            if (this.cube.temporal_composition_schema) {
+                const data = {
+                    start_date: this.cube.start_date,
+                    last_date: this.cube.end_date,
+                    ...this.cube.temporal_composition_schema
                 }
-                const [start, end] = response.temporal;
-                const { step, schema } = response.temporal_composition as any;
-                this.timeline = await this.cbs.getTimeline(start, end, schema, step);
+                const respTimeline = await this.cbs.getTimeline(data);
+                this.timeline = respTimeline['timeline'];
             }
+
         } catch (err) {
             this.router.navigate(['/list-cubes'])
 
@@ -95,22 +97,33 @@ export class CheckCubeComponent implements OnInit {
         start = start ? moment(start).utc().format('YYYY-MM-DD') : ''
         end = end ? moment(end).utc().format('YYYY-MM-DD') : moment().utc().format('YYYY-MM-DD')
 
-        // Always search for page 1
         const foundItems = await this.getAllItems(null, bbox, start, end)
         const tilesFound = foundItems.map(item => item.tile_id).filter((tile, index, self) => self.indexOf(tile) === index)
 
         this.tiles = tilesFound
         const allItemsExpected = this.getAllFeatures(foundItems)
         for(let tile of this.tiles) {
-            this.items[tile] = allItemsExpected.filter(item => item.tile_id === tile && item.item_date >= start && item.item_date <= end)
+            this.items[tile] = allItemsExpected.filter(item => {
+                const item_date = moment(item.start_date).utc().format('YYYY-MM-DD')
+                return item.tile_id === tile && start <= item_date && item_date <= end
+            });
         }
     }
 
     getAllFeatures(features) {
         if (this.timeline.length) {
-            const dates = this.timeline.map(t => {
-                return features.filter(f => f['item_date'] === t).length ? null : t;
-            }).filter(t => t).map(t => { return { id: t, item_date: t, notFound: true, ...this.parseSceneID(features[0]['id']) } });
+            const dates = this.timeline
+                .map(t => {
+                    return features.filter(f => f['start_date'].substring(0,10) === t[0]).length ? null : t;
+                })
+                .filter(t => t)
+                .map(t => { return { 
+                    name: `${t[0]}_${t[1]}`, 
+                    start_date: t[0], 
+                    end_date: t[1], 
+                    notFound: true, 
+                    ...this.parseSceneID(features[0]['name']) } });
+
             return [...dates, ...features];
         }
 
@@ -121,24 +134,19 @@ export class CheckCubeComponent implements OnInit {
         const parts = sceneID.split('_');
         return {
             cube: parts.slice(0, 4).join('_'),
-            tile_id: parts[4],
-            startDate: parts[5],
-            lastDate: parts[6]
+            version: parts[4],
+            tile_id: parts[5],
+            startDate: parts[6],
+            lastDate: parts[7]
         }
     }
 
     /** Retrieve all items from cube builder associated with cube context. */
     async getAllItems(tileId?: string, bbox?: string, start?: string, end?: string) {
-        const result = await this.listItems(this.cube.id, bbox, null, null, this.pageIndex + 1, tileId);
+        const result = await this.listItems(this.cube.id, bbox, start, end, this.pageIndex + 1, tileId);
 
         const total = result.total_items;
         let container = [...result.items];
-        let pageRef = 1;
-
-        while (container.length < total) {
-            const res = await this.listItems(this.cube.id, bbox, null, null, ++pageRef, tileId);
-            container = [...container, ...res.items];
-        }
 
         return container;
     }
@@ -161,8 +169,12 @@ export class CheckCubeComponent implements OnInit {
         const qk = item.quicklook;
 
         if (qk) {
-            const bucket = qk.split('/')[0]
-            return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
+            const bucket = qk.split('/')[0];
+            if (window['__env'].environmentVersion === 'cloud') {
+                return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`;
+            } else {
+                return `http://brazildatacube.dpi.inpe.br${qk}`;
+            }
         }
         return '';
     }
@@ -184,9 +196,9 @@ export class CheckCubeComponent implements OnInit {
         try {
             this.store.dispatch(showLoading());
 
-            const cubeName = this.cube.id;
-            let start = item.composite_start;
-            let end = item.composite_end;
+            const cubeName = this.cube.name;
+            let start = item.start_date;
+            let end = item.end_date;
 
             if (cubeName.split('_').length === 2) {
                 start = moment(start).startOf('month').format('YYYY-MM-DD');
@@ -199,9 +211,9 @@ export class CheckCubeComponent implements OnInit {
                 height: '90%',
                 maxHeight: '700px',
                 data: {
-                    cube: this.cube.id,
+                    cube: this.cube.name,
                     merges: response,
-                    itemDate: item.item_date,
+                    itemDate: item.start_date,
                     tileId: item.tile_id
                 }
             })
@@ -222,13 +234,14 @@ export class CheckCubeComponent implements OnInit {
                 disableClose: true,
                 data: {
                     ...meta,
-                    grid: this.cube.grs_schema_id,
-                    datacube: this.cube.id,
+                    title: `Reprocess ${this.cube.name}`,
+                    grid: this.cube.grid,
+                    datacube: this.cube.name,
                     tiles: [item.tile_id],
                     editable: false,
-                    start_date: item.composite_start,
-                    end_date: item.composite_end,
-                    force: true,
+                    start_date: item.start_date,
+                    end_date: item.end_date,
+                    force: true
                 }
             })
             dialogRef.afterClosed();
@@ -240,7 +253,7 @@ export class CheckCubeComponent implements OnInit {
     }
 
     isIdentity() {
-        return this.cube && this.cube.id.split('_').length === 2;
+        return this.cube && this.cube.name.split('_').length === 2;
     }
 
 }

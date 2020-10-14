@@ -33,8 +33,8 @@ export class DetailsCubeComponent implements OnInit {
 
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
-            this.getCube(params['params']['cube'])
-            this.getCubesStatus(params['params']['cube'])
+            this.getCube(params['params']['cube'].split(':')[1])
+            this.getCubesStatus(params['params']['cube'].split(':')[0])
         })
 
         this.options = {
@@ -140,9 +140,9 @@ export class DetailsCubeComponent implements OnInit {
                 disableClose: true,
                 data: {
                     ...meta,
-                    title: `Update Cube ${this.cube.id}`,
-                    grid: this.cube.grs_schema_id,
-                    datacube: this.cube.id,
+                    title: `Update Cube ${this.cube.name}`,
+                    grid: this.cube.grid,
+                    datacube: this.cube.name,
                     tiles: tiles,
                     editable: true,
                     end_date: null,
@@ -153,6 +153,14 @@ export class DetailsCubeComponent implements OnInit {
         } finally {
             this.store.dispatch(closeLoading());
         }
+    }
+
+    public convertToString(obj) {
+        return JSON.stringify(obj);
+    }
+
+    public getCubeFullName(cube) {
+        return `${cube.name}-${cube.version}:${cube.id}`
     }
 
     /**

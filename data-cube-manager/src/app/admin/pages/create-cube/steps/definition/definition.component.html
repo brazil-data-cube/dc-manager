@@ -8,7 +8,7 @@
         message="Select a region of interest in the REGION step!"></app-alert>
 
     <form class="row" [formGroup]="formCreateCube" (ngSubmit)="saveInfosInStore()">
-        <div class="col-12 box_input_with_button">
+        <div class="col-12 box_input_with_button" *ngIf="environmentVersion === 'cloud'">
             <mat-form-field appearance="outline">
                 <mat-label>BUCKET NAME</mat-label>
                 <mat-select formControlName="bucket">
@@ -100,7 +100,7 @@
                     <mat-form-field appearance="outline" style="width: 30%;">
                         <mat-label>R</mat-label>
                         <mat-select formControlName="quicklookR">
-                            <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                            <mat-option *ngFor="let band of formCreateCube.get('bands').value" [value]="band">
                                 {{ band }}
                             </mat-option>
                         </mat-select>
@@ -108,7 +108,7 @@
                     <mat-form-field appearance="outline" style="width: 30%;">
                         <mat-label>G</mat-label>
                         <mat-select formControlName="quicklookG">
-                            <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                            <mat-option *ngFor="let band of formCreateCube.get('bands').value" [value]="band">
                                 {{ band }}
                             </mat-option>
                         </mat-select>
@@ -116,7 +116,7 @@
                     <mat-form-field appearance="outline" style="width: 30%;">
                         <mat-label>B</mat-label>
                         <mat-select formControlName="quicklookB">
-                            <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                            <mat-option *ngFor="let band of formCreateCube.get('bands').value" [value]="band">
                                 {{ band }}
                             </mat-option>
                         </mat-select>
@@ -142,7 +142,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Quality Band</mat-label>
                 <mat-select formControlName="qualityBand">
-                    <mat-option *ngFor="let band of bandsAvailable" [value]="band">
+                    <mat-option *ngFor="let band of formCreateCube.get('bands').value" [value]="band">
                         {{ band }}
                     </mat-option>
                 </mat-select>
@@ -157,7 +157,8 @@
                 SAVE
             </button>
             <button type="button" mat-raised-button color="primary" [disabled]="!definitonCompleted"
-                (click)="openModalCost()">
+                (click)="openModalCost()"
+                *ngIf="environmentVersion === 'cloud'">
                 ESTIMATE COST ($)
             </button>
         </div>

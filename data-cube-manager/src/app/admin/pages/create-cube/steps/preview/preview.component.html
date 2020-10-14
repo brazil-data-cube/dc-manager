@@ -55,12 +55,12 @@
                                 <p><b>URL STAC:</b> {{ urlSTAC }}</p>
                                 <p><b>Collection:</b> {{ collection }}</p>
                                 <p><b>Satellite:</b> {{ satellite }}</p>
-                                <p><b>Bucket to save the Cube:</b> {{ definition.bucket }}</p>
+                                <p *ngIf="environmentVersion === 'cloud'"><b>Bucket to save the Cube:</b> {{ definition.bucket }}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-md-12 col-sm-12 box">
+                    <div class="col-lg-4 col-md-12 col-sm-12 box" *ngIf="environmentVersion === 'cloud'">
                         <div class="container" *ngIf="cost[func || 'IDENTITY']">
                             <p class="title">
                                 <mat-icon>attach_money</mat-icon> Cost:

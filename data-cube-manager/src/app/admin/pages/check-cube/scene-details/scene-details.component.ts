@@ -43,15 +43,22 @@ export class SceneDetailsComponent implements OnInit {
 
   getImagesFromMerge(date) {
     const bands = this.getBands(date)
-    return this.merges[date]['bands'][bands[0]]['scenes']
+    return this.merges[date]['bands'][bands[0]]
   }
 
   getMergeFile(date) {
     const bands = this.getBands(date)
     const mergeAssets = this.merges[date]['bands'][bands[0]]
-    const qk = mergeAssets['merge'].replace('s3://', '').replace('.tif', '.png').replace(`_${bands[0]}`, '')
-    const bucket = qk.split('/')[0]
-    return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
+    let qk = '';
+    if (window['__env'].environmentVersion === 'cloud') {
+      qk = mergeAssets['merge'].replace('s3://', '').replace('.tif', '.png').replace(`_${bands[0]}`, '')
+      const bucket = qk.split('/')[0]
+      return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
+
+    } else {
+      qk = mergeAssets[0].replace('.tif', '.png').replace(`_${bands[0]}`, '')
+      return qk
+    }
   }
 
   getScenePath(file) {

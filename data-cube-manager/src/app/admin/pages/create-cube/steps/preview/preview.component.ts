@@ -6,7 +6,6 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { showLoading, closeLoading } from 'app/app.action';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Cost } from '../definition/estimate-cost/cost.interface';
 
 @Component({
   selector: 'app-create-cube-preview',
@@ -28,6 +27,8 @@ export class CreateCubePreviewComponent implements OnInit {
   public satellite: string
   public rangeDates: string[]
   public cost = {}
+
+  public environmentVersion = window['__env'].environmentVersion
 
   constructor(
     private store: Store<AdminState>,
@@ -68,7 +69,8 @@ export class CreateCubePreviewComponent implements OnInit {
         this.rangeDates = [res.startDate, res.lastDate]
       }
 
-      if (this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
+      if (this.environmentVersion === 'cloud' &&
+          this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
         this.getCost()
       }
     })
@@ -97,7 +99,7 @@ export class CreateCubePreviewComponent implements OnInit {
         t_schema: temporalSchema[0].temporal_schema,
         t_step: parseInt(temporalSchema[0].temporal_composite_t)
       }
-      
+
       const response = await this.cbs.estimateCost(data)
       const funcs = ['', 'STK', 'MED']
       funcs.forEach(func => {
@@ -151,7 +153,7 @@ export class CreateCubePreviewComponent implements OnInit {
     } else {
       try {
         this.store.dispatch(showLoading());
-        
+
         // CREATE RASTER SIZE SCHEMA
         const rasterSchema = {
           grs_schema: this.grid,
@@ -161,19 +163,21 @@ export class CreateCubePreviewComponent implements OnInit {
         }
         const respRaster = await this.cbs.createRasterSchema(rasterSchema)
 
+        const cubeId = this.environmentVersion === 'local' ? this.definition.name.split('_')[0] : this.definition.name;
+
         // CREATE CUBES METADATA
         const cube = {
-          datacube: this.definition.name,
+          datacube: cubeId,
           grs: this.grid,
           resolution: this.definition.resolution,
           temporal_schema: this.definition.temporal,
           composite_function: this.definition.functions,
-          bands: this.definition.bands.map(b => { 
-            return {'name': b, 'common_name': b, 'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8'} 
+          bands: this.definition.bands.map(b => {
+            return {'name': b, 'common_name': b, 'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8'}
           }),
           bands_quicklook: this.definition.bandsQuicklook,
-          indexes: this.definition.indexes.map(i => { 
-            return {'name': i, 'common_name': i, 'data_type': 'int16'} 
+          indexes: this.definition.indexes.map(i => {
+            return {'name': i, 'common_name': i, 'data_type': 'int16'}
           }),
           license: this.metadata.license,
           description: this.metadata.description,
@@ -192,6 +196,22 @@ export class CreateCubePreviewComponent implements OnInit {
           start_date: this.rangeDates[0],
           end_date: this.rangeDates[1],
           force: false
+        }
+        if (this.environmentVersion === 'local') {
+          delete process['bucket']
+          delete process['process_id']
+          delete process['satellite']
+
+          const compositeFunctions = this.definition.functions.filter(fn => fn !== 'IDENTITY');
+
+          if (compositeFunctions.length !== 0) {
+            process['composite_functions'] = compositeFunctions;
+            process['datacube'] = `${this.definition.name}_${compositeFunctions[0]}`;
+          } else {
+            // Only IDENTITY selected
+            process['datacube'] = this.definition.name.split('_').slice(0, 2).join('_')
+          }
+
         }
         const respStart = await this.cbs.start(process)
 
