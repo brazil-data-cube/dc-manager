@@ -11,8 +11,11 @@ export class STACService {
      * get stac version
      */
     public async getVersion(url): Promise<any> {
-        let urlSuffix = '/stac'
-        const response = await this.http.get(`${url}${urlSuffix}`).toPromise()
+        const response = await this.http.get(`${url}`).toPromise();
+        if (!response['stac_version']) {
+            const response = await this.http.get(`${url}/stac`).toPromise();
+            return response;
+        }
         return response;
     }
 

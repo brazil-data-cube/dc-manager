@@ -85,8 +85,6 @@ export class CreateCubePreviewComponent implements OnInit {
   async getCost() {
     try {
       this.store.dispatch(showLoading())
-      const temporalCompositions = await this.cbs.getTemporalCompositions()
-      const temporalSchema = temporalCompositions.filter(t => t.id === this.definition.temporal)
       const data = {
         start_date: this.rangeDates[0],
         last_date: this.rangeDates[1],
@@ -96,8 +94,8 @@ export class CreateCubePreviewComponent implements OnInit {
         quantity_bands: this.definition.bands.length,
         quantity_tiles: this.tiles.length,
         quantity_indexes: this.definition.indexes.length,
-        t_schema: temporalSchema[0].temporal_schema,
-        t_step: parseInt(temporalSchema[0].temporal_composite_t)
+        // t_schema: temporalSchema[0].temporal_schema,
+        // t_step: parseInt(temporalSchema[0].temporal_composite_t)
       }
 
       const response = await this.cbs.estimateCost(data)
@@ -131,16 +129,15 @@ export class CreateCubePreviewComponent implements OnInit {
   }
 
   getCubeName(func) {
-    const parts = this.definition.name.split('_')
-    return func ? `${this.definition.name}_${func}` : `${parts[0]}_${parts[1]}`
+    return func !== 'IDT' ? 
+      `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${func}` : 
+      `${this.definition.name}_${this.definition.resolution}`
   }
 
-  getCubeTypeDescription(func) {
-    switch (func) {
-      case 'STK': return 'Data cube using the STACK composition function'
-      case 'MED': return 'Data cube using the MED composition function'
-      default: return 'Irregular Data cube'
-    }
+  getComplementCubeName(temporalSchema) {
+    const temporalComposite = JSON.parse(temporalSchema)
+    const unit = temporalComposite['unit'].replace('day', 'D').replace('month', 'M').replace('year', 'Y')
+    return `${this.definition.resolution}_${temporalComposite['step']}${unit}`
   }
 
   async create() {
@@ -154,24 +151,13 @@ export class CreateCubePreviewComponent implements OnInit {
       try {
         this.store.dispatch(showLoading());
 
-        // CREATE RASTER SIZE SCHEMA
-        const rasterSchema = {
-          grs_schema: this.grid,
-          resolution: this.definition.resolution,
-          chunk_size_x: 256,
-          chunk_size_y: 256
-        }
-        const respRaster = await this.cbs.createRasterSchema(rasterSchema)
-
-        const cubeId = this.environmentVersion === 'local' ? this.definition.name.split('_')[0] : this.definition.name;
-
         // CREATE CUBES METADATA
         const cube = {
-          datacube: cubeId,
+          datacube: this.definition.name,
           grs: this.grid,
           resolution: this.definition.resolution,
-          temporal_schema: this.definition.temporal,
-          composite_function: this.definition.functions,
+          temporal_composition: JSON.parse(this.definition.temporal),
+          composite_functions_id: this.definition.functions.map(func => func['id']),
           bands: this.definition.bands.map(b => {
             return {'name': b, 'common_name': b, 'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8'}
           }),
@@ -179,8 +165,7 @@ export class CreateCubePreviewComponent implements OnInit {
           indexes: this.definition.indexes.map(i => {
             return {'name': i, 'common_name': i, 'data_type': 'int16'}
           }),
-          license: this.metadata.license,
-          description: this.metadata.description,
+          metadata: {...this.metadata, platform: { code: this.satellite }},
           quality_band: this.definition.qualityBand
         }
         const respCube = await this.cbs.create(cube)
@@ -202,14 +187,12 @@ export class CreateCubePreviewComponent implements OnInit {
           delete process['process_id']
           delete process['satellite']
 
-          const compositeFunctions = this.definition.functions.filter(fn => fn !== 'IDENTITY');
-
+          const compositeFunctions = this.definition.functions.filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
           if (compositeFunctions.length !== 0) {
-            process['composite_functions'] = compositeFunctions;
-            process['datacube'] = `${this.definition.name}_${compositeFunctions[0]}`;
+            process['datacube'] = `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${compositeFunctions[0]}`;
           } else {
             // Only IDENTITY selected
-            process['datacube'] = this.definition.name.split('_').slice(0, 2).join('_')
+            process['datacube'] = this.definition.name
           }
 
         }

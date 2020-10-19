@@ -25,7 +25,7 @@
                     <mat-label>Grid Name</mat-label>
                     <mat-select>
                         <mat-option *ngFor="let grid of grids" [value]="grid.id" (click)="selectGrid(grid)">
-                            {{ grid.id }}</mat-option>
+                            {{ grid.name }}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline">

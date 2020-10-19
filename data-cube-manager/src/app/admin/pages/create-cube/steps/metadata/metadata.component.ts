@@ -22,7 +22,7 @@ export class CreateCubeMetadataComponent implements OnInit {
     this.formMetadataCube = this.fb.group({
       license: [''],
       description: [''],
-      additional: ['']
+      // additional: ['']
     });
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
@@ -48,7 +48,7 @@ export class CreateCubeMetadataComponent implements OnInit {
         metadata: {
           license: this.formMetadataCube.get('license').value,
           description: this.formMetadataCube.get('description').value,
-          additional: this.formMetadataCube.get('additional').value
+          // additional: this.formMetadataCube.get('additional').value
         }
       }))
     }

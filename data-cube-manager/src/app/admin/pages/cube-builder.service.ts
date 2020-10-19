@@ -62,7 +62,7 @@ export class CubeBuilderService {
     public async getGrids(id = null): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        let urlSuffix = '/grs'
+        let urlSuffix = '/grids'
         if (id) {
             urlSuffix += `/${id}`
         }
@@ -87,18 +87,7 @@ export class CubeBuilderService {
     public async start(data): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = '/start';
-        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
-        return response;
-    }
-
-    /**
-     * create raster size schema
-     */
-    public async createRasterSchema(data): Promise<any> {
-        const token = sessionStorage.getItem('dc_manager_api_token')
-        const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = '/create-raster-size';
+        const urlSuffix = '/start-cube';
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
     }
@@ -148,27 +137,6 @@ export class CubeBuilderService {
         return response;
     }
 
-    /**
-     * get temporal compositions
-     */
-    public async getTemporalCompositions(): Promise<any> {
-        const token = sessionStorage.getItem('dc_manager_api_token')
-        const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = `/temporal-composition`;
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise();
-        return response;
-    }
-
-    /**
-     * create temporal compositions
-     */
-    public async createTemporalComposition(data): Promise<any> {
-        const token = sessionStorage.getItem('dc_manager_api_token')
-        const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = `/create-temporal-composition`;
-        const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
-        return response;
-    }
 
     /**
      * get composite functions

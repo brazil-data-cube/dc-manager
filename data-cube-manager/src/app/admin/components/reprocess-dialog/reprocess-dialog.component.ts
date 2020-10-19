@@ -77,7 +77,7 @@ export class ReprocessDialogComponent implements OnInit {
     const data = this.form.value;
     data.start_date = moment(data.start_date).utc().format('YYYY-MM-DD');
     data.end_date = moment(data.end_date).utc().format('YYYY-MM-DD');
-    data.collections = this.data.collections;
+    data.collections = [this.data.collections];
     data.datacube = data.datacube;
     data.force = !!this.data.force;
 

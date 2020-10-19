@@ -44,14 +44,15 @@ export class CreateCubeDefinitionComponent implements OnInit {
       bucket: ['', this.environmentVersion === 'cloud' ? [Validators.required] : []],
       name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9-]*$')]],
       resolution: ['', [Validators.required]],
-      temporalComposite: ['', [Validators.required]],
-      compositeFunctions: [['IDENTITY', 'MED', 'STK'], [Validators.required]],
+      temporalComposite: [{value: '', disabled: true}, [Validators.required]],
+      compositeFunctions: [[''], [Validators.required]],
       bands: [[''], [Validators.required]],
       quicklookR: ['', [Validators.required]],
       quicklookG: ['', [Validators.required]],
       quicklookB: ['', [Validators.required]],
       indexes: [['']],
-      qualityBand: ['', [Validators.required]]
+      qualityBand: ['', [Validators.required]],
+      public: [true, [Validators.required]],
     });
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
@@ -79,7 +80,6 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
   ngOnInit() {
     this.definitonCompleted = false
-    this.getTemporalCompositions()
     this.getCompositeFunctions()
     if (this.environmentVersion === 'cloud') {
       this.getBuckets();
@@ -87,11 +87,11 @@ export class CreateCubeDefinitionComponent implements OnInit {
     this.getIndexesAvailable()
   }
 
-  async getTemporalCompositions() {
+  async getCompositeFunctions() {
     try {
       this.store.dispatch(showLoading())
-      const response = await this.cbs.getTemporalCompositions()
-      this.temporalCompositions = response
+      const response = await this.cbs.getCompositeFunctions()
+      this.compositeFunctions = response
 
     } catch (err) {
       this.snackBar.open(err.error.toString(), '', {
@@ -123,24 +123,6 @@ export class CreateCubeDefinitionComponent implements OnInit {
     }
   }
 
-  async getCompositeFunctions() {
-    try {
-      this.store.dispatch(showLoading())
-      const response = await this.cbs.getCompositeFunctions()
-      this.compositeFunctions = response
-
-    } catch (err) {
-      this.snackBar.open(err.error.toString(), '', {
-        duration: 4000,
-        verticalPosition: 'top',
-        panelClass: 'app_snack-bar-error'
-      });
-
-    } finally {
-      this.store.dispatch(closeLoading())
-    }
-  }
-
   saveInfosInStore() {
     if (this.formCreateCube.status !== 'VALID') {
       this.snackBar.open('Fill in all fields correctly', '', {
@@ -152,14 +134,15 @@ export class CreateCubeDefinitionComponent implements OnInit {
       this.store.dispatch(setDefinition({
         definition: {
           bucket: this.formCreateCube.get('bucket').value,
-          name: this.getCubeFullName(),
+          name: this.formCreateCube.get('name').value,
           resolution: this.formCreateCube.get('resolution').value,
           temporal: this.formCreateCube.get('temporalComposite').value,
           functions: this.formCreateCube.get('compositeFunctions').value,
           bands: this.formCreateCube.get('bands').value,
           bandsQuicklook: this.getBandsQuicklook(),
           indexes: this.formCreateCube.get('indexes').value,
-          qualityBand: this.formCreateCube.get('qualityBand').value
+          qualityBand: this.formCreateCube.get('qualityBand').value,
+          public: this.formCreateCube.get('public').value
         }
       }))
       this.definitonCompleted = true
@@ -169,13 +152,16 @@ export class CreateCubeDefinitionComponent implements OnInit {
   getCubeFullName() {
     const name = this.formCreateCube.get('name').value
     const resolution = this.formCreateCube.get('resolution').value
-    const temporalComposite = this.formCreateCube.get('temporalComposite').value
-    let tcFormated = temporalComposite.substring(1)
-    tcFormated = tcFormated.replace('month', 'M').replace('day', 'D')
-    if (tcFormated === 'null') {
-      return `${name}_${resolution}`
+    if (this.formCreateCube.get('temporalComposite').value.length) {
+      const temporalComposite = JSON.parse(this.formCreateCube.get('temporalComposite').value)
+      const unit = temporalComposite['unit'].replace('day', 'D').replace('month', 'M').replace('year', 'Y')
+      if (unit === 'null') {
+        return `${name}_${resolution}`
+      } else {
+        return `${name}_${resolution}_${temporalComposite['step']}${unit}`
+      }
     } else {
-      return `${name}_${resolution}_${tcFormated}`
+      return `${name}_${resolution}`
     }
   }
 
@@ -188,12 +174,16 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
   openModalTemporal() {
     const dialogRef = this.dialog.open(TemporalCompositionModal, {
-      width: '450px',
-      disableClose: true
+      width: '800px',
+      data: {
+        schema: this.formCreateCube.get('temporalComposite').value
+      }
     })
 
-    dialogRef.afterClosed().subscribe(_ => {
-      this.getTemporalCompositions()
+    dialogRef.afterClosed().subscribe(value => {
+      if (value) {
+        this.formCreateCube.get('temporalComposite').setValue(value)
+      }
     })
   }
 
