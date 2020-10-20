@@ -130,7 +130,7 @@ export class CreateCubeImagesComponent implements OnInit {
 
     } catch (_) {
       this.snackBar.open(
-        'Collections not found in this STAC! Please use STAC service in the following version: 0.6.x, 0.7.x, 0.8.x',
+        'Collections not found in this STAC! Please use STAC service in the following version: 0.6.x, 0.7.x, 0.8.x, 0.9.x',
         '',
         {
           duration: 6000,
@@ -184,6 +184,7 @@ export class CreateCubeImagesComponent implements OnInit {
             const total = totalItemsByVersion(response, this.stacVersion)
             if (total === 0) {
               throw Error
+              
             } else {
               this.totalImages = total
               this.store.dispatch(setCollection({ collection }))
@@ -197,7 +198,7 @@ export class CreateCubeImagesComponent implements OnInit {
   
               const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
               await Object.keys(respCollection['properties']).forEach(props => {
-                if (props === 'bdc:bands' || props === 'bands') {
+                if (props === 'eo:bands' || props === 'bands') {
                   if (!respCollection['properties'][props]['0']) {
                     const bands = Object.keys(respCollection['properties'][props])
                     this.store.dispatch(setBandsAvailable({ bands }))

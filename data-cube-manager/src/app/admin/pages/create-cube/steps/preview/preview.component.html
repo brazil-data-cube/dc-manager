@@ -14,13 +14,13 @@
 
     <div class="row accordion" *ngIf="gridCompleted && regionCompleted && definitionCompleted">
         <mat-accordion class="col-12">
-            <mat-expansion-panel *ngFor="let func of ['', 'STK', 'MED']">
+            <mat-expansion-panel *ngFor="let func of definition.functions">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
-                        <b>{{ getCubeName(func) }}</b>
+                        <b>{{ getCubeName(func.alias) }}</b>
                     </mat-panel-title>
                     <mat-panel-description>
-                        {{ getCubeTypeDescription(func) }}
+                        {{ func.description }}
                     </mat-panel-description>
                 </mat-expansion-panel-header>
 
@@ -34,7 +34,7 @@
                                 <p><b>Range Temporal:</b> {{ rangeDates[0] }}/{{ rangeDates[1] }}</p>
                                 <p><b>Resolution:</b> {{ definition.resolution }}</p>
                                 <p><b>Temporal Composition:</b> {{ definition.temporal }}</p>
-                                <p><b>Composite Function:</b> {{ func || 'IDENTITY' }}</p>
+                                <p><b>Composite Function:</b> {{ func.name }}</p>
                                 <p><b>Bands:</b> {{ definition.bands.join(', ') }}</p>
                                 <p><b>Indexes:</b> {{ definition.indexes.join(', ') }}</p>
                                 <p><b>Bands to compose Quicklook:</b> {{ definition.bandsQuicklook.join(', ') }}</p>

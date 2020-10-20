@@ -3,27 +3,62 @@
     
     <div mat-dialog-content>
         <p>Fill in the information to create a new schema</p>
-    
-        <mat-form-field appearance="outline">
-            <mat-label>Schema</mat-label>
-            <mat-select formControlName="temporalSchema">
-                <mat-option *ngFor="let schema of ['A', 'M']" [value]="schema">
-                    {{ schema }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <mat-label>T</mat-label>
-            <input type="number" min="1" matInput formControlName="temporalCompositeT">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <mat-label>Unit</mat-label>
-            <mat-select formControlName="temporalCompositeUnit">
-                <mat-option *ngFor="let unit of ['day', 'month']" [value]="unit">
-                    {{ unit }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+        
+        <div class="row box-temporal_forms">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <mat-form-field appearance="outline">
+                    <mat-label>Schema</mat-label>
+                    <mat-select formControlName="temporalSchema">
+                        <mat-option *ngFor="let schema of ['Continuous', 'Cyclic']" 
+                                    [value]="schema.toLowerCase()">
+                            {{ schema }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Step</mat-label>
+                    <input type="number" min="1" matInput formControlName="temporalCompositeStep">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Unit</mat-label>
+                    <mat-select formControlName="temporalCompositeUnit">
+                        <mat-option *ngFor="let unit of ['day', 'month', 'year']" [value]="unit">
+                            {{ unit }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Intervals</mat-label>
+                    <input matInput formControlName="temporalCompositeIntervals">
+                </mat-form-field>
+            </div>
+
+            <div class="cyclic-box col-lg-6 col-md-6 col-sm-12" *ngIf="this.formTemporalCreate.get('temporalSchema').value === 'cyclic'">
+                <p class="title">
+                    <b>Cyclic Information</b>
+                </p>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Cyclic Step</mat-label>
+                    <input type="number" min="1" matInput formControlName="temporalCompositeCyclicStep">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Cyclic Unit</mat-label>
+                    <mat-select formControlName="temporalCompositeCyclicUnit">
+                        <mat-option *ngFor="let unit of ['day', 'month', 'year']" [value]="unit">
+                            {{ unit }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Intervals</mat-label>
+                    <input matInput formControlName="temporalCompositeCyclicIntervals">
+                </mat-form-field>
+            </div>
+        </div>
     </div>
     
     <div mat-dialog-actions>
