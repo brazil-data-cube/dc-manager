@@ -43,6 +43,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
     this.formCreateCube = this.fb.group({
       bucket: ['', this.environmentVersion === 'cloud' ? [Validators.required] : []],
       name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9-]*$')]],
+      version: ['', [Validators.required]],
       resolution: ['', [Validators.required]],
       temporalComposite: [{value: '', disabled: true}, [Validators.required]],
       compositeFunctions: [[''], [Validators.required]],
@@ -135,6 +136,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
         definition: {
           bucket: this.formCreateCube.get('bucket').value,
           name: this.formCreateCube.get('name').value,
+          version: this.formCreateCube.get('version').value,
           resolution: this.formCreateCube.get('resolution').value,
           temporal: this.formCreateCube.get('temporalComposite').value,
           functions: this.formCreateCube.get('compositeFunctions').value,

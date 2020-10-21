@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminState } from 'app/admin/admin.state';
 import { Store, select } from '@ngrx/store';
@@ -20,6 +20,7 @@ export class CreateCubeMetadataComponent implements OnInit {
     private snackBar: MatSnackBar,
     private fb: FormBuilder) {
     this.formMetadataCube = this.fb.group({
+      title: ['', [Validators.required, Validators.maxLength(100)]],
       license: [''],
       description: [''],
       // additional: ['']
@@ -46,6 +47,7 @@ export class CreateCubeMetadataComponent implements OnInit {
     } else {
       this.store.dispatch(setMetadata({
         metadata: {
+          title: this.formMetadataCube.get('title').value,
           license: this.formMetadataCube.get('license').value,
           description: this.formMetadataCube.get('description').value,
           // additional: this.formMetadataCube.get('additional').value
