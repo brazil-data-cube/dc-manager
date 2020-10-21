@@ -76,7 +76,7 @@ export class CubeBuilderService {
     public async create(data): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = '/create';
+        const urlSuffix = '/cubes';
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
     }
@@ -87,7 +87,7 @@ export class CubeBuilderService {
     public async start(data): Promise<any> {
         const token = sessionStorage.getItem('dc_manager_api_token')
         const headers = token ? { headers: { 'x-api-key': token } } : {}
-        const urlSuffix = '/start-cube';
+        const urlSuffix = '/start';
         const response = await this.http.post(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
         return response;
     }

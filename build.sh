@@ -7,11 +7,7 @@ echo "BUILD STARTED"
 echo
 
 cd data-cube-manager
-docker build -t image-to-build-data-cube-manager . --no-cache
-
-docker run --name data-cube-manager-node-build -v $PWD/../deploy/dist:/deploy/dist image-to-build-data-cube-manager
-docker rm data-cube-manager-node-build
-docker rmi image-to-build-data-cube-manager
+npm run build -- --prod
 
 cd ../deploy
 echo

@@ -150,10 +150,12 @@ export class CreateCubePreviewComponent implements OnInit {
     } else {
       try {
         this.store.dispatch(showLoading());
+        const title = this.metadata['title']
 
         // CREATE CUBES METADATA
         const cube = {
           datacube: this.definition.name,
+          title: title,
           grs: this.grid,
           resolution: this.definition.resolution,
           temporal_composition: JSON.parse(this.definition.temporal),
@@ -165,7 +167,7 @@ export class CreateCubePreviewComponent implements OnInit {
           indexes: this.definition.indexes.map(i => {
             return {'name': i, 'common_name': i, 'data_type': 'int16'}
           }),
-          metadata: {...this.metadata, platform: { code: this.satellite }},
+          metadata: {license: this.metadata['license'], description: this.metadata['description'], platform: { code: this.satellite }},
           quality_band: this.definition.qualityBand
         }
         const respCube = await this.cbs.create(cube)

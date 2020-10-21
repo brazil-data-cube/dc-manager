@@ -15,7 +15,7 @@
                         </div>
                         <div class="card-body">
                             <p class="card-category text-justify">
-                                {{ cube.description }}
+                                {{ cube.description.length > 145 ? cube.description.substring(0, 145) + '...' : cube.description }}
                             </p>
                         </div>
                         <div class="card-footer">

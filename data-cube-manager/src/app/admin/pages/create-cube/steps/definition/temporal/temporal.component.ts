@@ -6,7 +6,7 @@ import { TemporalSchema } from "./temporalSchema.interface";
 
 @Component({
     selector: 'temporal-composition-modal',
-    templateUrl: 'temporal.component.html',
+    templateUrl: './temporal.component.html',
     styleUrls: ['./temporal.component.scss']
 })
 export class TemporalCompositionModal {

@@ -184,7 +184,8 @@ export class CheckCubeComponent implements OnInit {
             width: '600px',
             disableClose: true,
             data: {
-                bbox: this.bbox
+                bbox: this.bbox,
+                cube: this.cube
             }
         })
         dialogRef.afterClosed().subscribe(result => {
