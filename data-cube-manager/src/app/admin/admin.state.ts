@@ -1,5 +1,5 @@
 export interface AdminState {
-    readonly grid: String;
+    readonly grid: object;
     readonly urlSTAC: String;
     readonly bandsAvailable: string[];
     readonly collection: String;

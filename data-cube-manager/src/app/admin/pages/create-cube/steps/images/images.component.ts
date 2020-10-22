@@ -38,7 +38,9 @@ export class CreateCubeImagesComponent implements OnInit {
   public grid: string
   public totalImages: number
   public tiles: string[]
+  public tilesString: string
   public featuresSelected: any[]
+  public isBigGrid = false
 
   constructor(
     private cbs: CubeBuilderService,
@@ -60,9 +62,10 @@ export class CreateCubeImagesComponent implements OnInit {
     this.initializeVariables()
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
-      if (res.grid && res.grid !== '' && res.grid !== this.grid) {
-        this.grid = res.grid
-        this.selectGrid(res.grid)
+      if (res.grid && res.grid.infos && res.grid.infos.id !== this.grid) {
+        this.grid = res.grid.infos.id
+        this.isBigGrid = res.grid.large
+        this.selectGrid(res.grid.infos.id)
       }
     })
   }
@@ -94,18 +97,20 @@ export class CreateCubeImagesComponent implements OnInit {
       })
 
       // plot grid in map
-      const response = await this.cbs.getGrids(grid)
-      const features = response['tiles'].map(t => {
-        return { ...t['geom_wgs84'], id: t['id'] }
-      })
-      const layer = geoJSON(features, {
-        attribution: `BDC-${grid}`
-      }).setStyle({
-        fillOpacity: 0.1,
-        fillColor:'blue'
-      })
-      this.map.addLayer(layer)
-      this.map.fitBounds(layer.getBounds())
+      if (!this.isBigGrid) {
+        let response = await this.cbs.getGrids(grid)
+        const features = response['tiles'].map(t => {
+          return { ...t['geom_wgs84'], id: t['id'] }
+        })
+        const layer = geoJSON(features, {
+          attribution: `BDC-${grid}`
+        }).setStyle({
+          fillOpacity: 0.1,
+          fillColor:'blue'
+        })
+        this.map.addLayer(layer)
+        this.map.fitBounds(layer.getBounds())
+      }
 
     } catch (_) {
       this.grid = ''
@@ -159,61 +164,58 @@ export class CreateCubeImagesComponent implements OnInit {
           panelClass: 'app_snack-bar-error'
         });
       } else {
-        if (!this.featuresSelected || this.featuresSelected.length <= 0 || !this.tiles) {
-          this.snackBar.open('Select the region of interest in the grid', '', {
+        if ((!this.tiles || this.tiles.length === 0) && (!this.tilesString.length)) {
+          this.snackBar.open('Select the region of interest in the grid or set tile_id in input', '', {
             duration: 4000,
             verticalPosition: 'top',
             panelClass: 'app_snack-bar-error'
           });
+
         } else {
 
           try {
             this.store.dispatch(showLoading());
-            const bbox = featureGroup(this.featuresSelected).getBounds().toBBoxString()
-
+            
             const urlSTAC = this.formSearchImages.get('urlSTAC').value
             const collection = this.formSearchImages.get('collection').value
             const satellite = this.formSearchImages.get('satellite').value
             const startDate = this.formSearchImages.get('startDate').value
             const lastDate = this.formSearchImages.get('lastDate').value
-            let query = `bbox=${this.stacVersion === '0.6' ? '['+bbox+']' : bbox}`
-            query += `&time=${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`
-            query += '&limit=1'
+            
+            if (this.isBigGrid) {
+              this.totalImages = null
+              this.tiles = this.tilesString.split(',').map(t => t.trim());
+              this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles);
 
-            const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
-            const total = totalItemsByVersion(response, this.stacVersion)
-            if (total === 0) {
-              throw Error
-              
-            } else {
-              this.totalImages = total
-              this.store.dispatch(setCollection({ collection }))
-              this.store.dispatch(setSatellite({ satellite }))
-              this.store.dispatch(setRangeTemporal({ 
-                startDate: formatDateUSA(startDate),
-                lastDate: formatDateUSA(lastDate)
-              }))
-              this.store.dispatch(setTiles({ tiles: this.tiles }))
-              this.store.dispatch(setUrlSTAC({ url: urlSTAC }))
-  
-              const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
-              await Object.keys(respCollection['properties']).forEach(props => {
-                if (props === 'eo:bands' || props === 'bands') {
-                  if (!respCollection['properties'][props]['0']) {
-                    const bands = Object.keys(respCollection['properties'][props])
-                    this.store.dispatch(setBandsAvailable({ bands }))
-                  } else {
-                    const bands = respCollection['properties'][props].map(b => b['name'])
-                    this.store.dispatch(setBandsAvailable({ bands }))
-                  }
-                }
-              })
-  
-              this.snackBar.open(`Found: ${this.totalImages} images!`, '', {
+              this.snackBar.open(`Collection is valid!`, '', {
                 duration: 4000,
                 verticalPosition: 'top',
                 panelClass: 'app_snack-bar-success'
               });
+              
+            } else {
+              const bbox = featureGroup(this.featuresSelected).getBounds().toBBoxString()
+  
+              let query = `bbox=${this.stacVersion === '0.6' ? '['+bbox+']' : bbox}`
+              query += `&time=${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`
+              query += '&limit=1'
+  
+              const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
+              const total = totalItemsByVersion(response, this.stacVersion)
+              if (total === 0) {
+                throw Error
+                
+              } else {
+                this.totalImages = total
+  
+                this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles)
+
+                this.snackBar.open(`Found: ${this.totalImages} images!`, '', {
+                  duration: 4000,
+                  verticalPosition: 'top',
+                  panelClass: 'app_snack-bar-success'
+                });
+              }
             }
 
           } catch (_) {
@@ -229,6 +231,42 @@ export class CreateCubeImagesComponent implements OnInit {
         }
       }
     }
+  }
+
+  async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, tiles) {
+    try {
+      const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
+      await Object.keys(respCollection['properties']).forEach(props => {
+        if (props === 'eo:bands' || props === 'bands') {
+          if (!respCollection['properties'][props]['0']) {
+            const bands = Object.keys(respCollection['properties'][props])
+            this.store.dispatch(setBandsAvailable({ bands }))
+          } else {
+            const bands = respCollection['properties'][props].map(b => b['name'])
+            this.store.dispatch(setBandsAvailable({ bands }))
+          }
+        }
+      })
+
+      this.store.dispatch(setTiles({ tiles: this.tiles }))
+      this.store.dispatch(setCollection({ collection }))
+      this.store.dispatch(setSatellite({ satellite }))
+      this.store.dispatch(setRangeTemporal({ 
+        startDate: formatDateUSA(startDate),
+        lastDate: formatDateUSA(lastDate)
+      }))
+      this.store.dispatch(setUrlSTAC({ url: urlSTAC }))
+
+    } catch (_) {
+      this.snackBar.open('Bands not found in STAC-Collection!', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+    } finally {
+      this.store.dispatch(closeLoading());
+    }
+
   }
 
   /**

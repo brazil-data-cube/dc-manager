@@ -41,8 +41,8 @@ export class CreateCubePreviewComponent implements OnInit {
     });
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
-      if (res.grid && res.grid !== '') {
-        this.grid = res.grid
+      if (res.grid && res.grid && res.grid.infos) {
+        this.grid = res.grid.infos.id
         this.gridCompleted = true
       }
       if (res.tiles && res.tiles.length > 0) {
@@ -93,9 +93,7 @@ export class CreateCubePreviewComponent implements OnInit {
         grid: this.grid,
         quantity_bands: this.definition.bands.length,
         quantity_tiles: this.tiles.length,
-        quantity_indexes: this.definition.indexes.length,
-        // t_schema: temporalSchema[0].temporal_schema,
-        // t_step: parseInt(temporalSchema[0].temporal_composite_t)
+        quantity_indexes: this.definition.indexes.length
       }
 
       const response = await this.cbs.estimateCost(data)
@@ -174,11 +172,10 @@ export class CreateCubePreviewComponent implements OnInit {
 
         // START CUBE CREATION
         const process = {
-          process_id: respCube['cubes']['process_id'],
           url_stac: this.urlSTAC,
           bucket: this.definition.bucket,
           tiles: this.tiles,
-          collections: this.collection,
+          collections: this.collection.split(','),
           satellite: this.satellite,
           start_date: this.rangeDates[0],
           end_date: this.rangeDates[1],
@@ -186,7 +183,6 @@ export class CreateCubePreviewComponent implements OnInit {
         }
         if (this.environmentVersion === 'local') {
           delete process['bucket']
-          delete process['process_id']
           delete process['satellite']
 
           const compositeFunctions = this.definition.functions.filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
@@ -196,7 +192,8 @@ export class CreateCubePreviewComponent implements OnInit {
             // Only IDENTITY selected
             process['datacube'] = this.definition.name
           }
-
+        } else {
+          process['process_id'] = respCube['cubes']['process_id']
         }
         const respStart = await this.cbs.start(process)
 

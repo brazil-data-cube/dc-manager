@@ -6,7 +6,11 @@
 
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12">
-            <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)"></div>
+            <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)">
+                <div class="map-disclaimer" *ngIf="isBigGrid">
+                    We don't show the grid, because it is too big
+                </div>
+            </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12 form">
             <div class="btn-group">

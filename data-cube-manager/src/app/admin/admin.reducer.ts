@@ -6,7 +6,7 @@ import { AdminState } from './admin.state';
 
 /** initial values to Admin State */
 const initialState: AdminState = {
-  grid: '',
+  grid: {},
   urlSTAC: '',
   bandsAvailable: [],
   collection: '',
