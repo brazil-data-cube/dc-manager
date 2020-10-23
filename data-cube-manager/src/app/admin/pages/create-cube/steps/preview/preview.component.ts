@@ -169,7 +169,8 @@ export class CreateCubePreviewComponent implements OnInit {
           indexes: this.definition.indexes.map(i => {
             return {'name': i, 'common_name': i, 'data_type': 'int16'}
           }),
-          metadata: {license: this.metadata['license'], description: this.metadata['description'], platform: { code: this.satellite }},
+          metadata: {license: this.metadata['license'], platform: { code: this.satellite }},
+          description: this.metadata['description'],
           quality_band: this.definition.qualityBand
         }
         const respCube = await this.cbs.create(cube)
