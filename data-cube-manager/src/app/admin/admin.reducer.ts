@@ -17,9 +17,11 @@ const initialState: AdminState = {
   definitionInfos: {
     bucket: '',
     name: '',
+    version: null,
+    public: true,
     resolution: null,
     temporal: '',
-    functions: [],
+    function: {},
     bands: [],
     bandsQuicklook: [],
     indexes: [],

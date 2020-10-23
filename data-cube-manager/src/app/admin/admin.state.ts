@@ -14,9 +14,11 @@ export interface AdminState {
 export interface DefinitionCube {
     bucket: string;
     name: string;
+    version: number;
+    public: boolean;
     resolution: number;
     temporal: string;
-    functions: string[];
+    function: object;
     bands: string[];
     bandsQuicklook: string[];
     indexes: string[];
