@@ -11,7 +11,11 @@
 
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-12">
-            <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)"></div>
+            <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)">
+                <div class="map-disclaimer" *ngIf="isBigGrid">
+                    <input matInput placeholder="set tiles (tile_id) comma-separated" name="tiles" [(ngModel)]="tilesString">
+                </div>
+            </div>
         </div>
 
         <form class="col-lg-4 col-md-4 col-sm-12 form" (ngSubmit)="searchImages()" [formGroup]="formSearchImages">

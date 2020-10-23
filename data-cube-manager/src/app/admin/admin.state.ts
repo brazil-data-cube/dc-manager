@@ -1,5 +1,5 @@
 export interface AdminState {
-    readonly grid: String;
+    readonly grid: object;
     readonly urlSTAC: String;
     readonly bandsAvailable: string[];
     readonly collection: String;
@@ -14,9 +14,11 @@ export interface AdminState {
 export interface DefinitionCube {
     bucket: string;
     name: string;
+    version: number;
+    public: boolean;
     resolution: number;
     temporal: string;
-    functions: string[];
+    function: object;
     bands: string[];
     bandsQuicklook: string[];
     indexes: string[];

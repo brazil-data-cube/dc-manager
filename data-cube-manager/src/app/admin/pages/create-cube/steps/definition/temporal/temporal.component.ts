@@ -63,7 +63,7 @@ export class TemporalCompositionModal {
                     } else {
                         newSchema = {
                             ...newSchema,
-                            cyclic: {
+                            cycle: {
                                 step: this.formTemporalCreate.get('temporalCompositeCyclicStep').value,
                                 unit: this.formTemporalCreate.get('temporalCompositeCyclicUnit').value,
                                 intervals: this.formTemporalCreate.get('temporalCompositeCyclicIntervals').value

@@ -25,6 +25,7 @@ export class CreateCubeGridComponent implements OnInit {
   public options: MapOptions;
 
   public grids = [];
+  public isBigGrid = false;
   public action = 'select';
   public bbox = ''
   public grid: Grid;
@@ -91,28 +92,36 @@ export class CreateCubeGridComponent implements OnInit {
 
       // plot grid in map
       this.grid = grid;
-      const response = await this.cbs.getGrids(grid.id)
-      const features = response['tiles'].map(t => {
-        return { ...t['geom_wgs84'], id: t['id'] }
-      })
-      const layer = geoJSON(features, {
-        attribution: `BDC-${grid.id}`
-      }).setStyle({
-        fillOpacity: 0.1
-      })
-      this.map.addLayer(layer)
-      this.bbox = layer.getBounds().toBBoxString()
-      this.map.fitBounds(layer.getBounds())
-      this.store.dispatch(setGrid({ grid: grid.id }))
+      let response = await this.cbs.getGrids(grid.id)
+      if (response['tiles'].length > 2500) {
+        this.isBigGrid = true
+        response = null
 
+      } else {
+        this.isBigGrid = false
+
+        const features = response['tiles'].map(t => {
+          return { ...t['geom_wgs84'], id: t['id'] }
+        })
+        const layer = geoJSON(features, {
+          attribution: `BDC-${grid.id}`
+        }).setStyle({
+          fillOpacity: 0.1
+        })
+        this.map.addLayer(layer)
+        this.bbox = layer.getBounds().toBBoxString()
+        this.map.fitBounds(layer.getBounds())
+      }
+      
     } catch (err) {
       this.snackBar.open('Error when selecting the grid', '', {
         duration: 4000,
         verticalPosition: 'top',
         panelClass: 'app_snack-bar-error'
       });
-
+      
     } finally {
+      this.store.dispatch(setGrid({ grid: { infos: this.grid, large: this.isBigGrid } }))
       this.store.dispatch(closeLoading())
     }
   }

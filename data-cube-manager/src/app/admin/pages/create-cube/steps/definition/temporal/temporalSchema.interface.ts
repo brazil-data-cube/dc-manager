@@ -3,5 +3,5 @@ export interface TemporalSchema {
     step: string,
     unit: number,
     intervals?: string,
-    cyclic?: object
+    cycle?: object
 }

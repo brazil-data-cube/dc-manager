@@ -27,6 +27,8 @@ export class CreateCubePreviewComponent implements OnInit {
   public satellite: string
   public rangeDates: string[]
   public cost = {}
+  public cubeCreated = false
+  public processId: string
 
   public environmentVersion = window['__env'].environmentVersion
 
@@ -41,8 +43,8 @@ export class CreateCubePreviewComponent implements OnInit {
     });
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
-      if (res.grid && res.grid !== '') {
-        this.grid = res.grid
+      if (res.grid && res.grid && res.grid.infos) {
+        this.grid = res.grid.infos.name
         this.gridCompleted = true
       }
       if (res.tiles && res.tiles.length > 0) {
@@ -93,9 +95,7 @@ export class CreateCubePreviewComponent implements OnInit {
         grid: this.grid,
         quantity_bands: this.definition.bands.length,
         quantity_tiles: this.tiles.length,
-        quantity_indexes: this.definition.indexes.length,
-        // t_schema: temporalSchema[0].temporal_schema,
-        // t_step: parseInt(temporalSchema[0].temporal_composite_t)
+        quantity_indexes: this.definition.indexes.length
       }
 
       const response = await this.cbs.estimateCost(data)
@@ -129,8 +129,8 @@ export class CreateCubePreviewComponent implements OnInit {
   }
 
   getCubeName(func) {
-    return func !== 'IDT' ? 
-      `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${func}` : 
+    return func !== 'IDT' ?
+      `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${func}` :
       `${this.definition.name}_${this.definition.resolution}`
   }
 
@@ -157,9 +157,11 @@ export class CreateCubePreviewComponent implements OnInit {
           datacube: this.definition.name,
           title: title,
           grs: this.grid,
+          version: this.definition.version,
+          public: this.definition.public,
           resolution: this.definition.resolution,
           temporal_composition: JSON.parse(this.definition.temporal),
-          composite_functions_id: this.definition.functions.map(func => func['id']),
+          composite_function: this.definition.function['alias'],
           bands: this.definition.bands.map(b => {
             return {'name': b, 'common_name': b, 'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8'}
           }),
@@ -167,45 +169,20 @@ export class CreateCubePreviewComponent implements OnInit {
           indexes: this.definition.indexes.map(i => {
             return {'name': i, 'common_name': i, 'data_type': 'int16'}
           }),
-          metadata: {license: this.metadata['license'], description: this.metadata['description'], platform: { code: this.satellite }},
+          metadata: {license: this.metadata['license'], platform: { code: this.satellite }},
+          description: this.metadata['description'],
           quality_band: this.definition.qualityBand
         }
         const respCube = await this.cbs.create(cube)
-
-        // START CUBE CREATION
-        const process = {
-          process_id: respCube['cubes']['process_id'],
-          url_stac: this.urlSTAC,
-          bucket: this.definition.bucket,
-          tiles: this.tiles,
-          collections: this.collection,
-          satellite: this.satellite,
-          start_date: this.rangeDates[0],
-          end_date: this.rangeDates[1],
-          force: false
+        if (this.environmentVersion !== 'local') {
+         this.processId = respCube['cubes']['process_id']
         }
-        if (this.environmentVersion === 'local') {
-          delete process['bucket']
-          delete process['process_id']
-          delete process['satellite']
 
-          const compositeFunctions = this.definition.functions.filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
-          if (compositeFunctions.length !== 0) {
-            process['datacube'] = `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${compositeFunctions[0]}`;
-          } else {
-            // Only IDENTITY selected
-            process['datacube'] = this.definition.name
-          }
-
-        }
-        const respStart = await this.cbs.start(process)
-
-        this.snackBar.open('Cubes started with successfully', '', {
+        this.snackBar.open('Cube metadata created with successfully', '', {
           duration: 4000,
           verticalPosition: 'top',
           panelClass: 'app_snack-bar-success'
         });
-        this.router.navigate(['/list-cubes']);
 
       } catch (error) {
         const err = error && error.response ? error.response : 'Error creating cube'
@@ -218,6 +195,57 @@ export class CreateCubePreviewComponent implements OnInit {
       } finally {
         this.store.dispatch(closeLoading());
       }
+    }
+  }
+
+  async start() {
+    try {
+      this.store.dispatch(showLoading());
+
+      // START CUBE CREATION
+      const process = {
+        stac_url: this.urlSTAC,
+        bucket: this.definition.bucket,
+        tiles: this.tiles,
+        collections: this.collection.split(','),
+        satellite: this.satellite,
+        start_date: this.rangeDates[0],
+        end_date: this.rangeDates[1],
+        force: false
+      }
+      if (this.environmentVersion === 'local') {
+        delete process['bucket']
+        delete process['satellite']
+
+        const compositeFunctions = [this.definition.function].filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
+        if (compositeFunctions.length !== 0) {
+          process['datacube'] = `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${compositeFunctions[0]}`;
+        } else {
+          // Only IDENTITY selected
+          process['datacube'] = this.definition.name
+        }
+      } else {
+        process['process_id'] = this.processId
+      }
+      const respStart = await this.cbs.start(process)
+
+      this.snackBar.open('Cube started with successfully', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-success'
+      });
+      this.router.navigate(['/list-cubes']);
+
+    } catch (error) {
+      const err = error && error.response ? error.response : 'Error starting cube'
+      this.snackBar.open(err, '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+
+    } finally {
+      this.store.dispatch(closeLoading());
     }
   }
 }

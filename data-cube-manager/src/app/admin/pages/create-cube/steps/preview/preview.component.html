@@ -14,7 +14,7 @@
 
     <div class="row accordion" *ngIf="gridCompleted && regionCompleted && definitionCompleted">
         <mat-accordion class="col-12">
-            <mat-expansion-panel *ngFor="let func of definition.functions">
+            <mat-expansion-panel *ngFor="let func of [definition.function]">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         <b>{{ getCubeName(func.alias) }}</b>
@@ -81,13 +81,18 @@
             </mat-expansion-panel>
         </mat-accordion>
 
-        <form class="col-12 box_btn" [formGroup]="formCreate" (ngSubmit)="create()">
-            <mat-checkbox style="margin-top: 10px;" color="primary" formControlName="agree">
-                <span style="font-size: 1.3em;">I agree with the creation of the cubes!</span>
-            </mat-checkbox>
-            <button type="submit" mat-raised-button color="primary">
-                CREATE CUBE
+        <div class="col-12 box_btn">
+            <form [formGroup]="formCreate" (ngSubmit)="create()">
+                <mat-checkbox style="margin-top: 10px;" color="primary" formControlName="agree" [disabled]="cubeCreated">
+                    <span style="font-size: 1.3em;">I agree with the creation of the cubes!</span>
+                </mat-checkbox>
+                <button type="submit" mat-raised-button color="primary" [disabled]="cubeCreated">
+                    CREATE CUBE
+                </button>
+            </form>
+            <button type="submit" mat-raised-button color="primary" [disabled]="!cubeCreated" style="margin-top: -15px;">
+                START PROCESS
             </button>
-        </form>
+        </div>
     </div>
 </div>
