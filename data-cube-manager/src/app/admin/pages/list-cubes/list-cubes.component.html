@@ -1,7 +1,7 @@
 <div class="main-content">
     <div class="container-fluid">
-        <app-alert 
-            type="warning" 
+        <app-alert
+            type="warning"
             *ngIf="cubes.length == 0"
             message="You have no cubes created. Create your first now!"></app-alert>
 
@@ -15,7 +15,7 @@
                         </div>
                         <div class="card-body">
                             <p class="card-category text-justify">
-                                {{ cube.description.length > 145 ? cube.description.substring(0, 145) + '...' : cube.description }}
+                                {{ cube.description && cube.description.length > 145 ? cube.description.substring(0, 145) + '...' : cube.description }}
                             </p>
                         </div>
                         <div class="card-footer">
