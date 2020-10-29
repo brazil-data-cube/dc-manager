@@ -28,11 +28,13 @@
             </div>
 
             <span><b>Images used:</b></span>
-            <ol class="merges-used">
-                <li *ngFor="let image of getImagesFromMerge(date)">
-                    {{ getScenePath(image) }}
-                </li>
-            </ol>
+            <div class="merges-used">
+                <div class="merge-item" *ngFor="let image of getImagesFromMerge(date)">
+                    <a [href]="getScenePath(image)" target="_blank">
+                        <img [src]="getScenePath(image)" style="width: 64px;height: 64px;" />
+                    </a>
+                </div>
+            </div>
 
             <span><b>Errors:</b> {{ countErrors(date) }} </span>
 

@@ -56,7 +56,7 @@ export class SceneDetailsComponent implements OnInit {
       return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
 
     } else {
-      qk = mergeAssets[0].replace('.tif', '.png').replace(`_${bands[0]}`, '')
+      qk = this.merges[date].file.replace('.tif', '.png').replace(`_${bands[0]}`, '')
       return qk
     }
   }
@@ -65,7 +65,7 @@ export class SceneDetailsComponent implements OnInit {
     const parts = file.split('/')
     const partsSceneID = parts[parts.length - 1].split('_')
     const band = partsSceneID[partsSceneID.length - 1].replace('.tif', '')
-    return file.replace(`_${band}.tif`, '')
+    return file.replace(`_${band}.tif`, '.png')
   }
 
   close() {

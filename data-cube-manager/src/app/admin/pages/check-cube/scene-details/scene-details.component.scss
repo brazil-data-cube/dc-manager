@@ -12,14 +12,13 @@
   }
 
   .merges-used {
-    display: flex;
-    flex-direction: column;
+    text-align: center;
     padding: 10px 20px !important;
-    margin: 0px; 
+    margin: 0px;
 
-    li {
-      margin-bottom: 5px;
-      word-wrap: break-word;
+    .merge-item {
+      display: inline-block;
+      margin: 5px;
     }
   }
 }
