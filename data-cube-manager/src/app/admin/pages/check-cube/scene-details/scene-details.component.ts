@@ -56,8 +56,13 @@ export class SceneDetailsComponent implements OnInit {
       return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`
 
     } else {
-      qk = this.merges[date].file.replace('.tif', '.png').replace(`_${bands[0]}`, '')
-      return qk
+      qk = this.merges[date].file.replace('.tif', '.png')
+      bands.forEach(band => {
+        qk = qk.replace(`_${band}`, '')
+      })
+
+      const newPath = qk.startsWith('/gfs/') ? qk.substring(4) : qk
+      return `http://brazildatacube.dpi.inpe.br${newPath}`;
     }
   }
 
