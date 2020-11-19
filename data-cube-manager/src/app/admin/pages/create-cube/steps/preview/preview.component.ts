@@ -169,7 +169,7 @@ export class CreateCubePreviewComponent implements OnInit {
           indexes: this.definition.indexes.map(i => {
             return {'name': i, 'common_name': i, 'data_type': 'int16'}
           }),
-          metadata: {license: this.metadata['license'], platform: { code: this.satellite }},
+          metadata: {license: this.metadata['license'], platform: { code: this.metadata['satellite'], instruments: this.metadata['instruments'] }},
           description: this.metadata['description'],
           quality_band: this.definition.qualityBand
         }
@@ -177,7 +177,8 @@ export class CreateCubePreviewComponent implements OnInit {
         if (this.environmentVersion !== 'local') {
          this.processId = respCube['cubes']['process_id']
         }
-
+        
+        this.cubeCreated = true;
         this.snackBar.open('Cube metadata created with successfully', '', {
           duration: 4000,
           verticalPosition: 'top',

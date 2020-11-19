@@ -8,6 +8,15 @@ export const totalItemsByVersion = (data, version) => {
     return func(data)
 }
 
+function version1collections(data) {
+    const links = data
+    return links.map(d => d.id)
+}
+
+function version1totalItems(data) {
+    return data['context']['matched']
+}
+
 function version9collections(data) {
     const links = data['collections']
     return links.map(d => d.id)
@@ -40,6 +49,10 @@ function version7totalItems(data) {
 }
 
 const dictVersion = {
+    '1.0': {
+        'collections': version1collections,
+        'totalItems': version1totalItems
+    },
     '0.9': {
         'collections': version9collections,
         'totalItems': version9totalItems

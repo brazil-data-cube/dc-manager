@@ -22,6 +22,8 @@ export class CreateCubeMetadataComponent implements OnInit {
     this.formMetadataCube = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
       license: [''],
+      satellite: ['', [Validators.required]],
+      instruments: ['', [Validators.required]],
       description: [''],
       // additional: ['']
     });
@@ -29,6 +31,9 @@ export class CreateCubeMetadataComponent implements OnInit {
     this.store.pipe(select('admin' as any)).subscribe(res => {
       if (res.definitionInfos && res.definitionInfos.resolution) {
         this.definitionCompleted = true
+      }
+      if (res.satellite) {
+        this.formMetadataCube.get('satellite').setValue(res.satellite)
       }
     })
   }
@@ -50,6 +55,8 @@ export class CreateCubeMetadataComponent implements OnInit {
           title: this.formMetadataCube.get('title').value,
           license: this.formMetadataCube.get('license').value,
           description: this.formMetadataCube.get('description').value,
+          satellite: this.formMetadataCube.get('satellite').value,
+          instruments: this.formMetadataCube.get('instruments').value,
           // additional: this.formMetadataCube.get('additional').value
         }
       }))
