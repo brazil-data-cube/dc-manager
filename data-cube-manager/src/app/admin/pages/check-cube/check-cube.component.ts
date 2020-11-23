@@ -173,7 +173,7 @@ export class CheckCubeComponent implements OnInit {
             if (window['__env'].environmentVersion === 'cloud') {
                 return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`;
             } else {
-                if (qk.startsWith('/tmp/')) {
+                if (qk.startsWith('/tmp/') || qk.startsWith('/e006/')) {
                     return `http://brazildatacube.dpi.inpe.br/dev${qk}`;
                 } else {
                     return `http://brazildatacube.dpi.inpe.br${qk}`;
