@@ -68,7 +68,7 @@ export class CheckCubeComponent implements OnInit {
         try {
             this.store.dispatch(showLoading());
             const cubeId = cubeName.split(':')[1];
-            
+
             this.cube = await this.cbs.getCubes(cubeId);
 
             this.tiles = await this.cbs.listItemsTiles(cubeId) as any;
@@ -117,11 +117,11 @@ export class CheckCubeComponent implements OnInit {
                     return features.filter(f => f['start_date'].substring(0,10) === t[0]).length ? null : t;
                 })
                 .filter(t => t)
-                .map(t => { return { 
-                    name: `${t[0]}_${t[1]}`, 
-                    start_date: t[0], 
-                    end_date: t[1], 
-                    notFound: true, 
+                .map(t => { return {
+                    name: `${t[0]}_${t[1]}`,
+                    start_date: t[0],
+                    end_date: t[1],
+                    notFound: true,
                     ...this.parseSceneID(features[0]['name']) } });
 
             return [...dates, ...features];
@@ -219,7 +219,8 @@ export class CheckCubeComponent implements OnInit {
                     cube: this.cube.name,
                     merges: response,
                     itemDate: item.start_date,
-                    tileId: item.tile_id
+                    tileId: item.tile_id,
+                    itemId: item.name
                 }
             })
             dialogRef.afterClosed();
