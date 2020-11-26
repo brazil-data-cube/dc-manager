@@ -21,6 +21,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AceEditorModule } from 'ng2-ace-editor';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -75,7 +76,8 @@ import { UpdateCubeDialog } from './components/update-cube-dialog/update-cube-di
     LeafletDrawModule,
     MatPaginatorModule,
     MatCheckboxModule,
-    AceEditorModule
+    AceEditorModule,
+    MatTooltipModule
   ],
   declarations: [
     AdminLayoutComponent,

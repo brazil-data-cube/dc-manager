@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-scene-details',
@@ -11,16 +12,20 @@ export class SceneDetailsComponent implements OnInit {
   merges = {} as any
   isIrregular: boolean = false
   item_date: string
+  itemId: string
 
   constructor(
     public dialogRef: MatDialogRef<SceneDetailsComponent>,
+    private sanitizer: DomSanitizer,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
   }
 
   ngOnInit(): void {
     this.merges = this.data.merges
-    const { cube, itemDate } = this.data
+    const { cube, itemDate, itemId } = this.data
+
+    this.itemId = itemId;
 
     if (cube && cube.split('_').length === 2) {
       this.isIrregular = true
@@ -75,6 +80,14 @@ export class SceneDetailsComponent implements OnInit {
 
   close() {
     this.dialogRef.close()
+  }
+
+  exportMergesURL() {
+    const blob = new Blob([JSON.stringify(this.merges, null, 4)], { type: 'application/json' })
+
+    const downloadURL = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));
+
+    return downloadURL;
   }
 
 }

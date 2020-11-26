@@ -4,6 +4,11 @@
 
 <div mat-dialog-content class="merges">
     <header>
+        <div mat-dialog-actions align="end" class="export-json-button">
+            <a mat-icon-button matSuffix [href]="exportMergesURL()" download="{{ itemId }}_merges.json" target="_blank">
+                <mat-icon style="color: #000">get_app</mat-icon>
+            </a>
+        </div>
         <p><b>Date:</b> {{ data.itemDate }}</p>
         <p><b>Tile:</b> {{ data.tileId }}</p>
     </header>
