@@ -47,6 +47,7 @@
     "leaflet": "^1.6.0",
     "leaflet-draw": "^1.0.4",
     "moment": "^2.24.0",
+    "ng2-ace-editor": "^0.3.9",
     "ngx-pagination": "^5.0.0",
     "ngx-spinner": "^9.0.2",
     "perfect-scrollbar": "1.1.0",

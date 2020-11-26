@@ -93,6 +93,17 @@ export class CubeBuilderService {
     }
 
     /**
+     * start cube proccesses
+     */
+    public async update(cubeId, data): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = `/cubes/${cubeId}`;
+        const response = await this.http.put(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
+        return response;
+    }
+
+    /**
      * create raster size schema
      */
     public async createBucket(data): Promise<any> {
