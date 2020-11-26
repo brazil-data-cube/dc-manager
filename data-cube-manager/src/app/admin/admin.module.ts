@@ -20,6 +20,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { AceEditorModule } from 'ng2-ace-editor';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -47,6 +48,7 @@ import { SceneDetailsComponent } from './pages/check-cube/scene-details/scene-de
 import { ReprocessDialogComponent } from './components/reprocess-dialog/reprocess-dialog.component';
 import { BucketsModal } from './pages/create-cube/steps/definition/buckets/buckets.component';
 import { MapFieldComponent } from './components/map-field/map-field.component';
+import { UpdateCubeDialog } from './components/update-cube-dialog/update-cube-dialog.component';
 
 @NgModule({
   imports: [
@@ -72,7 +74,8 @@ import { MapFieldComponent } from './components/map-field/map-field.component';
     LeafletModule,
     LeafletDrawModule,
     MatPaginatorModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    AceEditorModule
   ],
   declarations: [
     AdminLayoutComponent,
@@ -95,6 +98,7 @@ import { MapFieldComponent } from './components/map-field/map-field.component';
     MapModal,
     SceneDetailsComponent,
     ReprocessDialogComponent,
+    UpdateCubeDialog,
     BucketsModal,
     MapFieldComponent
   ],

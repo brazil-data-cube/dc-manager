@@ -8,6 +8,7 @@ import { latLng, MapOptions, Map as MapLeaflet, tileLayer, geoJSON } from 'leafl
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
+import { UpdateCubeDialog } from 'app/admin/components/update-cube-dialog/update-cube-dialog.component';
 
 @Component({
     selector: 'app-details-cube',
@@ -153,6 +154,23 @@ export class DetailsCubeComponent implements OnInit {
         } finally {
             this.store.dispatch(closeLoading());
         }
+    }
+
+    openModalUpdateCubeMetadata() {
+        const dialogRef = this.dialog.open(UpdateCubeDialog, {
+            width: '800px',
+            maxHeight: '85%',
+            minHeight: '400px',
+            disableClose: true,
+            data: {
+                cube: this.cube
+            }
+        })
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.getCube(this.cube['id']);
+            }
+        });
     }
 
     public convertToString(obj) {

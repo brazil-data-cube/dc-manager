@@ -1,0 +1,37 @@
+<section class="update-cube_container">
+    <h1 mat-dialog-title>Update Cube: <b>{{ cube['name'] }}</b></h1>
+
+    <div mat-dialog-content>
+        <form [formGroup]="form">
+            <div class="row">
+                <div class="col-12">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Title</mat-label>
+                        <input matInput placeholder="Title" formControlName="title">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Description</mat-label>
+                        <textarea matInput placeholder="Description" formControlName="description" rows="5"></textarea>
+                    </mat-form-field>
+                </div>
+                
+                <div class="col-12">
+                    <mat-label>Metadata:</mat-label>
+                    <ace-editor [(text)]="codeMetadata" [theme]="'eclipse'" mode="json" style="height: 300px;"></ace-editor>
+                </div>
+
+                <div class="col-12" class="checkbox_container">
+                    <mat-checkbox formControlName="public" color="primary"><span style="color: green"><b>Is Public Cube?</b></span></mat-checkbox>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="close()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="update()" [disabled]="form.invalid">SAVE</button>
+    </div>
+</section>
