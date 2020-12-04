@@ -30,4 +30,4 @@ Make sure you have the following libraries installed:
 
 ## Compatibility
 
-Please refer to the document [`COMPATIBILITY.md`](./COMPATIBILITY) for more information on `Data Cube Manager` service versions supported.
+Please refer to the document [`COMPATIBILITY.md`](./COMPATIBILITY.md) for more information on `Data Cube Manager` service versions supported.
