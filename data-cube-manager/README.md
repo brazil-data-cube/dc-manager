@@ -14,16 +14,28 @@ Make sure you have the following libraries installed:
 npm install
 ```
 
-## Runnig 
+## Running
 
-* firstly, configure the file `src/assets/env.js`.
+First of all, you must have an instance of [Cube-Builder](https://github.com/brazil-data-cube/cube-builder) running. After that, you must configure the variable `window.__env.urlCubeBuilder` in the file `src/assets/env.js`. By default, its poinst to `http://localhost:5000`.
 
 ### Development server
 
-Run `npm start` for a dev server. Navigate to `http://localhost:4200`. The app will automatically reload if you change any of the source files.
+To launch the development server, use the command:
+
+```bash
+npm start
+```
+
+And then navigate to `http://localhost:4200`. The app will automatically reload if you change any of the source files.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+To build package as `development` mode, use the following command line:
 
-or with Docker -> [`deploy`](../deploy)
+```bash
+ng build
+```
+
+The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a `production` build.
+
+You can also build the `Data Cube Manager` with [`Docker Image`](../deploy).
