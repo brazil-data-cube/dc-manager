@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.token && window['__env'].environmentVersion === 'cloud') {
+    if (!this.token) {
       this.openTokenModal()
     }
   }

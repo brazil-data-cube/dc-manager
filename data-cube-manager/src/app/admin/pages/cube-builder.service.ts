@@ -8,15 +8,19 @@ export class CubeBuilderService {
     private urlCubeBuilder = window['__env'].urlCubeBuilder;
 
     /** start http service client */
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { 
+        if (!!sessionStorage.getItem('dc_manager_url_service')) {
+            this.urlCubeBuilder = sessionStorage.getItem('dc_manager_url_service')
+        }
+    }
 
     /**
      * verify token
      */
-    public async verifyToken(token = null): Promise<any> {
+    public async verifyToken(urlService, token = null): Promise<any> {
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         let urlSuffix = '/'
-        const response = await this.http.get(`${this.urlCubeBuilder}${urlSuffix}`, headers).toPromise()
+        const response = await this.http.get(`${urlService}${urlSuffix}`, headers).toPromise()
         return response;
     }
 

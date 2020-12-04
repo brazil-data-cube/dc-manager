@@ -4,7 +4,13 @@
 </h3>
 
 <div mat-dialog-content>
-    <p>Please, insert your token:</p>
+    <p>Cube Builder URL:</p>
+    <mat-form-field appearance="outline">
+        <mat-label>URL Cube Builder</mat-label>
+        <input matInput [(ngModel)]="urlService">
+    </mat-form-field>
+
+    <p>Token:</p>
     <mat-form-field appearance="outline">
         <mat-label>Token</mat-label>
         <input matInput [(ngModel)]="token" type="password">

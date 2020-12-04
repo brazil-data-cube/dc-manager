@@ -2,7 +2,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { Component } from "@angular/core";
 import { CubeBuilderService } from "app/admin/pages/cube-builder.service";
 import { Store } from "@ngrx/store";
-import { token, showLoading, closeLoading } from "app/app.action";
+import { token, showLoading, closeLoading, setURLCubeBuilder } from "app/app.action";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 
@@ -13,21 +13,22 @@ import { Router } from "@angular/router";
 })
 export class TokenModal {
 
+    public urlService: string = ''
     public token: string = ''
 
     constructor(
         public dialogRef: MatDialogRef<TokenModal>,
         private store: Store,
         private snackBar: MatSnackBar,
-        private cbs: CubeBuilderService,
-        private router: Router) { }
+        private cbs: CubeBuilderService) { }
 
     async verify() {
         try {
             this.store.dispatch(showLoading())
-            const _ = await this.cbs.verifyToken(this.token)
+            const _ = await this.cbs.verifyToken(this.urlService, this.token)
             this.store.dispatch(token({ token: this.token }))
-            this.router.navigate(['/list-cubes']);
+            this.store.dispatch(setURLCubeBuilder({ url: this.urlService }))
+            window.location.reload();
             this.dialogRef.close()
 
         } catch (_) {
