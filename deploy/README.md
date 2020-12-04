@@ -12,7 +12,7 @@ Make sure you have the following libraries installed:
 cd ../data-cube-manager && npm install
 ```
 
-## Runnig
+## Running
 
 ```
 cd ../data-cube-manager && npm run build

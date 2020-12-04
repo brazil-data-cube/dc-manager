@@ -1,5 +1,13 @@
 # Data Cube Manager - Brazil Data Cube
-Interface to manage Cube Builder package
+
+[![Software License](https://img.shields.io/badge/license-MIT-green)](https://github.com//brazil-data-cube/dc-manager/blob/master/LICENSE)
+[![Documentation Status](https://readthedocs.org/projects/dc-manager/badge/?version=latest)](https://dc-manager.readthedocs.io/en/latest/)
+[![Release](https://img.shields.io/github/tag/brazil-data-cube/dc-manager.svg)](https://github.com/brazil-data-cube/dc-manager/releases)
+[![Software Life Cycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Join us at Discord](https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8)](https://discord.com/channels/689541907621085198#)
+
+
+Web-based user interface to manage data cubes.
 
 ## Structure
 
@@ -19,3 +27,7 @@ Make sure you have the following libraries installed:
 
 - To development or Manual Build => [`data-cube-manager`](./data-cube-manager)
 - With Docker => [`deploy`](./deploy)
+
+## Compatibility
+
+Please refer to the document [`COMPATIBILITY.md`](./COMPATIBILITY) for more information on `Data Cube Manager` service versions supported.
