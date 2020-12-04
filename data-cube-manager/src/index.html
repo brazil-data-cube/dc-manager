@@ -10,20 +10,21 @@
 <!doctype html>
 <html>
 <head>
-    <base href='/'>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <meta name="viewport" content="width=device-width" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 
     <title>Data Cube Manager</title>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
 
     <!--     Fonts and icons     -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300|Material+Icons' rel='stylesheet' type='text/css'>
 
-    <script src="/assets/env.js"></script>
+    <base href="/">
+    <link rel="shortcut icon" href="assets/images/icons/favicon.png" />
+    
+    <script src="assets/env.js"></script>
 
     <style media="screen">
       #loader {
@@ -49,7 +50,7 @@
 </head>
 <body>
   <app-root>
-    <div id="loader"><img src="/assets/img/loading.gif" alt="loading"></div>
+    <div id="loader"><img src="assets/img/loading.gif" alt="loading"></div>
   </app-root>
 </body>
 
