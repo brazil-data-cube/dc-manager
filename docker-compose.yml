@@ -2,7 +2,7 @@ version: "3"
 
 services:
   datacube-manager:
-    image: registry.dpi.inpe.br/brazildatacube/data-cube-manager:0.0.2
+    image: registry.dpi.inpe.br/brazildatacube/data-cube-manager:0.2.0
     ports:
       - "8080:8080"
     environment:

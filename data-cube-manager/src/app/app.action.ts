@@ -18,6 +18,21 @@ export const closeLoading = createAction(
  * set token
  */
 export const token = createAction(
-    '[Loading Component] token',
+    'token',
     props<object>()
+);
+
+/**
+ * set url cube builder
+ */
+export const setURLCubeBuilder = createAction(
+    'URL Cube Builder',
+    props<object>()
+);
+
+/**
+ * set url cube builder
+ */
+export const logout = createAction(
+    'logout object (remove token and url)'
 );
