@@ -166,9 +166,7 @@ export class CreateCubePreviewComponent implements OnInit {
             return {'name': b, 'common_name': b, 'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8'}
           }),
           bands_quicklook: this.definition.bandsQuicklook,
-          indexes: this.definition.indexes.map(i => {
-            return {'name': i, 'common_name': i, 'data_type': 'int16'}
-          }),
+          indexes: this.definition.indexes,
           metadata: {license: this.metadata['license'], platform: { code: this.metadata['satellite'], instruments: this.metadata['instruments'] }},
           description: this.metadata['description'],
           quality_band: this.definition.qualityBand
@@ -177,7 +175,7 @@ export class CreateCubePreviewComponent implements OnInit {
         if (this.environmentVersion !== 'local') {
          this.processId = respCube['cubes']['process_id']
         }
-        
+
         this.cubeCreated = true;
         this.snackBar.open('Cube metadata created with successfully', '', {
           duration: 4000,
@@ -248,5 +246,9 @@ export class CreateCubePreviewComponent implements OnInit {
     } finally {
       this.store.dispatch(closeLoading());
     }
+  }
+
+  public getBandIndexes() {
+    return this.definition.indexes.map(idx => idx.name).join(', ');
   }
 }

@@ -49,7 +49,7 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        
+
         <div class="col-lg-3 col-md-3 col-sm-12">
             <mat-form-field appearance="outline">
                 <mat-label>Resolution</mat-label>
@@ -135,7 +135,7 @@
         <div class="col-lg-8 col-md-8 col-sm-12" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
                 <mat-label>Indexes</mat-label>
-                <mat-select multiple formControlName="indexes">
+                <mat-select multiple formControlName="indexes" (selectionChange)="onChangeBandIndex($event)">
                     <mat-option *ngFor="let index of indexesAvailable" [value]="index">
                         {{ index }}
                     </mat-option>
@@ -144,6 +144,39 @@
                     <form-field-error [errors]="formCreateCube.get('indexes').errors"></form-field-error>
                 </mat-error>
             </mat-form-field>
+
+            <div class="row">
+                <div class="col-md-6" *ngFor="let selectedIndex of getSelectedIndexes()">
+                    <div class="card card-chart" formGroupName="indexesMeta">
+                        <div class="card-header"><b>{{ selectedIndex }}</b></div>
+                        <div class="card-body" style="padding-top: 25px">
+                            <div class="card-category text-justify" [formGroupName]="selectedIndex">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Bands used: </mat-label>
+                                    <mat-select formControlName="bands" multiple>
+                                        <mat-option *ngFor="let index of bandsAvailable" [value]="index">
+                                            {{ index }}
+                                        </mat-option>
+                                    </mat-select>
+
+                                    <mat-error>
+                                        <form-field-error [errors]="formCreateCube.get('indexesMeta.' + selectedIndex + '.bands').errors"></form-field-error>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Expression</mat-label>
+                                    <textarea matInput formControlName="value"></textarea>
+
+                                    <mat-error>
+                                        <form-field-error [errors]="formCreateCube.get('indexesMeta.' + selectedIndex + '.value').errors"></form-field-error>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
