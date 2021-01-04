@@ -11,6 +11,18 @@ export interface AdminState {
     readonly metadata: MetadataCube;
 }
 
+export interface IBand {
+    name: string;
+    common_name: string;
+
+    metadata: {
+        expression: {
+            bands: string[],
+            value: string
+        }
+    };
+}
+
 export interface DefinitionCube {
     bucket: string;
     name: string;
@@ -21,7 +33,7 @@ export interface DefinitionCube {
     function: object;
     bands: string[];
     bandsQuicklook: string[];
-    indexes: string[];
+    indexes: IBand[];
     qualityBand: string;
 }
 

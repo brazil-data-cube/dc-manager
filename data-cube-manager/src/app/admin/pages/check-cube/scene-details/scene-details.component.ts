@@ -66,7 +66,16 @@ export class SceneDetailsComponent implements OnInit {
         qk = qk.replace(`_${band}`, '')
       })
 
-      const newPath = qk.startsWith('/gfs/') ? qk.substring(4) : qk
+      let newPath = null;
+
+      // TODO: Get absolute path from remote server
+      if (qk.startsWith('/gfs/'))
+        newPath = qk.substring(4);
+      else if (qk.startsWith('/mnt')) {
+        const prefix = window['__env'].itemPrefix;
+
+        newPath = `${prefix}${qk.substring(15)}`;
+      }
       return `http://brazildatacube.dpi.inpe.br${newPath}`;
     }
   }

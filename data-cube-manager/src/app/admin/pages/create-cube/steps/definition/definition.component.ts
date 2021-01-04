@@ -9,7 +9,7 @@ import { TemporalCompositionModal } from './temporal/temporal.component'
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
-import { FormGroup, FormBuilder, Validators } from '@angular/forms'
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { setDefinition } from 'app/admin/admin.action'
 import { BucketsModal } from './buckets/buckets.component'
 
@@ -31,6 +31,11 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public rangeDates: string[]
   public tiles: string[]
   public grid: string
+
+  public wellKnownIndexes = {
+    'NDVI': '10000. * ((NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + RED_BAND_HERE))',
+    'EVI': '10000. * 2.5 * (NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + 6. * RED_BAND_HERE - 7.5 * BLUE_BAND_HERE + 1.)'
+  }
 
   public environmentVersion = window['__env'].environmentVersion
 
@@ -54,6 +59,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
       indexes: [['']],
       qualityBand: ['', [Validators.required]],
       public: [true, [Validators.required]],
+      indexesMeta: this.fb.group({})
     });
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
@@ -77,6 +83,25 @@ export class CreateCubeDefinitionComponent implements OnInit {
         this.grid = res.grid
       }
     })
+  }
+
+  public addIndexMetaGroup(value) {
+    return this.fb.group({
+      bands: [[''], []],
+      value: [[value || ''], []]
+    })
+  }
+
+  public onChangeBandIndex(event) {
+    const { value } = event;
+
+    for(let indexValue of value) {
+      const expression = this.wellKnownIndexes[indexValue];
+
+      if (!this.formCreateCube.get('indexesMeta').get(indexValue)) {
+        (this.formCreateCube.get('indexesMeta') as any).controls[indexValue] = this.addIndexMetaGroup(expression)
+      }
+    }
   }
 
   ngOnInit() {
@@ -132,6 +157,22 @@ export class CreateCubeDefinitionComponent implements OnInit {
         panelClass: 'app_snack-bar-error'
       });
     } else {
+      let indexes = [];
+
+      for(let bandIndexName of this.formCreateCube.get('indexes').value) {
+        const indexFormValue = this.formCreateCube.get('indexesMeta').get(bandIndexName).value;
+        let bandIndex = {
+          name: bandIndexName,
+          common_name: bandIndexName,  // TODO: get common name from stac
+          data_type: 'int16',
+          metadata: {
+            expression: indexFormValue
+          }
+        };
+
+        indexes.push(bandIndex);
+      }
+
       this.store.dispatch(setDefinition({
         definition: {
           bucket: this.formCreateCube.get('bucket').value,
@@ -142,7 +183,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
           function: this.formCreateCube.get('compositeFunction').value,
           bands: this.formCreateCube.get('bands').value,
           bandsQuicklook: this.getBandsQuicklook(),
-          indexes: this.formCreateCube.get('indexes').value,
+          indexes: indexes,
           qualityBand: this.formCreateCube.get('qualityBand').value,
           public: this.formCreateCube.get('public').value
         }
@@ -165,6 +206,15 @@ export class CreateCubeDefinitionComponent implements OnInit {
     } else {
       return `${name}_${resolution}`
     }
+  }
+
+  getSelectedIndexes() {
+    const indexes = this.formCreateCube.get('indexes').value;
+
+    if (indexes.length === 1 && indexes[0] === "")
+      return [];
+
+    return indexes;
   }
 
   getBandsQuicklook() {
