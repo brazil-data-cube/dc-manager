@@ -24,6 +24,7 @@ export class ReprocessDialogComponent implements OnInit {
   form: FormGroup;
   editable: boolean = true;
   grid: string = '';
+  firstRun: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<ReprocessDialogComponent>,
@@ -41,9 +42,14 @@ export class ReprocessDialogComponent implements OnInit {
 
     this.grid = this.data.grid;
 
+    // If first tile
+    if (this.data.tiles && this.data.tiles.length === 0) {
+      this.firstRun = true;
+    }
+
     this.form = this.fb.group({
       tiles: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      collections: [{ value: '', disabled: true }, [Validators.required]], // You cannot change collection
+      collections: [{ value: '', disabled: !this.firstRun }, [Validators.required]], // You cannot change collection
       start_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
@@ -53,10 +59,20 @@ export class ReprocessDialogComponent implements OnInit {
       this.form.addControl('url_stac', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
       this.form.addControl('satellite', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
       this.form.addControl('bucket', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
+    } else {
+      // TODO: Use same property in both cube-builder and cube-builder-aws
+      this.form.addControl('stac_url', new FormControl('', []));
+    }
+
+    if (this.data.collections && Array.isArray(this.data.collections)) {
+      this.data.collections = this.data.collections.join(',');
+    }
+
+    if (this.data.tiles && Array.isArray(this.data.tiles)) {
+      this.data.tiles = this.data.tiles.join(',');
     }
 
     this.form.patchValue({ ...this.data });
-    this.form.patchValue({ collections: this.data.collections });
   }
 
   getTitle() {
@@ -78,7 +94,15 @@ export class ReprocessDialogComponent implements OnInit {
     data.tiles = !Array.isArray(data.tiles) ? data.tiles.split(',') : data.tiles;
     data.start_date = moment(data.start_date).utc().format('YYYY-MM-DD');
     data.end_date = moment(data.end_date).utc().format('YYYY-MM-DD');
-    data.collections = [this.data.collections];
+
+    let collections = data.collections;
+
+    if (!this.firstRun) {
+      collections = this.data.collections;
+    }
+
+    data.collections = !Array.isArray(collections) ? collections.split(',') : collections;
+
     data.datacube = data.datacube;
     data.force = !!this.data.force;
 
@@ -94,10 +118,12 @@ export class ReprocessDialogComponent implements OnInit {
       this.close();
 
     } catch (err) {
-      let message = err.error;
+      let message = null;
 
-      if (err.status === 0) {
+      if (err.status === 0 || err.status === 500) {
         message = 'Server error. Please contact the system administrator';
+      } else {
+        message = err.error.description;
       }
 
       this.snackBar.open(message, '', {
