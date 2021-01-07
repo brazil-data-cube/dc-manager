@@ -90,7 +90,8 @@ export class ReprocessDialogComponent implements OnInit {
 
     this.store.dispatch(showLoading());
 
-    const data = this.form.value;
+    const data = this.form.getRawValue();
+
     data.tiles = !Array.isArray(data.tiles) ? data.tiles.split(',') : data.tiles;
     data.start_date = moment(data.start_date).utc().format('YYYY-MM-DD');
     data.end_date = moment(data.end_date).utc().format('YYYY-MM-DD');
