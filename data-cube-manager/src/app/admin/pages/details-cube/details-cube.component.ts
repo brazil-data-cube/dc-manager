@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
 import { UpdateCubeDialog } from 'app/admin/components/update-cube-dialog/update-cube-dialog.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-details-cube',
@@ -20,6 +21,8 @@ export class DetailsCubeComponent implements OnInit {
     public cube;
     public cubeStatus;
 
+    public exportMetadataUrl;
+
     /** pointer to reference map */
     public map: MapLeaflet;
     /** object with map settings */
@@ -30,6 +33,7 @@ export class DetailsCubeComponent implements OnInit {
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
         private store: Store<AppState>,
+        private sanitizer: DomSanitizer,
         public dialog: MatDialog) { }
 
     ngOnInit() {
@@ -54,6 +58,8 @@ export class DetailsCubeComponent implements OnInit {
             this.store.dispatch(showLoading())
             const response = await this.cbs.getCubes(cubeName)
             this.cube = response
+
+            this.exportCubeMetadata()
 
         } catch (err) {
             this.snackBar.open('Error when listing cube information', '', {
@@ -156,6 +162,24 @@ export class DetailsCubeComponent implements OnInit {
         }
     }
 
+    exportCubeMetadata() {
+        // Clone entire cube object
+        let cloneCubeObject = JSON.parse(this.convertToString(this.cube));
+        cloneCubeObject['metadata'] = cloneCubeObject._metadata;
+        delete cloneCubeObject._metadata;
+
+        this.removeProperty(cloneCubeObject, ['grid_ref_sys_id', 'composite_function_id'])
+
+        for (let band of cloneCubeObject.bands) {
+            this.removeProperty(band, ['_metadata', 'id', 'collection_id']);
+        }
+
+        const data = JSON.stringify(cloneCubeObject, null, 4);
+
+        const uri = this.sanitizer.bypassSecurityTrustUrl(`data:text/json;charset=UTF-8,${encodeURIComponent(data)}`);
+        this.exportMetadataUrl = uri;
+    }
+
     openModalUpdateCubeMetadata() {
         const dialogRef = this.dialog.open(UpdateCubeDialog, {
             width: '800px',
@@ -171,6 +195,14 @@ export class DetailsCubeComponent implements OnInit {
                 this.getCube(this.cube['id']);
             }
         });
+    }
+
+    private removeProperty(obj, keys) {
+        for(let key of keys) {
+            if (obj.hasOwnProperty(key)) {
+                delete obj[key];
+            }
+        }
     }
 
     public convertToString(obj) {
