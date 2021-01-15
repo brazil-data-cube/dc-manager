@@ -53,6 +53,7 @@ export class ReprocessDialogComponent implements OnInit {
       start_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
+      token: [{ value: '', disabled: !this.editable }, []],
     });
 
     if (window['__env'].environmentVersion === 'cloud') {
