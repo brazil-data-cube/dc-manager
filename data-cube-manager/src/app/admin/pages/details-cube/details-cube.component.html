@@ -45,7 +45,7 @@
                                     <td class="text-success">Temporal Composition:</td>
                                     <td>{{ convertToString(cube.temporal_composition_schema) }}</td>
                                 </tr>
-                            </tbody>                            
+                            </tbody>
                         </table>
 
                         <div class="actions">
@@ -53,6 +53,14 @@
                                 <mat-icon>edit</mat-icon>
                                 <span style="margin-left: 10px">UPDATE CUBE METADATA</span>
                             </button>
+
+                            <a mat-raised-button
+                                    [href]="exportMetadataUrl" download="{{ cube.name }}.json" color="gray"
+                                    matTooltip="Export cube metadata"
+                                    aria-label="Export metadata">
+                                <mat-icon>get_app</mat-icon>
+                                <span style="margin-left: 10px">EXPORT</span>
+                            </a>
                         </div>
                     </div>
                 </div>
