@@ -14,6 +14,7 @@ import { formatDateUSA } from 'app/shared/helpers/date';
 import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC, setSatellite } from 'app/admin/admin.action';
 
 import { intersect } from '@turf/turf';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -36,6 +37,7 @@ export class CreateCubeImagesComponent implements OnInit {
   public collections: string[]
   public satellites: string[]
   public formSearchImages: FormGroup
+  public extraCatalogForm: FormGroup
   public stacVersion: string
   public grid: string
   public totalImages: number
@@ -43,6 +45,9 @@ export class CreateCubeImagesComponent implements OnInit {
   public tilesString: string
   public featuresSelected: any[]
   public isBigGrid = false
+  public advancedSelected = false;
+  public environmentVersion = window['__env'].environmentVersion;
+  public extraCatalog = {};
 
   constructor(
     private cbs: CubeBuilderService,
@@ -58,6 +63,10 @@ export class CreateCubeImagesComponent implements OnInit {
       startDate: ['', [Validators.required]],
       lastDate: ['', [Validators.required]]
     });
+    this.extraCatalogForm = this.fb.group({
+      'stac_url': ['', [Validators.required]],
+      'collection': ['', [Validators.required]],
+    })
   }
 
   ngOnInit() {
@@ -86,6 +95,16 @@ export class CreateCubeImagesComponent implements OnInit {
     this.satellites = ['CBERS-4-MUX', 'CBERS-4-WFI', 'LANDSAT', 'MODIS', 'SENTINEL-2']
     this.totalImages = 0
     this.tiles = []
+  }
+
+  checkAdvancedOptions(event: MatCheckboxChange) {
+    this.advancedSelected = event.checked;
+
+    if (event.checked) {
+      this.formSearchImages.addControl('extra_catalog', this.extraCatalogForm);
+    } else {
+      this.formSearchImages.removeControl('extra_catalog');
+    }
   }
 
   async selectGrid(grid) {
@@ -151,6 +170,50 @@ export class CreateCubeImagesComponent implements OnInit {
     }
   }
 
+  private async searchSTAC(stac_url: string) {
+    let output = {};
+
+    try {
+      this.store.dispatch(showLoading());
+
+      if (stac_url && stac_url !== '') {
+        const respVersion = await this.ss.getVersion(stac_url)
+        const stacVersion = respVersion['stac_version'].substring(0, 3)
+
+        const response = await this.ss.getCollections(stac_url)
+        output = {
+          stacVersion: stacVersion,
+          collections: collectionsByVersion(response, stacVersion)
+        }
+      }
+
+    } catch (_) {
+      this.snackBar.open(
+        'Collections not found in this STAC! Please use STAC service in the following version: 0.6.x, 0.7.x, 0.8.x, 0.9.x',
+        '',
+        {
+          duration: 6000,
+          verticalPosition: 'top',
+          panelClass: 'app_snack-bar-error'
+        }
+      );
+
+    } finally {
+      this.store.dispatch(closeLoading());
+    }
+
+    return output;
+  }
+
+  async searchExtraSTAC() {
+    const stacUrl = this.extraCatalogForm.get('stac_url').value;
+
+    const response = await this.searchSTAC(stacUrl);
+
+    this.extraCatalog = response;
+    this.extraCatalog['url'] = stacUrl;
+  }
+
   async searchImages() {
     if (this.formSearchImages.status !== 'VALID') {
       this.snackBar.open('Fill in all fields correctly', '', {
@@ -197,10 +260,13 @@ export class CreateCubeImagesComponent implements OnInit {
 
             } else {
               const bbox = featureGroup(this.featuresSelected).getBounds().toBBoxString()
+              const fg = featureGroup(this.featuresSelected);
 
-              let query = `bbox=${this.stacVersion === '0.6' ? '['+bbox+']' : bbox}`
-              query += `&time=${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`
-              query += '&limit=1'
+              let query = {
+                  geometry: fg.toGeoJSON(),
+                  datetime: `${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`,
+                  limit: 1
+              };
 
               const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
               const total = totalItemsByVersion(response, this.stacVersion)
@@ -209,6 +275,14 @@ export class CreateCubeImagesComponent implements OnInit {
 
               } else {
                 this.totalImages = total
+
+                if (this.advancedSelected) {
+                  const extraStacUrl = this.formSearchImages.controls['extra_catalog'].get('stac_url').value;
+                  const extraCollection = this.formSearchImages.controls['extra_catalog'].get('collection').value;
+                  const extraResponse = await this.ss.getItemsByCollection(extraStacUrl, extraCollection, query);
+                  const extraTotal = totalItemsByVersion(extraResponse, this.stacVersion);
+                  this.extraCatalog['total'] = extraTotal;
+                }
 
                 this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles)
 

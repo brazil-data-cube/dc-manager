@@ -73,7 +73,33 @@
                         <form-field-error [errors]="formSearchImages.get('lastDate').errors"></form-field-error>
                     </mat-error>
                 </mat-form-field>
+            </div>
 
+            <div style="display: flex;" *ngIf="environmentVersion === 'local'">
+                <mat-checkbox (change)="checkAdvancedOptions($event)">Advanced</mat-checkbox>
+            </div>
+
+            <div style="display: flex;" *ngIf="advancedSelected" [formGroup]="extraCatalogForm">
+                <mat-form-field appearance="outline" style="width: 48%;">
+                    <mat-label>URL STAC</mat-label>
+                    <input matInput placeholder="URL STAC"
+                           formControlName="stac_url" (focusout)="searchExtraSTAC()">
+                    <mat-error>
+                        <form-field-error [errors]="formSearchImages.get('extra_catalog').get('stac_url').errors"></form-field-error>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
+                    <mat-label>Related Collection</mat-label>
+                    <mat-select formControlName="collection">
+                        <mat-option *ngFor="let collection of extraCatalog?.collections" [value]="collection">
+                            {{ collection }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>
+                        <form-field-error [errors]="formSearchImages.get('extra_catalog').get('collection').errors"></form-field-error>
+                    </mat-error>
+                </mat-form-field>
             </div>
 
             <div style="display: flex; margin-bottom: 40px;">
@@ -93,6 +119,10 @@
                             <p>
                                 <mat-icon>cloud_done</mat-icon>
                                 <b>Total Images:</b> <span style="font-size: 1.4em; margin-left: 10px"><b>{{ totalImages }}</b></span>
+                            </p>
+                            <p *ngIf="advancedSelected">
+                                <mat-icon>cloud_done</mat-icon>
+                                <b>Total Images Catalog-2:</b> <span style="font-size: 1.4em; margin-left: 10px"><b>{{ extraCatalog['total'] }}</b></span>
                             </p>
                         </div>
                     </div>
