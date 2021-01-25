@@ -293,7 +293,8 @@ export class CreateCubeImagesComponent implements OnInit {
         }
       },
       edit: {
-        featureGroup: drawnItems
+        featureGroup: drawnItems,
+        remove: null
       }
     });
     this.map.addControl(drawControl);
