@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON, featureGroup, Layer } from 'leaflet';
+import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON, featureGroup, Layer, FeatureGroup, polygon } from 'leaflet';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
@@ -12,6 +12,8 @@ import { STACService } from 'app/admin/pages/stac.service';
 import { collectionsByVersion, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
 import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC, setSatellite } from 'app/admin/admin.action';
+
+import { intersect } from '@turf/turf';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -127,7 +129,7 @@ export class CreateCubeImagesComponent implements OnInit {
       if (urlSTAC && urlSTAC !== '') {
         const respVersion = await this.ss.getVersion(urlSTAC)
         const stacVersion = respVersion['stac_version'].substring(0, 3)
-  
+
         const response = await this.ss.getCollections(urlSTAC)
         this.stacVersion = stacVersion
         this.collections = collectionsByVersion(response, stacVersion)
@@ -175,13 +177,13 @@ export class CreateCubeImagesComponent implements OnInit {
 
           try {
             this.store.dispatch(showLoading());
-            
+
             const urlSTAC = this.formSearchImages.get('urlSTAC').value
             const collection = this.formSearchImages.get('collection').value
             const satellite = this.formSearchImages.get('satellite').value
             const startDate = this.formSearchImages.get('startDate').value
             const lastDate = this.formSearchImages.get('lastDate').value
-            
+
             if (this.isBigGrid) {
               this.totalImages = null
               this.tiles = this.tilesString.split(',').map(t => t.trim());
@@ -192,22 +194,22 @@ export class CreateCubeImagesComponent implements OnInit {
                 verticalPosition: 'top',
                 panelClass: 'app_snack-bar-success'
               });
-              
+
             } else {
               const bbox = featureGroup(this.featuresSelected).getBounds().toBBoxString()
-  
+
               let query = `bbox=${this.stacVersion === '0.6' ? '['+bbox+']' : bbox}`
               query += `&time=${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`
               query += '&limit=1'
-  
+
               const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
               const total = totalItemsByVersion(response, this.stacVersion)
               if (total === 0) {
                 throw Error
-                
+
               } else {
                 this.totalImages = total
-  
+
                 this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles)
 
                 this.snackBar.open(`Found: ${this.totalImages} images!`, '', {
@@ -251,7 +253,7 @@ export class CreateCubeImagesComponent implements OnInit {
       this.store.dispatch(setTiles({ tiles: this.tiles }))
       this.store.dispatch(setCollection({ collection }))
       this.store.dispatch(setSatellite({ satellite }))
-      this.store.dispatch(setRangeTemporal({ 
+      this.store.dispatch(setRangeTemporal({
         startDate: formatDateUSA(startDate),
         lastDate: formatDateUSA(lastDate)
       }))
@@ -273,31 +275,42 @@ export class CreateCubeImagesComponent implements OnInit {
    * set Draw control of the map
    */
   private setDrawControl() {
+    let drawnItems = new FeatureGroup();
+    this.map.addLayer(drawnItems);
+
     const drawControl = new Control.Draw({
       draw: {
         marker: false,
         circle: false,
         polyline: false,
-        polygon: false,
+        // polygon: false,
         circlemarker: false,
-        rectangle: {
+        polygon: {
+          showArea: true,
           shapeOptions: {
             color: '#FFF'
           }
         }
+      },
+      edit: {
+        featureGroup: drawnItems
       }
     });
     this.map.addControl(drawControl);
 
     // remove style of grid tiles
-    this.map.on(Draw.Event.DRAWSTART, _ => {
+    this.map.on(Draw.Event.DRAWSTART, e => {
+      if (e['layerType'] == 'polygon') {
+        return;
+      }
+
       this.map.eachLayer(l => {
         if (l.getAttribution() && l.getAttribution().indexOf('BDC-') >= 0) {
           const layer: any = l
           layer.setStyle({
             fillOpacity: 0.1,
             fillColor:'blue'
-          }) 
+          })
         }
       })
     })
@@ -305,7 +318,7 @@ export class CreateCubeImagesComponent implements OnInit {
     // add bbox in the map
     this.map.on(Draw.Event.CREATED, e => {
       const layer = e.layer;
-      const newLayer = rectangle(layer.getBounds())
+      const newLayer = layer.toGeoJSON();
       this.tiles = []
       this.featuresSelected = []
 
@@ -313,7 +326,8 @@ export class CreateCubeImagesComponent implements OnInit {
         if (l.getAttribution() && l.getAttribution().indexOf('BDC-') >= 0) {
           if (l['feature']) {
             const layer: any = l
-            if (newLayer.getBounds().intersects(layer.getBounds())) {
+
+            if (intersect(newLayer, layer['feature'])) {
               layer.setStyle({
                 fillOpacity: 0.5,
                 fillColor: '#FFFFFF'
@@ -324,7 +338,7 @@ export class CreateCubeImagesComponent implements OnInit {
           }
         }
       })
-      
+
       this.ref.detectChanges()
     });
   }
