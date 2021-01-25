@@ -71,7 +71,7 @@ export class CheckCubeComponent implements OnInit {
 
             this.cube = await this.cbs.getCubes(cubeId);
 
-            this.tiles = await this.cbs.listItemsTiles(cubeId) as any;
+            this.tiles = (await this.cbs.listItemsTiles(cubeId) as any).sort();
             this.currentTab = this.tiles[0];
 
             if (this.cube.temporal_composition_schema) {
