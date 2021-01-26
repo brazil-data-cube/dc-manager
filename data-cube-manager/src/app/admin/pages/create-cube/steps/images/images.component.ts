@@ -9,7 +9,7 @@ import { AdminState } from 'app/admin/admin.state';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { STACService } from 'app/admin/pages/stac.service';
-import { collectionsByVersion, totalItemsByVersion } from 'app/shared/helpers/stac';
+import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
 import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC, setSatellite } from 'app/admin/admin.action';
 
@@ -99,6 +99,7 @@ export class CreateCubeImagesComponent implements OnInit {
 
   checkAdvancedOptions(event: MatCheckboxChange) {
     this.advancedSelected = event.checked;
+    this.extraCatalogForm.patchValue({ 'stac_url': '', 'collection': '' })
 
     if (event.checked) {
       this.formSearchImages.addControl('extra_catalog', this.extraCatalogForm);
@@ -142,32 +143,12 @@ export class CreateCubeImagesComponent implements OnInit {
   }
 
   async getCollectionBySTAC() {
-    try {
-      this.store.dispatch(showLoading());
-      const urlSTAC = this.formSearchImages.get('urlSTAC').value
-      if (urlSTAC && urlSTAC !== '') {
-        const respVersion = await this.ss.getVersion(urlSTAC)
-        const stacVersion = respVersion['stac_version'].substring(0, 3)
+    const stacUrl = this.formSearchImages.get('urlSTAC').value;
 
-        const response = await this.ss.getCollections(urlSTAC)
-        this.stacVersion = stacVersion
-        this.collections = collectionsByVersion(response, stacVersion)
-      }
+    const response = await this.searchSTAC(stacUrl);
 
-    } catch (_) {
-      this.snackBar.open(
-        'Collections not found in this STAC! Please use STAC service in the following version: 0.6.x, 0.7.x, 0.8.x, 0.9.x',
-        '',
-        {
-          duration: 6000,
-          verticalPosition: 'top',
-          panelClass: 'app_snack-bar-error'
-        }
-      );
-
-    } finally {
-      this.store.dispatch(closeLoading());
-    }
+    this.stacVersion = response['stacVersion'];
+    this.collections = response['collections'];
   }
 
   private async searchSTAC(stac_url: string) {
@@ -259,17 +240,22 @@ export class CreateCubeImagesComponent implements OnInit {
               });
 
             } else {
-              const bbox = featureGroup(this.featuresSelected).getBounds().toBBoxString()
-              const fg = featureGroup(this.featuresSelected);
+              const featureCollection = featureGroup(this.featuresSelected);
 
               let query = {
-                  geometry: fg.toGeoJSON(),
                   datetime: `${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`,
                   limit: 1
               };
 
-              const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
-              const total = totalItemsByVersion(response, this.stacVersion)
+              let total = 0;
+
+              for(let featureLayer of featureCollection.getLayers()) {
+                query['intersects'] = featureLayer['feature']['geometry']
+
+                const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
+                total += totalItemsByVersion(response, this.stacVersion)
+              }
+
               if (total === 0) {
                 throw Error
 
@@ -279,14 +265,23 @@ export class CreateCubeImagesComponent implements OnInit {
                 if (this.advancedSelected) {
                   const extraStacUrl = this.formSearchImages.controls['extra_catalog'].get('stac_url').value;
                   const extraCollection = this.formSearchImages.controls['extra_catalog'].get('collection').value;
-                  const extraResponse = await this.ss.getItemsByCollection(extraStacUrl, extraCollection, query);
-                  const extraTotal = totalItemsByVersion(extraResponse, this.stacVersion);
-                  this.extraCatalog['total'] = extraTotal;
+                  let extraCatalogTotal = 0;
+
+                  for(let featureLayer of featureCollection.getLayers()) {
+                    query['intersects'] = featureLayer['feature']['geometry']
+
+                    const extraResponse = await this.ss.getItemsByCollection(extraStacUrl, extraCollection, query);
+                    extraCatalogTotal += totalItemsByVersion(extraResponse, this.stacVersion)
+                  }
+
+                  this.extraCatalog['total'] = extraCatalogTotal;
+
+                  total += extraCatalogTotal;
                 }
 
                 this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles)
 
-                this.snackBar.open(`Found: ${this.totalImages} images!`, '', {
+                this.snackBar.open(`Found: ${total} images!`, '', {
                   duration: 4000,
                   verticalPosition: 'top',
                   panelClass: 'app_snack-bar-success'
@@ -312,17 +307,10 @@ export class CreateCubeImagesComponent implements OnInit {
   async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, tiles) {
     try {
       const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
-      await Object.keys(respCollection['properties']).forEach(props => {
-        if (props === 'eo:bands' || props === 'bands') {
-          if (!respCollection['properties'][props]['0']) {
-            const bands = Object.keys(respCollection['properties'][props])
-            this.store.dispatch(setBandsAvailable({ bands }))
-          } else {
-            const bands = respCollection['properties'][props].map(b => b['name'])
-            this.store.dispatch(setBandsAvailable({ bands }))
-          }
-        }
-      })
+
+      const bands = getBands(respCollection);
+
+      this.store.dispatch(setBandsAvailable({ bands }));
 
       this.store.dispatch(setTiles({ tiles: this.tiles }))
       this.store.dispatch(setCollection({ collection }))
