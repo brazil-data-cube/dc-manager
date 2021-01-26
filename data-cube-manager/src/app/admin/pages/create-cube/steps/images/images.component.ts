@@ -108,6 +108,15 @@ export class CreateCubeImagesComponent implements OnInit {
     }
   }
 
+  /**
+   * Return the layer tile identifier.
+   *
+   * @param layer Leaflet layer with BDC Grid tiles
+   */
+  private displayTileOnClick = (layer) => {
+    return layer['feature'].geometry.properties.name;
+  }
+
   async selectGrid(grid) {
     try {
       this.store.dispatch(showLoading());
@@ -122,14 +131,15 @@ export class CreateCubeImagesComponent implements OnInit {
       if (!this.isBigGrid) {
         let response = await this.cbs.getGrids(grid)
         const features = response['tiles'].map(t => {
-          return { ...t['geom_wgs84'], id: t['id'] }
+          return { ...t['geom_wgs84'], id: t['id'], properties: {name: t['id']} }
         })
         const layer = geoJSON(features, {
           attribution: `BDC-${grid}`
         }).setStyle({
           fillOpacity: 0.1,
           fillColor:'blue'
-        })
+        }).bindPopup(this.displayTileOnClick);
+
         this.map.addLayer(layer)
         this.map.fitBounds(layer.getBounds())
       }
