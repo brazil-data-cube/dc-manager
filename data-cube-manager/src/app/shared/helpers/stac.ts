@@ -8,6 +8,40 @@ export const totalItemsByVersion = (data, version) => {
     return func(data)
 }
 
+/**
+ * Tries to retrieve a list of bands offered by STAC provider.
+ *
+ * @param stac STAC Response object
+ * @returns List of bands found in stac response.
+ */
+export function getBands(stac: Map<string, any>): string[] {
+    let bands = [];
+
+    // When STAC response supports item-assets extension
+    if (stac['stac_extensions'] && stac['stac_extensions'].includes('item-assets')) {
+        for(let property of Object.keys(stac['item_assets'])) {
+            if (stac['item_assets'][property]['roles'].includes('data')) {
+                bands.push(property);
+            }
+        }
+    } else {
+        const maybeProperties = ['eo:bands', 'bands'];
+
+        for(let property of maybeProperties) {
+            if (stac['properties'][property]) {
+                if (!stac['properties'][property]['0']) {
+                    bands = Object.keys(stac['properties'][property])
+                } else {
+                    bands = stac['properties'][property].map(band => band['name']);
+                }
+                break;
+            }
+        }
+    }
+
+    return bands;
+}
+
 function version1collections(data) {
     const links = data
     return links.map(d => d.id)

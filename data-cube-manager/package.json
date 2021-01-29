@@ -32,6 +32,7 @@
     "@angular/router": "9.0.5",
     "@asymmetrik/ngx-leaflet": "^7.0.0",
     "@asymmetrik/ngx-leaflet-draw": "^6.0.0",
+    "@fireflysemantics/join": "^1.0.3",
     "@ngrx/store": "^9.1.2",
     "@turf/turf": "^6.3.0",
     "ajv": "6.12.0",

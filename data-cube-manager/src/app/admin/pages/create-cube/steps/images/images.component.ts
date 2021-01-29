@@ -9,11 +9,12 @@ import { AdminState } from 'app/admin/admin.state';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { STACService } from 'app/admin/pages/stac.service';
-import { collectionsByVersion, totalItemsByVersion } from 'app/shared/helpers/stac';
+import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
 import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC, setSatellite } from 'app/admin/admin.action';
 
 import { intersect } from '@turf/turf';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -36,6 +37,7 @@ export class CreateCubeImagesComponent implements OnInit {
   public collections: string[]
   public satellites: string[]
   public formSearchImages: FormGroup
+  public extraCatalogForm: FormGroup
   public stacVersion: string
   public grid: string
   public totalImages: number
@@ -43,6 +45,9 @@ export class CreateCubeImagesComponent implements OnInit {
   public tilesString: string
   public featuresSelected: any[]
   public isBigGrid = false
+  public advancedSelected = false;
+  public environmentVersion = window['__env'].environmentVersion;
+  public extraCatalog = {};
 
   constructor(
     private cbs: CubeBuilderService,
@@ -58,6 +63,10 @@ export class CreateCubeImagesComponent implements OnInit {
       startDate: ['', [Validators.required]],
       lastDate: ['', [Validators.required]]
     });
+    this.extraCatalogForm = this.fb.group({
+      'stac_url': ['', [Validators.required]],
+      'collection': ['', [Validators.required]],
+    })
   }
 
   ngOnInit() {
@@ -88,6 +97,26 @@ export class CreateCubeImagesComponent implements OnInit {
     this.tiles = []
   }
 
+  checkAdvancedOptions(event: MatCheckboxChange) {
+    this.advancedSelected = event.checked;
+    this.extraCatalogForm.patchValue({ 'stac_url': '', 'collection': '' })
+
+    if (event.checked) {
+      this.formSearchImages.addControl('extra_catalog', this.extraCatalogForm);
+    } else {
+      this.formSearchImages.removeControl('extra_catalog');
+    }
+  }
+
+  /**
+   * Return the layer tile identifier.
+   *
+   * @param layer Leaflet layer with BDC Grid tiles
+   */
+  private displayTileOnClick = (layer) => {
+    return layer['feature'].geometry.properties.name;
+  }
+
   async selectGrid(grid) {
     try {
       this.store.dispatch(showLoading());
@@ -102,14 +131,15 @@ export class CreateCubeImagesComponent implements OnInit {
       if (!this.isBigGrid) {
         let response = await this.cbs.getGrids(grid)
         const features = response['tiles'].map(t => {
-          return { ...t['geom_wgs84'], id: t['id'] }
+          return { ...t['geom_wgs84'], id: t['id'], properties: {name: t['id']} }
         })
         const layer = geoJSON(features, {
           attribution: `BDC-${grid}`
         }).setStyle({
           fillOpacity: 0.1,
           fillColor:'blue'
-        })
+        }).bindPopup(this.displayTileOnClick);
+
         this.map.addLayer(layer)
         this.map.fitBounds(layer.getBounds())
       }
@@ -123,16 +153,29 @@ export class CreateCubeImagesComponent implements OnInit {
   }
 
   async getCollectionBySTAC() {
+    const stacUrl = this.formSearchImages.get('urlSTAC').value;
+
+    const response = await this.searchSTAC(stacUrl);
+
+    this.stacVersion = response['stacVersion'];
+    this.collections = response['collections'];
+  }
+
+  private async searchSTAC(stac_url: string) {
+    let output = {};
+
     try {
       this.store.dispatch(showLoading());
-      const urlSTAC = this.formSearchImages.get('urlSTAC').value
-      if (urlSTAC && urlSTAC !== '') {
-        const respVersion = await this.ss.getVersion(urlSTAC)
+
+      if (stac_url && stac_url !== '') {
+        const respVersion = await this.ss.getVersion(stac_url)
         const stacVersion = respVersion['stac_version'].substring(0, 3)
 
-        const response = await this.ss.getCollections(urlSTAC)
-        this.stacVersion = stacVersion
-        this.collections = collectionsByVersion(response, stacVersion)
+        const response = await this.ss.getCollections(stac_url)
+        output = {
+          stacVersion: stacVersion,
+          collections: collectionsByVersion(response, stacVersion)
+        }
       }
 
     } catch (_) {
@@ -149,6 +192,17 @@ export class CreateCubeImagesComponent implements OnInit {
     } finally {
       this.store.dispatch(closeLoading());
     }
+
+    return output;
+  }
+
+  async searchExtraSTAC() {
+    const stacUrl = this.extraCatalogForm.get('stac_url').value;
+
+    const response = await this.searchSTAC(stacUrl);
+
+    this.extraCatalog = response;
+    this.extraCatalog['url'] = stacUrl;
   }
 
   async searchImages() {
@@ -196,23 +250,48 @@ export class CreateCubeImagesComponent implements OnInit {
               });
 
             } else {
-              const bbox = featureGroup(this.featuresSelected).getBounds().toBBoxString()
+              const featureCollection = featureGroup(this.featuresSelected);
 
-              let query = `bbox=${this.stacVersion === '0.6' ? '['+bbox+']' : bbox}`
-              query += `&time=${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`
-              query += '&limit=1'
+              let query = {
+                  datetime: `${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`,
+                  limit: 1
+              };
 
-              const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
-              const total = totalItemsByVersion(response, this.stacVersion)
+              let total = 0;
+
+              for(let featureLayer of featureCollection.getLayers()) {
+                query['intersects'] = featureLayer['feature']['geometry']
+
+                const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
+                total += totalItemsByVersion(response, this.stacVersion)
+              }
+
               if (total === 0) {
                 throw Error
 
               } else {
                 this.totalImages = total
 
+                if (this.advancedSelected) {
+                  const extraStacUrl = this.formSearchImages.controls['extra_catalog'].get('stac_url').value;
+                  const extraCollection = this.formSearchImages.controls['extra_catalog'].get('collection').value;
+                  let extraCatalogTotal = 0;
+
+                  for(let featureLayer of featureCollection.getLayers()) {
+                    query['intersects'] = featureLayer['feature']['geometry']
+
+                    const extraResponse = await this.ss.getItemsByCollection(extraStacUrl, extraCollection, query);
+                    extraCatalogTotal += totalItemsByVersion(extraResponse, this.stacVersion)
+                  }
+
+                  this.extraCatalog['total'] = extraCatalogTotal;
+
+                  total += extraCatalogTotal;
+                }
+
                 this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles)
 
-                this.snackBar.open(`Found: ${this.totalImages} images!`, '', {
+                this.snackBar.open(`Found: ${total} images!`, '', {
                   duration: 4000,
                   verticalPosition: 'top',
                   panelClass: 'app_snack-bar-success'
@@ -238,17 +317,10 @@ export class CreateCubeImagesComponent implements OnInit {
   async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, tiles) {
     try {
       const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
-      await Object.keys(respCollection['properties']).forEach(props => {
-        if (props === 'eo:bands' || props === 'bands') {
-          if (!respCollection['properties'][props]['0']) {
-            const bands = Object.keys(respCollection['properties'][props])
-            this.store.dispatch(setBandsAvailable({ bands }))
-          } else {
-            const bands = respCollection['properties'][props].map(b => b['name'])
-            this.store.dispatch(setBandsAvailable({ bands }))
-          }
-        }
-      })
+
+      const bands = getBands(respCollection);
+
+      this.store.dispatch(setBandsAvailable({ bands }));
 
       this.store.dispatch(setTiles({ tiles: this.tiles }))
       this.store.dispatch(setCollection({ collection }))

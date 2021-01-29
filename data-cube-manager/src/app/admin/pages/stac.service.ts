@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { join } from '@fireflysemantics/join';
+
 @Injectable({ providedIn: 'root' })
 export class STACService {
 
@@ -32,8 +34,13 @@ export class STACService {
      * get items by collections
      */
     public async getItemsByCollection(url, collection, query): Promise<any> {
-        let urlSuffix = `/collections/${collection}/items?${query}`
-        const response = await this.http.get(`${url}${urlSuffix}`).toPromise()
+        const q = {
+            collections: [collection],
+            ...query
+        }
+
+        let urlSuffix = `/search`
+        const response = await this.http.post(join(url, urlSuffix), q, { headers: {'Content-Type': 'application/json'}}).toPromise()
         return response;
     }
 
@@ -45,5 +52,5 @@ export class STACService {
         const response = await this.http.get(`${url}${urlSuffix}`).toPromise()
         return response;
     }
-    
+
 }
