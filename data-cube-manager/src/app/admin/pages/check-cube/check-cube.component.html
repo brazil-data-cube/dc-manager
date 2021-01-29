@@ -6,13 +6,20 @@
         <form [formGroup]="form">
             <div class="search-box">
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-3 col-md-3 col-sm-6">
                         <mat-form-field appearance="outline">
                             <mat-label>BBOX</mat-label>
                             <input matInput formControlName="bbox" placeholder="BBox (W, S, E, N)">
                             <button mat-icon-button matSuffix (click)="openMapModal()">
                                 <mat-icon>map</mat-icon>
                             </button>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Tiles</mat-label>
+                            <input matInput formControlName="tiles" placeholder="Comma separated tiles">
                         </mat-form-field>
                     </div>
 

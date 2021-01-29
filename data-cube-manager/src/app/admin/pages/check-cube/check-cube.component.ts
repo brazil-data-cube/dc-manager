@@ -27,6 +27,7 @@ export class CheckCubeComponent implements OnInit {
     public perPage = 10
     public timeline = []
     public tiles: string[] = []
+    private tilesAvailable: string[] = [];
     public currentTab: string = ''
     public items = {} as any
     public form: FormGroup
@@ -45,6 +46,7 @@ export class CheckCubeComponent implements OnInit {
             bbox: [''],
             start: [''],
             end: [''],
+            tiles: [''],
         })
 
         this.route.paramMap.subscribe(async params => {
@@ -72,6 +74,7 @@ export class CheckCubeComponent implements OnInit {
             this.cube = await this.cbs.getCubes(cubeId);
 
             this.tiles = (await this.cbs.listItemsTiles(cubeId) as any).sort();
+            this.tilesAvailable = this.tiles;
             this.currentTab = this.tiles[0];
 
             if (this.cube.temporal_composition_schema) {
@@ -93,20 +96,37 @@ export class CheckCubeComponent implements OnInit {
     }
 
     async search() {
-        let { bbox, start, end } = this.form.value
+        let { bbox, start, end, tiles } = this.form.value
+
         start = start ? moment(start).utc().format('YYYY-MM-DD') : ''
         end = end ? moment(end).utc().format('YYYY-MM-DD') : moment().utc().format('YYYY-MM-DD')
 
-        const foundItems = await this.getAllItems(null, bbox, start, end)
+        let calleeArguments = [null, null];
+
+        if (bbox) {
+            calleeArguments = [null, bbox];
+        }
+
+        if (tiles) {
+            calleeArguments = [tiles, null];
+        }
+
+        calleeArguments.push(start, end);
+
+        const foundItems = await this.getAllItems(...calleeArguments)
         const tilesFound = foundItems.map(item => item.tile_id).filter((tile, index, self) => self.indexOf(tile) === index)
 
-        this.tiles = tilesFound
-        const allItemsExpected = this.getAllFeatures(foundItems)
-        for(let tile of this.tiles) {
-            this.items[tile] = allItemsExpected.filter(item => {
-                const item_date = moment(item.start_date).utc().format('YYYY-MM-DD')
-                return item.tile_id === tile && start <= item_date && item_date <= end
-            });
+        this.tiles = tilesFound.sort();
+
+        if (tilesFound.length >= 1) {
+            const allItemsExpected = this.getAllFeatures(foundItems)
+            for(let tile of this.tiles) {
+                this.items[tile] = allItemsExpected.filter(item => {
+                    const item_date = moment(item.start_date).utc().format('YYYY-MM-DD')
+                    return item.tile_id === tile && start <= item_date && item_date <= end
+                });
+            }
+            this.onTabChanged({ index: 0 });
         }
     }
 
@@ -145,7 +165,6 @@ export class CheckCubeComponent implements OnInit {
     async getAllItems(tileId?: string, bbox?: string, start?: string, end?: string) {
         const result = await this.listItems(this.cube.id, bbox, start, end, this.pageIndex + 1, tileId);
 
-        const total = result.total_items;
         let container = [...result.items];
 
         return container;
@@ -189,7 +208,8 @@ export class CheckCubeComponent implements OnInit {
             disableClose: true,
             data: {
                 bbox: this.bbox,
-                cube: this.cube
+                cube: this.cube,
+                tiles: this.tilesAvailable
             }
         })
         dialogRef.afterClosed().subscribe(result => {

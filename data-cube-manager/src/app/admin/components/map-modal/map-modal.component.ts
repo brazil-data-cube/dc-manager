@@ -16,6 +16,7 @@ export class MapModal {
 
     public bbox = ''
     public cube = {}
+    private availableTiles: string[] = [];
 
     /** pointer to reference map */
     public map: MapLeaflet;
@@ -31,6 +32,7 @@ export class MapModal {
         this.initializeVariables()
         this.bbox = data['bbox']
         this.cube = data['cube']
+        this.availableTiles = data['tiles'] || [];
     }
 
     initializeVariables() {
@@ -115,8 +117,17 @@ export class MapModal {
                 attribution: `BDC-${this.cube['grid_ref_sys_id']}`
             }).setStyle({
                 fillOpacity: 0.1
-            }).eachLayer(function (layer) {
-                layer.bindPopup(layer['feature']['geometry']['id']);
+            }).eachLayer(layer => {
+                const tile = layer['feature']['geometry']['id'];
+
+                if (this.availableTiles.includes(tile)) {
+                    (layer as any).setStyle({
+                        fillOpacity: 0.5,
+                        fillColor: '#00ff00'
+                    })
+                }
+
+                layer.bindPopup(tile);
             });
 
             this.map.addLayer(layer)
