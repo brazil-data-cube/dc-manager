@@ -169,7 +169,8 @@ export class CreateCubePreviewComponent implements OnInit {
           indexes: this.definition.indexes,
           metadata: {license: this.metadata['license'], platform: { code: this.metadata['satellite'], instruments: this.metadata['instruments'] }},
           description: this.metadata['description'],
-          quality_band: this.definition.qualityBand
+          quality_band: this.definition.qualityBand,
+          parameters: this.metadata['parameters']
         }
         const respCube = await this.cbs.create(cube)
         if (this.environmentVersion !== 'local') {
@@ -203,7 +204,6 @@ export class CreateCubePreviewComponent implements OnInit {
 
       // START CUBE CREATION
       const process = {
-        stac_url: this.urlSTAC,
         bucket: this.definition.bucket,
         tiles: this.tiles,
         collections: this.collection.split(','),

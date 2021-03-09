@@ -4,8 +4,8 @@
         <span style="margin-left: 10px;">Fill in the Metadata to the regular Cube</span>
     </h3>
 
-    <app-alert 
-        type="warning" 
+    <app-alert
+        type="warning"
         *ngIf="!definitionCompleted"
         message="Fill in all the information in the DEFINITION step and click on the SAVE button!"></app-alert>
 
@@ -42,6 +42,11 @@
                 <mat-label>Description</mat-label>
                 <textarea matInput placeholder="Description" formControlName="description"></textarea>
             </mat-form-field>
+        </div>
+
+        <div class="col-12">
+            <mat-label>Cube Parameters:</mat-label>
+            <ace-editor [(text)]="cubeParameters" [theme]="'eclipse'" mode="json" style="height: 200px;"></ace-editor>
         </div>
 
         <!-- <div class="col-12">
