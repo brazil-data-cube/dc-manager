@@ -53,17 +53,13 @@ export class ReprocessDialogComponent implements OnInit {
       start_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
+      stac_url: [{ value: '', disabled: !this.editable }, [Validators.required]],
       token: [{ value: '', disabled: !this.editable }, []],
     });
 
     if (window['__env'].environmentVersion === 'cloud') {
-      this.form.addControl('url_stac', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
-      this.form.addControl('satellite', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
       this.form.addControl('bucket', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
-    } else {
-      // TODO: Use same property in both cube-builder and cube-builder-aws
-      this.form.addControl('stac_url', new FormControl('', []));
-    }
+    } 
 
     if (this.data.collections && Array.isArray(this.data.collections)) {
       this.data.collections = this.data.collections.join(',');
