@@ -20,6 +20,7 @@ export class DetailsCubeComponent implements OnInit {
 
     public cube;
     public cubeStatus;
+    public countTiles = 0;
 
     public exportMetadataUrl;
 
@@ -95,6 +96,8 @@ export class DetailsCubeComponent implements OnInit {
         try {
             this.store.dispatch(showLoading())
             const response = await this.cbs.getGeoJSON(cubeName)
+            this.countTiles = response.length;
+
             const layer = geoJSON(response).setStyle({
                 fillOpacity: 0.1
             })

@@ -9,7 +9,7 @@ import { TemporalCompositionModal } from './temporal/temporal.component'
 import { CubeBuilderService } from 'app/admin/pages/cube-builder.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
+import { FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { setDefinition } from 'app/admin/admin.action'
 import { BucketsModal } from './buckets/buckets.component'
 
@@ -110,14 +110,14 @@ export class CreateCubeDefinitionComponent implements OnInit {
     if (this.environmentVersion === 'cloud') {
       this.getBuckets();
     }
-    this.getIndexesAvailable()
+    this.getIndexesAvailable();
   }
 
   async getCompositeFunctions() {
     try {
-      this.store.dispatch(showLoading())
-      const response = await this.cbs.getCompositeFunctions()
-      this.compositeFunctions = response
+      this.store.dispatch(showLoading());
+      const response = await this.cbs.getCompositeFunctions();
+      this.compositeFunctions = response;
 
     } catch (err) {
       this.snackBar.open(err.error.toString(), '', {
@@ -160,17 +160,19 @@ export class CreateCubeDefinitionComponent implements OnInit {
       let indexes = [];
 
       for(let bandIndexName of this.formCreateCube.get('indexes').value) {
-        const indexFormValue = this.formCreateCube.get('indexesMeta').get(bandIndexName).value;
-        let bandIndex = {
-          name: bandIndexName,
-          common_name: bandIndexName,  // TODO: get common name from stac
-          data_type: 'int16',
-          metadata: {
-            expression: indexFormValue
-          }
-        };
-
-        indexes.push(bandIndex);
+        if (bandIndexName) {
+          const indexFormValue = this.formCreateCube.get('indexesMeta').get(bandIndexName).value;
+          let bandIndex = {
+            name: bandIndexName,
+            common_name: bandIndexName,
+            data_type: 'int16',
+            metadata: {
+              expression: indexFormValue
+            }
+          };
+  
+          indexes.push(bandIndex);
+        }
       }
 
       this.store.dispatch(setDefinition({

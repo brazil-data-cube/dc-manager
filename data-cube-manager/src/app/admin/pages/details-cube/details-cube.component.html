@@ -49,15 +49,16 @@
                         </table>
 
                         <div class="actions">
-                            <button mat-raised-button (click)="openModalUpdateCubeMetadata()" color="gray">
+                            <button mat-raised-button (click)="openModalUpdateCubeMetadata()" color="primary">
                                 <mat-icon>edit</mat-icon>
                                 <span style="margin-left: 10px">UPDATE CUBE METADATA</span>
                             </button>
 
                             <a mat-raised-button
-                                    [href]="exportMetadataUrl" download="{{ cube.name }}.json" color="gray"
-                                    matTooltip="Export cube metadata"
-                                    aria-label="Export metadata">
+                                [href]="exportMetadataUrl" download="{{ cube.name }}.json" color="gray"
+                                matTooltip="Export cube metadata"
+                                aria-label="Export metadata"
+                                style="margin-left: 10px">
                                 <mat-icon>get_app</mat-icon>
                                 <span style="margin-left: 10px">EXPORT</span>
                             </a>
@@ -77,7 +78,7 @@
                     <button *ngIf="cubeStatus.finished && cube.composite_function.toUpperCase() !== 'IDENTITY'" mat-raised-button color="success" (click)="openModalUpdateCube()">
                         PROCESS CUBE
                     </button>
-                    <a mat-raised-button color="primary" [routerLink]="['/check-cube', getCubeFullName(cube)]">
+                    <a mat-raised-button *ngIf="countTiles > 0" color="primary" [routerLink]="['/check-cube', getCubeFullName(cube)]">
                         CHECK CUBE
                     </a>
                 </div>
@@ -107,7 +108,7 @@
                     <app-mini-card category="Tasks - ERROR" [title]="cubeStatus.error" icon="error" class="card-header-danger"></app-mini-card>
                 </div>
                 <div *ngIf="cubeStatus.finished">
-                    <app-mini-card category="Tasks - ERROR" [title]="cubeStatus.error" icon="access_alarm" class="card-header-danger"></app-mini-card>
+                    <app-mini-card category="Tasks - duration" [title]="cubeStatus.duration" icon="access_alarm" class="card-header-gray"></app-mini-card>
                 </div>
             </div>
 

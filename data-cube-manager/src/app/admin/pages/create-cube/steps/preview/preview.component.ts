@@ -28,7 +28,6 @@ export class CreateCubePreviewComponent implements OnInit {
   public rangeDates: string[]
   public cost = {}
   public cubeCreated = false
-  public processId: string
 
   public environmentVersion = window['__env'].environmentVersion
 
@@ -71,10 +70,10 @@ export class CreateCubePreviewComponent implements OnInit {
         this.rangeDates = [res.startDate, res.lastDate]
       }
 
-      if (this.environmentVersion === 'cloud' &&
-          this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
-        this.getCost()
-      }
+      // if (this.environmentVersion === 'cloud' &&
+      //     this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
+      //   this.getCost()
+      // }
     })
   }
 
@@ -173,9 +172,6 @@ export class CreateCubePreviewComponent implements OnInit {
           parameters: this.metadata['parameters']
         }
         const respCube = await this.cbs.create(cube)
-        if (this.environmentVersion !== 'local') {
-         this.processId = respCube['cubes']['process_id']
-        }
 
         this.cubeCreated = true;
         this.snackBar.open('Cube metadata created with successfully', '', {
@@ -205,27 +201,28 @@ export class CreateCubePreviewComponent implements OnInit {
       // START CUBE CREATION
       const process = {
         bucket: this.definition.bucket,
+        datacube_version: this.definition.version,
         tiles: this.tiles,
         collections: this.collection.split(','),
-        satellite: this.satellite,
         start_date: this.rangeDates[0],
         end_date: this.rangeDates[1],
-        force: false
+        force: false,
+        stac_url: this.urlSTAC
       }
+
       if (this.environmentVersion === 'local') {
         delete process['bucket']
-        delete process['satellite']
-
-        const compositeFunctions = [this.definition.function].filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
-        if (compositeFunctions.length !== 0) {
-          process['datacube'] = `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${compositeFunctions[0]}`;
-        } else {
-          // Only IDENTITY selected
-          process['datacube'] = this.definition.name
-        }
-      } else {
-        process['process_id'] = this.processId
+        delete process['datacube_version']
       }
+
+      const compositeFunctions = [this.definition.function].filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
+      if (compositeFunctions.length !== 0) {
+        process['datacube'] = `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${compositeFunctions[0]}`;
+      } else {
+        // Only IDENTITY selected
+        process['datacube'] = this.definition.name
+      }
+
       const respStart = await this.cbs.start(process)
 
       this.snackBar.open('Cube started with successfully', '', {
