@@ -23,6 +23,7 @@ export class CreateCubePreviewComponent implements OnInit {
   public grid: string
   public tiles: string[]
   public urlSTAC: string
+  public token: string
   public collection: string
   public satellite: string
   public rangeDates: string[]
@@ -59,6 +60,9 @@ export class CreateCubePreviewComponent implements OnInit {
       }
       if (res.urlSTAC) {
         this.urlSTAC = res.urlSTAC
+      }
+      if (res.token) {
+        this.token = res.token
       }
       if (res.collection) {
         this.collection = res.collection
@@ -207,7 +211,8 @@ export class CreateCubePreviewComponent implements OnInit {
         start_date: this.rangeDates[0],
         end_date: this.rangeDates[1],
         force: false,
-        stac_url: this.urlSTAC
+        stac_url: this.urlSTAC,
+        token: this.token
       }
 
       if (this.environmentVersion === 'local') {

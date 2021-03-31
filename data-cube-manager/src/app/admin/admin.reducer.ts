@@ -8,6 +8,7 @@ import { AdminState } from './admin.state';
 const initialState: AdminState = {
   grid: {},
   urlSTAC: '',
+  token: '',
   bandsAvailable: [],
   collection: '',
   satellite: '',
@@ -64,10 +65,10 @@ const reducerAdmin = createReducer(initialState,
     return { ...state, metadata: payload['metadata'] };
   }),
   on(setUrlSTAC, (state, payload) => {
-    return { ...state, urlSTAC: payload['url'] };
+    return { ...state, urlSTAC: payload['url'], token: payload['token'] };
   }),
 );
 
 export function reducer(state: AdminState | undefined, action: Action) {
   return reducerAdmin(state, action);
-} 
+}
