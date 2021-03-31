@@ -1,6 +1,7 @@
 export interface AdminState {
     readonly grid: object;
     readonly urlSTAC: String;
+    readonly token: String;
     readonly bandsAvailable: string[];
     readonly collection: String;
     readonly satellite: String;

@@ -6,7 +6,7 @@ import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store, select } from '@ngrx/store';
 import { AdminState } from 'app/admin/admin.state';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { STACService } from 'app/admin/pages/stac.service';
 import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/helpers/stac';
@@ -46,6 +46,7 @@ export class CreateCubeImagesComponent implements OnInit {
   public featuresSelected: any[]
   public isBigGrid = false
   public advancedSelected = false;
+  public authenticationSelected = false;
   public environmentVersion = window['__env'].environmentVersion;
   public extraCatalog = {};
 
@@ -108,6 +109,16 @@ export class CreateCubeImagesComponent implements OnInit {
     }
   }
 
+  checkAuthentication(event: MatCheckboxChange) {
+    this.authenticationSelected = event.checked;
+
+    if (event.checked) {
+      this.formSearchImages.addControl('token', new FormControl(['']));
+    } else {
+      this.formSearchImages.removeControl('token');
+    }
+  }
+
   /**
    * Return the layer tile identifier.
    *
@@ -115,6 +126,16 @@ export class CreateCubeImagesComponent implements OnInit {
    */
   private displayTileOnClick = (layer) => {
     return layer['feature'].geometry.properties.name;
+  }
+
+  private getSTACAuthentication() {
+    let token = undefined;
+
+    if (this.authenticationSelected) {
+      token = this.formSearchImages.get('token').value;
+    }
+
+    return token;
   }
 
   async selectGrid(grid) {
@@ -155,7 +176,13 @@ export class CreateCubeImagesComponent implements OnInit {
   async getCollectionBySTAC() {
     const stacUrl = this.formSearchImages.get('urlSTAC').value;
 
-    const response = await this.searchSTAC(stacUrl);
+    let args: [string] = [stacUrl];
+
+    if (this.authenticationSelected) {
+      args.push(this.formSearchImages.get('token').value);
+    }
+
+    const response = await this.searchSTAC(...args);
 
     this.stacVersion = response['stacVersion'];
     this.collections = response['collections'];
@@ -171,7 +198,9 @@ export class CreateCubeImagesComponent implements OnInit {
         const respVersion = await this.ss.getVersion(stac_url)
         const stacVersion = respVersion['stac_version'].substring(0, 3)
 
-        const response = await this.ss.getCollections(stac_url)
+        let access_token = this.getSTACAuthentication();
+
+        const response = await this.ss.getCollections(stac_url, { access_token })
         output = {
           stacVersion: stacVersion,
           collections: collectionsByVersion(response, stacVersion)
@@ -238,10 +267,12 @@ export class CreateCubeImagesComponent implements OnInit {
             const startDate = this.formSearchImages.get('startDate').value
             const lastDate = this.formSearchImages.get('lastDate').value
 
+            const access_token = this.getSTACAuthentication();
+
             if (this.isBigGrid) {
               this.totalImages = null
               this.tiles = this.tilesString.split(',').map(t => t.trim());
-              this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles);
+              this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles, access_token);
 
               this.snackBar.open(`Collection is valid!`, '', {
                 duration: 4000,
@@ -262,7 +293,7 @@ export class CreateCubeImagesComponent implements OnInit {
               for(let featureLayer of featureCollection.getLayers()) {
                 query['intersects'] = featureLayer['feature']['geometry']
 
-                const response = await this.ss.getItemsByCollection(urlSTAC, collection, query)
+                const response = await this.ss.getItemsByCollection(urlSTAC, collection, query, { access_token })
                 total += totalItemsByVersion(response, this.stacVersion)
               }
 
@@ -289,7 +320,7 @@ export class CreateCubeImagesComponent implements OnInit {
                   total += extraCatalogTotal;
                 }
 
-                this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles)
+                this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles, access_token)
 
                 this.snackBar.open(`Found: ${total} images!`, '', {
                   duration: 4000,
@@ -314,7 +345,7 @@ export class CreateCubeImagesComponent implements OnInit {
     }
   }
 
-  async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, tiles) {
+  async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, tiles, token) {
     try {
       const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
 
@@ -329,7 +360,7 @@ export class CreateCubeImagesComponent implements OnInit {
         startDate: formatDateUSA(startDate),
         lastDate: formatDateUSA(lastDate)
       }))
-      this.store.dispatch(setUrlSTAC({ url: urlSTAC }))
+      this.store.dispatch(setUrlSTAC({ url: urlSTAC, token }))
 
     } catch (_) {
       this.snackBar.open('Bands not found in STAC-Collection!', '', {

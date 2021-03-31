@@ -24,23 +24,23 @@ export class STACService {
     /**
      * get collections
      */
-    public async getCollections(url): Promise<any> {
+    public async getCollections(url, params: any = { }): Promise<any> {
         let urlSuffix = '/collections'
-        const response = await this.http.get(`${url}${urlSuffix}`).toPromise()
+        const response = await this.http.get(`${url}${urlSuffix}`, { params }).toPromise()
         return response;
     }
 
     /**
      * get items by collections
      */
-    public async getItemsByCollection(url, collection, query): Promise<any> {
+    public async getItemsByCollection(url, collection, query, params: any = { }): Promise<any> {
         const q = {
             collections: [collection],
             ...query
         }
 
         let urlSuffix = `/search`
-        const response = await this.http.post(join(url, urlSuffix), q, { headers: {'Content-Type': 'application/json'}}).toPromise()
+        const response = await this.http.post(join(url, urlSuffix), q, { params, headers: {'Content-Type': 'application/json'}}).toPromise()
         return response;
     }
 

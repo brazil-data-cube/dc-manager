@@ -27,6 +27,22 @@
                 </mat-error>
             </mat-form-field>
 
+            <div style="display: flex; margin-top: -4%; height: 30px;">
+                <div style="position: absolute; right: 10px">
+                    <mat-checkbox (change)="checkAuthentication($event)">Authentication</mat-checkbox>
+                </div>
+            </div>
+
+            <div style="display: flex;" *ngIf="authenticationSelected">
+                <mat-form-field appearance="outline" style="width: 100%">
+                    <mat-label>Access Token</mat-label>
+                    <input matInput placeholder="User Personal Token" formControlName="token" (focusout)="getCollectionBySTAC()">
+                    <mat-error>
+                        <form-field-error [errors]="formSearchImages.get('token').errors"></form-field-error>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
             <div style="display: flex;">
                 <mat-form-field appearance="outline" style="width: 48%">
                     <mat-label>Related Collection</mat-label>

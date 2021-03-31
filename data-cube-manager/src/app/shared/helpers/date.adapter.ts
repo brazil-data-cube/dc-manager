@@ -20,7 +20,7 @@ export class AppDateAdapter extends NativeDateAdapter {
             return new Date(year, month, date);
         }
         const timestamp = typeof value === 'number' ? value : Date.parse(value);
-        return isNaN(timestamp) ? null : new Date(timestamp);
+        return isNaN(timestamp) ? null : moment.utc(timestamp).toDate();
     }
 
     /**
@@ -29,7 +29,7 @@ export class AppDateAdapter extends NativeDateAdapter {
      */
     format(date: Date, displayFormat: string): string {
         // tslint:disable-next-line
-        const momentDate = moment(date).utc();
+        const momentDate = moment.utc(date.toISOString());
 
         if (displayFormat == 'input') {
             return momentDate.format('YYYY-MM-DD');
