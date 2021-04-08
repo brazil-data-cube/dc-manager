@@ -26,7 +26,7 @@ export class STACService {
      */
     public async getCollections(url, params: any = { }): Promise<any> {
         let urlSuffix = '/collections'
-        const response = await this.http.get(`${url}${urlSuffix}`, { params }).toPromise()
+        const response = await this.http.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}}).toPromise()
         return response;
     }
 
@@ -47,9 +47,9 @@ export class STACService {
     /**
      * get collection informations
      */
-    public async getCollectionInfo(url, collection): Promise<any> {
+    public async getCollectionInfo(url, collection, params: any = { }): Promise<any> {
         let urlSuffix = `/collections/${collection}`
-        const response = await this.http.get(`${url}${urlSuffix}`).toPromise()
+        const response = await this.http.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}}).toPromise()
         return response;
     }
 

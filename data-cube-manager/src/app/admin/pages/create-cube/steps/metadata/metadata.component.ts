@@ -6,11 +6,12 @@ import { Store, select } from '@ngrx/store';
 import { setMetadata } from 'app/admin/admin.action';
 
 const DEFAULT_PARAMETERS = {
-    "mask": {
-        "clear_data": [],
-        "not_clear_data": [],
-        "nodata": 0
-    }
+  "mask": {
+    "clear_data": [],
+    "not_clear_data": [],
+    "saturated_data": [],
+    "nodata": 0
+  }
 }
 
 @Component({
@@ -35,7 +36,6 @@ export class CreateCubeMetadataComponent implements OnInit {
       instruments: ['', [Validators.required]],
       description: [''],
       parameters: ['', [Validators.required]],
-      // additional: ['']
     });
 
     this.cubeParameters = JSON.stringify(DEFAULT_PARAMETERS, null, 4)
@@ -98,7 +98,6 @@ export class CreateCubeMetadataComponent implements OnInit {
           satellite: this.formMetadataCube.get('satellite').value,
           instruments: this.formMetadataCube.get('instruments').value,
           parameters: this.formMetadataCube.get('parameters').value
-          // additional: this.formMetadataCube.get('additional').value
         }
       }))
     }

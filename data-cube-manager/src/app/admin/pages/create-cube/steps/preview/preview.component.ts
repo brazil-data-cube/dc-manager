@@ -22,9 +22,7 @@ export class CreateCubePreviewComponent implements OnInit {
   public metadata: MetadataCube
   public grid: string
   public tiles: string[]
-  public urlSTAC: string
-  public token: string
-  public collection: string
+  public stacList: string[]
   public satellite: string
   public rangeDates: string[]
   public cost = {}
@@ -58,14 +56,8 @@ export class CreateCubePreviewComponent implements OnInit {
       if (res.metadata) {
         this.metadata = res.metadata
       }
-      if (res.urlSTAC) {
-        this.urlSTAC = res.urlSTAC
-      }
-      if (res.token) {
-        this.token = res.token
-      }
-      if (res.collection) {
-        this.collection = res.collection
+      if (res.stacList) {
+        this.stacList = res.stacList
       }
       if (res.satellite) {
         this.satellite = res.satellite
@@ -150,10 +142,28 @@ export class CreateCubePreviewComponent implements OnInit {
         verticalPosition: 'top',
         panelClass: 'app_snack-bar-error'
       });
+
     } else {
       try {
         this.store.dispatch(showLoading());
         const title = this.metadata['title']
+
+        let parameters = this.metadata['parameters']
+        if (this.environmentVersion === 'cloud') {
+          parameters = {
+            ...parameters,
+            stac_list: this.stacList.map(s => {
+              const infos = {
+                url: s['url'], 
+                collection: s['collection']
+              }
+              if (s['token']) {
+                infos['token'] = s['token']
+              }
+              return infos
+            })
+          }
+        }
 
         // CREATE CUBES METADATA
         const cube = {
@@ -173,7 +183,7 @@ export class CreateCubePreviewComponent implements OnInit {
           metadata: {license: this.metadata['license'], platform: { code: this.metadata['satellite'], instruments: this.metadata['instruments'] }},
           description: this.metadata['description'],
           quality_band: this.definition.qualityBand,
-          parameters: this.metadata['parameters']
+          parameters: parameters
         }
         const respCube = await this.cbs.create(cube)
 
@@ -207,17 +217,18 @@ export class CreateCubePreviewComponent implements OnInit {
         bucket: this.definition.bucket,
         datacube_version: this.definition.version,
         tiles: this.tiles,
-        collections: this.collection.split(','),
         start_date: this.rangeDates[0],
         end_date: this.rangeDates[1],
-        force: false,
-        stac_url: this.urlSTAC,
-        token: this.token
+        force: false
       }
 
       if (this.environmentVersion === 'local') {
         delete process['bucket']
         delete process['datacube_version']
+
+        process['collections'] = [this.stacList[0]['collection']]
+        process['stac_url'] = this.stacList[0]['url']
+        process['token'] = this.stacList[0]['token']
       }
 
       const compositeFunctions = [this.definition.function].filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);

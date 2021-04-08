@@ -10,11 +10,6 @@ export const setBandsAvailable = createAction(
     props<object>()
 );
 
-export const setCollection = createAction(
-    '[Loading Component] setCollection',
-    props<object>()
-);
-
 export const setSatellite = createAction(
     '[Loading Component] setSatellite',
     props<object>()
@@ -40,7 +35,7 @@ export const setMetadata = createAction(
     props<object>()
 );
 
-export const setUrlSTAC = createAction(
-    '[Loading Component] setUrlSTAC',
+export const setStacList = createAction(
+    '[Loading Component] setStacList',
     props<object>()
 );

@@ -11,10 +11,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { STACService } from 'app/admin/pages/stac.service';
 import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
-import { setBandsAvailable, setCollection, setRangeTemporal, setTiles, setUrlSTAC, setSatellite } from 'app/admin/admin.action';
+import { setBandsAvailable, setRangeTemporal, setTiles, setStacList, setSatellite } from 'app/admin/admin.action';
 
 import { intersect } from '@turf/turf';
-import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -34,10 +33,8 @@ export class CreateCubeImagesComponent implements OnInit {
   /** object with map settings */
   public options: MapOptions
 
-  public collections: string[]
   public satellites: string[]
   public formSearchImages: FormGroup
-  public extraCatalogForm: FormGroup
   public stacVersion: string
   public grid: string
   public totalImages: number
@@ -45,10 +42,9 @@ export class CreateCubeImagesComponent implements OnInit {
   public tilesString: string
   public featuresSelected: any[]
   public isBigGrid = false
-  public advancedSelected = false;
-  public authenticationSelected = false;
+  public stacList = [];
+
   public environmentVersion = window['__env'].environmentVersion;
-  public extraCatalog = {};
 
   constructor(
     private cbs: CubeBuilderService,
@@ -58,16 +54,10 @@ export class CreateCubeImagesComponent implements OnInit {
     private snackBar: MatSnackBar,
     private ref: ChangeDetectorRef) {
     this.formSearchImages = this.fb.group({
-      collection: ['', [Validators.required]],
-      urlSTAC: ['', [Validators.required]],
       satellite: ['', [Validators.required]],
       startDate: ['', [Validators.required]],
       lastDate: ['', [Validators.required]]
     });
-    this.extraCatalogForm = this.fb.group({
-      'stac_url': ['', [Validators.required]],
-      'collection': ['', [Validators.required]],
-    })
   }
 
   ngOnInit() {
@@ -92,31 +82,27 @@ export class CreateCubeImagesComponent implements OnInit {
       ],
       center: latLng(-16, -52)
     }
-    this.collections = []
     this.satellites = ['CBERS-4-MUX', 'CBERS-4-WFI', 'LANDSAT', 'MODIS', 'SENTINEL-2']
-    this.totalImages = 0
     this.tiles = []
+
+    this.addStac()
   }
 
-  checkAdvancedOptions(event: MatCheckboxChange) {
-    this.advancedSelected = event.checked;
-    this.extraCatalogForm.patchValue({ 'stac_url': '', 'collection': '' })
-
-    if (event.checked) {
-      this.formSearchImages.addControl('extra_catalog', this.extraCatalogForm);
-    } else {
-      this.formSearchImages.removeControl('extra_catalog');
-    }
+  addStac() {
+    this.stacList = [...this.stacList]
+    this.stacList.push({
+      authentication: false,
+      url: '',
+      collection: '',
+      token: '',
+      totalImages: 0,
+      collections: [],
+      version: ''
+    })
   }
 
-  checkAuthentication(event: MatCheckboxChange) {
-    this.authenticationSelected = event.checked;
-
-    if (event.checked) {
-      this.formSearchImages.addControl('token', new FormControl(['']));
-    } else {
-      this.formSearchImages.removeControl('token');
-    }
+  removeStac(stacIndice) {
+    this.stacList.splice(stacIndice, 1);
   }
 
   /**
@@ -126,16 +112,6 @@ export class CreateCubeImagesComponent implements OnInit {
    */
   private displayTileOnClick = (layer) => {
     return layer['feature'].geometry.properties.name;
-  }
-
-  private getSTACAuthentication() {
-    let token = undefined;
-
-    if (this.authenticationSelected) {
-      token = this.formSearchImages.get('token').value;
-    }
-
-    return token;
   }
 
   async selectGrid(grid) {
@@ -173,34 +149,19 @@ export class CreateCubeImagesComponent implements OnInit {
     }
   }
 
-  async getCollectionBySTAC() {
-    const stacUrl = this.formSearchImages.get('urlSTAC').value;
-
-    let args: [string] = [stacUrl];
-
-    if (this.authenticationSelected) {
-      args.push(this.formSearchImages.get('token').value);
-    }
-
-    const response = await this.searchSTAC(...args);
-
-    this.stacVersion = response['stacVersion'];
-    this.collections = response['collections'];
-  }
-
-  private async searchSTAC(stac_url: string) {
+  private async searchSTAC(stac_url: string, access_token = undefined) {
     let output = {};
 
     try {
       this.store.dispatch(showLoading());
 
+      access_token = access_token ? { access_token } : {}
+
       if (stac_url && stac_url !== '') {
         const respVersion = await this.ss.getVersion(stac_url)
         const stacVersion = respVersion['stac_version'].substring(0, 3)
 
-        let access_token = this.getSTACAuthentication();
-
-        const response = await this.ss.getCollections(stac_url, { access_token })
+        const response = await this.ss.getCollections(stac_url, access_token)
         output = {
           stacVersion: stacVersion,
           collections: collectionsByVersion(response, stacVersion)
@@ -209,7 +170,7 @@ export class CreateCubeImagesComponent implements OnInit {
 
     } catch (_) {
       this.snackBar.open(
-        'Collections not found in this STAC! Please use STAC service in the following version: 0.6.x, 0.7.x, 0.8.x, 0.9.x',
+        'Collections not found in this STAC! Please use STAC service in the following version: 0.6.x, 0.7.x, 0.8.x, 0.9.x, 1.0.x',
         '',
         {
           duration: 6000,
@@ -225,13 +186,17 @@ export class CreateCubeImagesComponent implements OnInit {
     return output;
   }
 
-  async searchExtraSTAC() {
-    const stacUrl = this.extraCatalogForm.get('stac_url').value;
+  async getCollectionBySTAC(stacIndice) {
+    let args: [string] = [this.stacList[stacIndice].url];
 
-    const response = await this.searchSTAC(stacUrl);
+    if (this.stacList[stacIndice].authentication) {
+      args.push(this.stacList[stacIndice].token);
+    }
 
-    this.extraCatalog = response;
-    this.extraCatalog['url'] = stacUrl;
+    const response = await this.searchSTAC(...args);
+
+    this.stacList[stacIndice]['collections'] = response['collections'];
+    this.stacList[stacIndice]['version'] = response['stacVersion'];
   }
 
   async searchImages() {
@@ -248,119 +213,115 @@ export class CreateCubeImagesComponent implements OnInit {
           verticalPosition: 'top',
           panelClass: 'app_snack-bar-error'
         });
+
+      } else if ((!this.tiles || this.tiles.length === 0) && (!this.tilesString)) {
+        this.snackBar.open('Select the region of interest in the grid or set tile_id in input', '', {
+          duration: 4000,
+          verticalPosition: 'top',
+          panelClass: 'app_snack-bar-error'
+        });
+
+      } else if (!this.stacList[0].url || !this.stacList[0].collection) {
+        this.snackBar.open('Send STAC url and select one Collection', '', {
+          duration: 4000,
+          verticalPosition: 'top',
+          panelClass: 'app_snack-bar-error'
+        });
+          
       } else {
-        if ((!this.tiles || this.tiles.length === 0) && (!this.tilesString.length)) {
-          this.snackBar.open('Select the region of interest in the grid or set tile_id in input', '', {
-            duration: 4000,
-            verticalPosition: 'top',
-            panelClass: 'app_snack-bar-error'
-          });
+        try {
+          this.store.dispatch(showLoading());
 
-        } else {
+          const satellite = this.formSearchImages.get('satellite').value
+          const startDate = this.formSearchImages.get('startDate').value
+          const lastDate = this.formSearchImages.get('lastDate').value
 
-          try {
-            this.store.dispatch(showLoading());
+          let bands = [];
 
-            const urlSTAC = this.formSearchImages.get('urlSTAC').value
-            const collection = this.formSearchImages.get('collection').value
-            const satellite = this.formSearchImages.get('satellite').value
-            const startDate = this.formSearchImages.get('startDate').value
-            const lastDate = this.formSearchImages.get('lastDate').value
+          for (let i = 0; i < this.stacList.length; i++) {
+            let stac = this.stacList[i];
 
-            const access_token = this.getSTACAuthentication();
+            if (stac.url && stac.collection) {
+              let params = stac.authentication ? { access_token: stac.token } : {};
 
-            if (this.isBigGrid) {
-              this.totalImages = null
-              this.tiles = this.tilesString.split(',').map(t => t.trim());
-              this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles, access_token);
+              if (this.isBigGrid) {
+                stac.totalImages = null;
+                this.tiles = this.tilesString.split(',').map(t => t.trim());
 
-              this.snackBar.open(`Collection is valid!`, '', {
-                duration: 4000,
-                verticalPosition: 'top',
-                panelClass: 'app_snack-bar-success'
-              });
+                const bandsByCollection = await this.getBandsAndSaveinStore(stac.collection, satellite, stac.url, startDate, lastDate, params);
+                bands = [...bands, ...bandsByCollection]
 
-            } else {
-              const featureCollection = featureGroup(this.featuresSelected);
-
-              let query = {
-                  datetime: `${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`,
-                  limit: 1
-              };
-
-              let total = 0;
-
-              for(let featureLayer of featureCollection.getLayers()) {
-                query['intersects'] = featureLayer['feature']['geometry']
-
-                const response = await this.ss.getItemsByCollection(urlSTAC, collection, query, { access_token })
-                total += totalItemsByVersion(response, this.stacVersion)
-              }
-
-              if (total === 0) {
-                throw Error
-
-              } else {
-                this.totalImages = total
-
-                if (this.advancedSelected) {
-                  const extraStacUrl = this.formSearchImages.controls['extra_catalog'].get('stac_url').value;
-                  const extraCollection = this.formSearchImages.controls['extra_catalog'].get('collection').value;
-                  let extraCatalogTotal = 0;
-
-                  for(let featureLayer of featureCollection.getLayers()) {
-                    query['intersects'] = featureLayer['feature']['geometry']
-
-                    const extraResponse = await this.ss.getItemsByCollection(extraStacUrl, extraCollection, query);
-                    extraCatalogTotal += totalItemsByVersion(extraResponse, this.stacVersion)
-                  }
-
-                  this.extraCatalog['total'] = extraCatalogTotal;
-
-                  total += extraCatalogTotal;
-                }
-
-                this.getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, this.tiles, access_token)
-
-                this.snackBar.open(`Found: ${total} images!`, '', {
+                this.snackBar.open(`Collection is valid!`, '', {
                   duration: 4000,
                   verticalPosition: 'top',
                   panelClass: 'app_snack-bar-success'
                 });
+
+              } else {
+                const featureCollection = featureGroup(this.featuresSelected);
+
+                let query = {
+                    datetime: `${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`,
+                    limit: 1
+                };
+
+                let total = 0;
+
+                for(let featureLayer of featureCollection.getLayers()) {
+                  query['intersects'] = featureLayer['feature']['geometry'];
+
+                  const response = await this.ss.getItemsByCollection(stac.url, stac.collection, query, params);
+                  total += totalItemsByVersion(response, stac.version);
+                }
+
+                this.stacList[i] = {...stac, totalImages: total};
+
+                const bandsByCollection = await this.getBandsAndSaveinStore(stac.collection, satellite, stac.url, startDate, lastDate, params);
+                bands = [...bands, ...bandsByCollection.filter(band => bands.indexOf(band) < 0)];
               }
             }
-
-          } catch (_) {
-            this.snackBar.open('Images not found!', '', {
-              duration: 4000,
-              verticalPosition: 'top',
-              panelClass: 'app_snack-bar-error'
-            });
-          } finally {
-            this.store.dispatch(closeLoading());
           }
 
+          this.store.dispatch(setBandsAvailable({ bands }));
+          this.store.dispatch(setStacList({ 
+            stacList: this.stacList.filter(s => s.url && s.collection)
+          }));
+
+          const totalImagesFounded = this.stacList.map(s => s.totalImages).reduce((a, b) => a + b, 0);
+          this.snackBar.open(`Found: ${totalImagesFounded} images!`, '', {
+            duration: 4000,
+            verticalPosition: 'top',
+            panelClass: 'app_snack-bar-success'
+          });
+
+        } catch (err) {
+          console.log(err)
+          this.snackBar.open('Images not found!', '', {
+            duration: 4000,
+            verticalPosition: 'top',
+            panelClass: 'app_snack-bar-error'
+          });
+        } finally {
+          this.store.dispatch(closeLoading());
         }
       }
     }
   }
 
-  async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, tiles, token) {
+  async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, token) {
     try {
-      const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection)
+      const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection, token)
 
       const bands = getBands(respCollection);
 
-      this.store.dispatch(setBandsAvailable({ bands }));
-
       this.store.dispatch(setTiles({ tiles: this.tiles }))
-      this.store.dispatch(setCollection({ collection }))
       this.store.dispatch(setSatellite({ satellite }))
       this.store.dispatch(setRangeTemporal({
         startDate: formatDateUSA(startDate),
         lastDate: formatDateUSA(lastDate)
-      }))
-      this.store.dispatch(setUrlSTAC({ url: urlSTAC, token }))
+      }));
+
+      return bands
 
     } catch (_) {
       this.snackBar.open('Bands not found in STAC-Collection!', '', {
@@ -376,7 +337,7 @@ export class CreateCubeImagesComponent implements OnInit {
 
   /**
    * set Draw control of the map
-   */
+   */ 
   private setDrawControl() {
     let drawnItems = new FeatureGroup();
     this.map.addLayer(drawnItems);
