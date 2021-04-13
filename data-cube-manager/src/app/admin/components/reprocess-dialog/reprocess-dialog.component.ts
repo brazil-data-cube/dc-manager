@@ -53,13 +53,13 @@ export class ReprocessDialogComponent implements OnInit {
       start_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      stac_url: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      token: [{ value: '', disabled: !this.editable }, []],
+      stac_url: [{ value: '' }, [Validators.required]],
+      token: [''],
     });
 
     if (window['__env'].environmentVersion === 'cloud') {
       this.form.addControl('bucket', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
-    } 
+    }
 
     if (this.data.collections && Array.isArray(this.data.collections)) {
       this.data.collections = this.data.collections.join(',');
