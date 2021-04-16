@@ -43,12 +43,12 @@ export function getBands(stac: Map<string, any>): string[] {
 }
 
 function version1collections(data) {
-    const links = data
+    const links = data['collections']
     return links.map(d => d.id)
 }
 
 function version1totalItems(data) {
-    return data['context']['matched']
+    return data['numberMatched']
 }
 
 function version9collections(data) {

@@ -1,16 +1,14 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import {
-  setGrid, setBandsAvailable, setCollection, setRangeTemporal, setTiles, setDefinition, setMetadata, setUrlSTAC, setSatellite
+  setGrid, setBandsAvailable, setRangeTemporal, setTiles, setDefinition, setMetadata, setSatellite, setStacList
 } from './admin.action';
 import { AdminState } from './admin.state';
 
 /** initial values to Admin State */
 const initialState: AdminState = {
   grid: {},
-  urlSTAC: '',
-  token: '',
+  stacList: [],
   bandsAvailable: [],
-  collection: '',
   satellite: '',
   startDate: null,
   lastDate: null,
@@ -30,8 +28,7 @@ const initialState: AdminState = {
   },
   metadata: {
     license: '',
-    description: '',
-    additional: ''
+    description: ''
   }
 };
 
@@ -45,9 +42,6 @@ const reducerAdmin = createReducer(initialState,
   }),
   on(setBandsAvailable, (state, payload) => {
     return { ...state, bandsAvailable: payload['bands'] };
-  }),
-  on(setCollection, (state, payload) => {
-    return { ...state, collection: payload['collection'] };
   }),
   on(setSatellite, (state, payload) => {
     return { ...state, satellite: payload['satellite'] };
@@ -64,8 +58,8 @@ const reducerAdmin = createReducer(initialState,
   on(setMetadata, (state, payload) => {
     return { ...state, metadata: payload['metadata'] };
   }),
-  on(setUrlSTAC, (state, payload) => {
-    return { ...state, urlSTAC: payload['url'], token: payload['token'] };
+  on(setStacList, (state, payload) => {
+    return { ...state, stacList: payload['stacList'] };
   }),
 );
 

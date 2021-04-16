@@ -1,15 +1,23 @@
 export interface AdminState {
     readonly grid: object;
-    readonly urlSTAC: String;
-    readonly token: String;
+    readonly stacList: STAC[];
     readonly bandsAvailable: string[];
-    readonly collection: String;
     readonly satellite: String;
     readonly startDate: String;
     readonly lastDate: String;
     readonly tiles: String[];
     readonly definitionInfos: DefinitionCube;
     readonly metadata: MetadataCube;
+}
+
+export interface STAC {
+    authentication: boolean;
+    url: string;
+    collection: string;
+    token: string;
+    totalImages: number;
+    collections: string[];
+    version: string;
 }
 
 export interface IBand {
@@ -41,5 +49,4 @@ export interface DefinitionCube {
 export interface MetadataCube {
     license: string;
     description: string;
-    additional: string;
 }

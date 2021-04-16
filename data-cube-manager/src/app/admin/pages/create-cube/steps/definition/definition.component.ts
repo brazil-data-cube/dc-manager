@@ -34,7 +34,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
   public wellKnownIndexes = {
     'NDVI': '10000. * ((NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + RED_BAND_HERE))',
-    'EVI': '10000. * 2.5 * (NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + 6. * RED_BAND_HERE - 7.5 * BLUE_BAND_HERE + 1.)'
+    'EVI': '10000. * 2.5 * (NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + 6. * RED_BAND_HERE - 7.5 * BLUE_BAND_HERE + 10000)'
   }
 
   public environmentVersion = window['__env'].environmentVersion

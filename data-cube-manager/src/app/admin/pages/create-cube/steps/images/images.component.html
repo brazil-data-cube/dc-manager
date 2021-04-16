@@ -19,55 +19,73 @@
         </div>
 
         <form class="col-lg-4 col-md-4 col-sm-12 form" (ngSubmit)="searchImages()" [formGroup]="formSearchImages">
+            <!-- STAC Box -->
+            <mat-tab-group mat-align-tabs="start">
+                <mat-tab [label]="'STAC ' + (i+1)" 
+                         *ngFor="let stac of stacList; let i = index">
+
+                    <div style="padding: 10px">
+                        <div style="display: flex; margin: 5px 0 10px 10px; justify-content: flex-start;">
+                            <mat-checkbox (change)="stac.authentication = $event.checked" [checked]="stac.authentication">Authentication</mat-checkbox>
+                        </div>
+
+                        <div style="display: block; position: absolute; z-index: 999; top: 0px; right: 30px;">
+                            <button type="button" mat-icon-button color="primary" (click)="addStac()" [disabled]="environmentVersion !== 'cloud'">
+                                <mat-icon>plus_one</mat-icon>
+                            </button>
+                        </div>
+
+                        <div style="display: block; position: absolute; z-index: 999; top: 0px; right: 0px;">
+                            <button type="button" mat-icon-button color="error" (click)="removeStac(i)" [disabled]="stacList.length <= 1">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+
+                        <div style="display: flex;">
+                            <mat-form-field appearance="outline" style="width: 48%">
+                                <mat-label>URL STAC</mat-label>
+                                <input matInput placeholder="URL STAC" 
+                                        [(ngModel)]="stac.url" 
+                                        (focusout)="getCollectionBySTAC(i)" 
+                                        [ngModelOptions]="{standalone: true}">
+                            </mat-form-field>
+        
+                            <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
+                                <mat-label>Related Collection</mat-label>
+                                <mat-select [(ngModel)]="stac.collection" [ngModelOptions]="{standalone: true}">
+                                    <mat-option *ngFor="let collection of stac.collections" [value]="collection">
+                                        {{ collection }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+        
+                        <div style="display: flex;" *ngIf="stac.authentication">
+                            <mat-form-field appearance="outline" style="width: 100%">
+                                <mat-label>Access Token</mat-label>
+                                <input matInput placeholder="User Personal Token" 
+                                        [(ngModel)]="stac.token" 
+                                        (focusout)="getCollectionBySTAC(i)"
+                                        [ngModelOptions]="{standalone: true}">
+                            </mat-form-field>
+                        </div> 
+                    </div>
+              
+                </mat-tab>
+            </mat-tab-group>
+
+
             <mat-form-field appearance="outline">
-                <mat-label>URL STAC</mat-label>
-                <input matInput placeholder="URL STAC" formControlName="urlSTAC" (focusout)="getCollectionBySTAC()">
+                <mat-label>Satellite</mat-label>
+                <mat-select formControlName="satellite">
+                    <mat-option *ngFor="let satellite of satellites" [value]="satellite">
+                        {{ satellite }}
+                    </mat-option>
+                </mat-select>
                 <mat-error>
-                    <form-field-error [errors]="formSearchImages.get('urlSTAC').errors"></form-field-error>
+                    <form-field-error [errors]="formSearchImages.get('satellite').errors"></form-field-error>
                 </mat-error>
             </mat-form-field>
-
-            <div style="display: flex; margin-top: -4%; height: 30px;">
-                <div style="position: absolute; right: 10px">
-                    <mat-checkbox (change)="checkAuthentication($event)">Authentication</mat-checkbox>
-                </div>
-            </div>
-
-            <div style="display: flex;" *ngIf="authenticationSelected">
-                <mat-form-field appearance="outline" style="width: 100%">
-                    <mat-label>Access Token</mat-label>
-                    <input matInput placeholder="User Personal Token" formControlName="token" (focusout)="getCollectionBySTAC()">
-                    <mat-error>
-                        <form-field-error [errors]="formSearchImages.get('token').errors"></form-field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-
-            <div style="display: flex;">
-                <mat-form-field appearance="outline" style="width: 48%">
-                    <mat-label>Related Collection</mat-label>
-                    <mat-select formControlName="collection">
-                        <mat-option *ngFor="let collection of collections" [value]="collection">
-                            {{ collection }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error>
-                        <form-field-error [errors]="formSearchImages.get('collection').errors"></form-field-error>
-                    </mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
-                    <mat-label>Satellite</mat-label>
-                    <mat-select formControlName="satellite">
-                        <mat-option *ngFor="let satellite of satellites" [value]="satellite">
-                            {{ satellite }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error>
-                        <form-field-error [errors]="formSearchImages.get('satellite').errors"></form-field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
 
             <div style="display: flex;">
                 <mat-form-field appearance="outline" style="width: 48%">
@@ -91,33 +109,6 @@
                 </mat-form-field>
             </div>
 
-            <div style="display: flex;" *ngIf="environmentVersion === 'cloud'">
-                <mat-checkbox (change)="checkAdvancedOptions($event)">Advanced</mat-checkbox>
-            </div>
-
-            <div style="display: flex;" *ngIf="advancedSelected" [formGroup]="extraCatalogForm">
-                <mat-form-field appearance="outline" style="width: 48%;">
-                    <mat-label>URL STAC</mat-label>
-                    <input matInput placeholder="URL STAC"
-                           formControlName="stac_url" (focusout)="searchExtraSTAC()">
-                    <mat-error>
-                        <form-field-error [errors]="formSearchImages.get('extra_catalog').get('stac_url').errors"></form-field-error>
-                    </mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
-                    <mat-label>Related Collection</mat-label>
-                    <mat-select formControlName="collection">
-                        <mat-option *ngFor="let collection of extraCatalog?.collections" [value]="collection">
-                            {{ collection }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error>
-                        <form-field-error [errors]="formSearchImages.get('extra_catalog').get('collection').errors"></form-field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-
             <div style="display: flex; margin-bottom: 40px;">
                 <button mat-raised-button type="submit" style="display: block; margin: 0 auto;">SEARCH</button>
             </div>
@@ -132,13 +123,9 @@
                     </div>
                     <div class="card-body" style="padding-top: 25px">
                         <div class="card-category text-justify">
-                            <p>
+                            <p *ngFor="let stac of stacList; let i = index">
                                 <mat-icon>cloud_done</mat-icon>
-                                <b>Total Images:</b> <span style="font-size: 1.4em; margin-left: 10px"><b>{{ totalImages }}</b></span>
-                            </p>
-                            <p *ngIf="advancedSelected">
-                                <mat-icon>cloud_done</mat-icon>
-                                <b>Total Images Catalog-2:</b> <span style="font-size: 1.4em; margin-left: 10px"><b>{{ extraCatalog['total'] }}</b></span>
+                                <b>Total Images ({{ 'STAC ' + (i + 1) }}):</b> <span style="font-size: 1.4em; margin-left: 10px"><b>{{ stac.totalImages }}</b></span>
                             </p>
                         </div>
                     </div>

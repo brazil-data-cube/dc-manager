@@ -53,8 +53,11 @@
                                 <mat-icon>folder_shared</mat-icon> Data Aquisition:
                             </p>
                             <div class="box_content">
-                                <p><b>URL STAC:</b> {{ urlSTAC }}</p>
-                                <p><b>Collection:</b> {{ collection }}</p>
+                                <div *ngFor="let stac of stacList" style="padding: 0 10px;">
+                                    <p><b>URL STAC:</b> {{ stac['url'] }}</p>
+                                    <p><b>Collection:</b> {{ stac['collection'] }}</p>
+                                    <p *ngIf="stac['token']"><b>Token:</b> {{ stac['token'] }}</p>
+                                </div>
                                 <p><b>Satellite:</b> {{ satellite }}</p>
                                 <p *ngIf="environmentVersion === 'cloud'"><b>Bucket to save the Cube:</b> {{ definition.bucket }}</p>
                             </div>
