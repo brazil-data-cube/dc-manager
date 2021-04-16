@@ -263,6 +263,7 @@ export class CheckCubeComponent implements OnInit {
                     title: `Reprocess ${this.cube.name}`,
                     grid: this.cube.grid,
                     datacube: this.cube.name,
+                    datacube_version: this.cube.version,
                     tiles: [item.tile_id],
                     editable: false,
                     start_date: item.start_date,

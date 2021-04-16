@@ -57,12 +57,18 @@ export class ReprocessDialogComponent implements OnInit {
       token: [{ value: '', disabled: !this.editable }, []],
     });
 
-    if (window['__env'].environmentVersion === 'cloud') {
+    if (this.isCloud()) {
       this.form.addControl('bucket', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
-    } 
+      this.form.addControl('datacube_version', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
+      this.form.addControl('indexes_only_regular_cube', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
+      this.form.removeControl('collections');
+      this.form.removeControl('stac_url');
+      this.form.removeControl('token');
 
-    if (this.data.collections && Array.isArray(this.data.collections)) {
-      this.data.collections = this.data.collections.join(',');
+    } else {
+      if (this.data.collections && Array.isArray(this.data.collections)) {
+        this.data.collections = this.data.collections.join(',');
+      }
     }
 
     if (this.data.tiles && Array.isArray(this.data.tiles)) {
@@ -83,28 +89,30 @@ export class ReprocessDialogComponent implements OnInit {
   async dispatch() {
     if (this.form.invalid) {
       return;
-    }
-
-    this.store.dispatch(showLoading());
-
-    const data = this.form.getRawValue();
-
-    data.tiles = !Array.isArray(data.tiles) ? data.tiles.split(',') : data.tiles;
-    data.start_date = moment(data.start_date).utc().format('YYYY-MM-DD');
-    data.end_date = moment(data.end_date).utc().format('YYYY-MM-DD');
-
-    let collections = data.collections;
-
-    if (!this.firstRun) {
-      collections = this.data.collections;
-    }
-
-    data.collections = !Array.isArray(collections) ? collections.split(',') : collections;
-
-    data.datacube = data.datacube;
-    data.force = !!this.data.force;
+    }  
 
     try {
+      this.store.dispatch(showLoading());
+
+      const data = this.form.getRawValue();
+
+      data.tiles = !Array.isArray(data.tiles) ? data.tiles.split(',') : data.tiles;
+      data.start_date = moment(data.start_date).utc().format('YYYY-MM-DD');
+      data.end_date = moment(data.end_date).utc().format('YYYY-MM-DD');
+
+      if (!this.isCloud()) {
+        let collections = data.collections;
+
+        if (!this.firstRun) {
+          collections = this.data.collections;
+        }
+
+        data.collections = !Array.isArray(collections) ? collections.split(',') : collections;
+      }
+
+      data.datacube = data.datacube;
+      data.force = !!this.data.force;
+
       await this.service.start(data);
 
       this.snackBar.open('Update datacube has been successfully triggered.', '', {
@@ -132,6 +140,10 @@ export class ReprocessDialogComponent implements OnInit {
     } finally {
       this.store.dispatch(closeLoading());
     }
+  }
+
+  isCloud() {
+    return window['__env'].environmentVersion === 'cloud'
   }
 
 }

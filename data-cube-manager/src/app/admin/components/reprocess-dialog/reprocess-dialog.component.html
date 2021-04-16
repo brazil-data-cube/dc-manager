@@ -28,21 +28,21 @@
                 </mat-form-field>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="!isCloud()">
                 <mat-form-field appearance="outline">
                     <mat-label>Collections</mat-label>
                     <input matInput formControlName="collections">
                 </mat-form-field>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="!isCloud()">
                 <mat-form-field appearance="outline">
                     <mat-label>STAC</mat-label>
                     <input matInput formControlName="stac_url">
                 </mat-form-field>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="!isCloud()">
                 <mat-form-field appearance="outline">
                     <mat-label>Access Token</mat-label>
                     <input matInput formControlName="token">
@@ -54,6 +54,12 @@
                     <app-map-field [form]="form" [grid]="grid" [tiles]="data.tiles"></app-map-field>
                 </div>
             </ng-template>
+            
+            <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="isCloud()">
+                <mat-checkbox color="primary" formControlName="indexes_only_regular_cube" style="margin-left: 15px;">
+                    <span style="font-size: 1.3em; color: #666">Generate indexes only Regular Cube</span>
+                </mat-checkbox>
+            </div>
         </div>
     </form>
 </div>
