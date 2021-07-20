@@ -183,14 +183,21 @@ export class DetailsCubeComponent implements OnInit {
         this.exportMetadataUrl = uri;
     }
 
-    openModalUpdateCubeMetadata() {
+    async openModalUpdateCubeMetadata() {
+        const parameters = await this.cbs.getCubeMeta(this.cube.id);
+
+        if (parameters.hasOwnProperty('token')) {
+            delete parameters['token'];
+        }
+
         const dialogRef = this.dialog.open(UpdateCubeDialog, {
             width: '800px',
             maxHeight: '85%',
             minHeight: '400px',
             disableClose: true,
             data: {
-                cube: this.cube
+                cube: this.cube,
+                parameters
             }
         })
         dialogRef.afterClosed().subscribe(result => {

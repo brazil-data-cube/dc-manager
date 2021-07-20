@@ -19,10 +19,13 @@ import { closeLoading, showLoading } from 'app/app.action';
   ]
 })
 export class UpdateCubeDialog implements OnInit {
-
+  public environmentVersion = window['__env'].environmentVersion
   form: FormGroup;
   cube: object;
   metadata: string;
+  parameters: any = { };
+
+  private cubeParameters_: any;
 
   constructor(
     public dialogRef: MatDialogRef<UpdateCubeDialog>,
@@ -32,7 +35,8 @@ export class UpdateCubeDialog implements OnInit {
     private store: Store<AppState>,
     private snackBar: MatSnackBar
   ) {
-    this.cube = data['cube'];   
+    this.cube = data['cube'];
+    this.cubeParameters_ = data['parameters'];
   }
 
   ngOnInit(): void {
@@ -42,13 +46,24 @@ export class UpdateCubeDialog implements OnInit {
       public: [{ value: false }, [Validators.required]],
     });
 
-    this.form.patchValue({ 
+    this.form.patchValue({
       title: this.cube['title'],
       description: this.cube['description'],
       public: this.cube['is_public']
     });
 
     this.metadata = this.cube['_metadata'];
+  }
+
+  get cubeParameters () {
+    return JSON.stringify(this.cubeParameters_, null, 4);
+  }
+
+  set cubeParameters (v) {
+    try{
+      this.cubeParameters_ = JSON.parse(v);
+    }
+    catch(e) {};
   }
 
   close(status = false) {
@@ -73,10 +88,14 @@ export class UpdateCubeDialog implements OnInit {
 
     this.store.dispatch(showLoading());
 
-    const data = {...this.form.value, metadata: this.metadata}; 
+    const data = {...this.form.value, metadata: this.metadata};
 
     try {
       await this.service.update(this.cube['id'], data);
+
+      if (this.environmentVersion === 'local') {
+        await this.service.updateCubeParameters(this.cube['id'], this.cubeParameters_);
+      }
 
       this.snackBar.open('Update datacube has been successfully.', '', {
           duration: 4000,
