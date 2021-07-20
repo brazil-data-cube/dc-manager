@@ -25,7 +25,7 @@
 
                 <div class="col-12" *ngIf="environmentVersion == 'local'">
                     <mat-label>Parameters:</mat-label>
-                    <ace-editor [(text)]="cubeParameters" [theme]="'eclipse'" mode="json" style="height: 150px;"></ace-editor>
+                    <ace-editor [(text)]="cubeParameters" [durationBeforeCallback]="3000" [theme]="'eclipse'" mode="json" style="height: 150px;"></ace-editor>
                 </div>
 
                 <div class="col-12" class="checkbox_container">
