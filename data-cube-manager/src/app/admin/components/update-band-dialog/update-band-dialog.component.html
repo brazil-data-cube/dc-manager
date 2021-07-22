@@ -1,0 +1,71 @@
+<section class="update-band-modal">
+    <h3 mat-dialog-title>Update Band: <b>{{ band.name }}</b></h3>
+
+    <div mat-dialog-content>
+        <div class="alert alert-warning">
+            This operation does not change the values (nodata, name, scale) previously set on files. Make sure to change manually.
+        </div>
+
+        <form [formGroup]="form">
+            <div class="row">
+                <div class="col-6">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Name</mat-label>
+                        <input matInput placeholder="Band Name" formControlName="name">
+                    </mat-form-field>
+                </div>
+                <div class="col-6">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Common Name</mat-label>
+                        <input matInput placeholder="Common Name" formControlName="common_name">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Description</mat-label>
+                        <textarea matInput placeholder="Description" formControlName="description" rows="4"></textarea>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-4">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nodata</mat-label>
+                        <input matInput placeholder="Band Nodata" formControlName="nodata">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-4">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Data Type: </mat-label>
+                        <mat-select formControlName="data_type">
+                            <mat-option *ngFor="let dataType of dataTypes" [value]="dataType">
+                                {{ dataType }}
+                            </mat-option>
+                        </mat-select>
+
+                        <mat-error>
+                            <form-field-error [errors]="form.get('data_type').errors"></form-field-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-4">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Scale</mat-label>
+                        <input matInput placeholder="Band Scale" type="number" formControlName="scale">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-12">
+                    <mat-label>Metadata:</mat-label>
+                    <ace-editor [(text)]="metadata" [theme]="'eclipse'" mode="json" style="height: 200px;"></ace-editor>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="close()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="update()" [disabled]="form.invalid">SAVE</button>
+    </div>
+</section>

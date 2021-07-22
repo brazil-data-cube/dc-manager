@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
 import { UpdateCubeDialog } from 'app/admin/components/update-cube-dialog/update-cube-dialog.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { UpdateBandDialogComponent } from 'app/admin/components/update-band-dialog/update-band-dialog.component';
 
 @Component({
     selector: 'app-details-cube',
@@ -198,6 +199,24 @@ export class DetailsCubeComponent implements OnInit {
             data: {
                 cube: this.cube,
                 parameters
+            }
+        })
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.getCube(this.cube['id']);
+            }
+        });
+    }
+
+    async openUpdateBandModal(band: any) {
+        const dialogRef = this.dialog.open(UpdateBandDialogComponent, {
+            width: '600px',
+            maxHeight: '85%',
+            minHeight: '400px',
+            disableClose: true,
+            data: {
+                cube: this.cube,
+                band
             }
         })
         dialogRef.afterClosed().subscribe(result => {
