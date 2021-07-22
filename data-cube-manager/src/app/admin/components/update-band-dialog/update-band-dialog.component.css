@@ -1,0 +1,11 @@
+.update-band-modal {
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .checkbox_container {
+        margin-top: 15px;
+        padding: 0 20px;
+    }
+}

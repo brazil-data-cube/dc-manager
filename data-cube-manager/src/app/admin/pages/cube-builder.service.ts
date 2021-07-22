@@ -8,7 +8,7 @@ export class CubeBuilderService {
     private urlCubeBuilder = window['__env'].urlCubeBuilder;
 
     /** start http service client */
-    constructor(private http: HttpClient) { 
+    constructor(private http: HttpClient) {
         if (!!sessionStorage.getItem('dc_manager_url_service')) {
             this.urlCubeBuilder = sessionStorage.getItem('dc_manager_url_service')
         }
@@ -104,6 +104,20 @@ export class CubeBuilderService {
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         const urlSuffix = `/cubes/${cubeId}`;
         const response = await this.http.put(`${this.urlCubeBuilder}${urlSuffix}`, data, headers).toPromise();
+        return response;
+    }
+
+    /**
+     * Update the given data cube instance parameters and make it available in execution.
+     *
+     * @param cubeId Data Cube Identifier.
+     * @param parameters Map of parameters to be set on Data Cube Instance.
+     */
+    public async updateCubeParameters(cubeId, parameters: any): Promise<any> {
+        const token = sessionStorage.getItem('dc_manager_api_token')
+        const headers = token ? { headers: { 'x-api-key': token } } : {}
+        const urlSuffix = `/cubes/${cubeId}/parameters`;
+        const response = await this.http.put(`${this.urlCubeBuilder}${urlSuffix}`, parameters, headers).toPromise();
         return response;
     }
 

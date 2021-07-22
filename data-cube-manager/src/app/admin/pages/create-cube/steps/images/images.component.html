@@ -21,7 +21,7 @@
         <form class="col-lg-4 col-md-4 col-sm-12 form" (ngSubmit)="searchImages()" [formGroup]="formSearchImages">
             <!-- STAC Box -->
             <mat-tab-group mat-align-tabs="start">
-                <mat-tab [label]="'STAC ' + (i+1)" 
+                <mat-tab [label]="'STAC ' + (i+1)"
                          *ngFor="let stac of stacList; let i = index">
 
                     <div style="padding: 10px">
@@ -41,15 +41,25 @@
                             </button>
                         </div>
 
+                        <div style="display: flex;" *ngIf="stac.authentication">
+                            <mat-form-field appearance="outline" style="width: 100%">
+                                <mat-label>Access Token</mat-label>
+                                <input matInput placeholder="User Personal Token"
+                                        [(ngModel)]="stac.token"
+                                        (focusout)="getCollectionBySTAC(i)"
+                                        [ngModelOptions]="{standalone: true}">
+                            </mat-form-field>
+                        </div>
+
                         <div style="display: flex;">
                             <mat-form-field appearance="outline" style="width: 48%">
                                 <mat-label>URL STAC</mat-label>
-                                <input matInput placeholder="URL STAC" 
-                                        [(ngModel)]="stac.url" 
-                                        (focusout)="getCollectionBySTAC(i)" 
+                                <input matInput placeholder="URL STAC"
+                                        [(ngModel)]="stac.url"
+                                        (focusout)="getCollectionBySTAC(i)"
                                         [ngModelOptions]="{standalone: true}">
                             </mat-form-field>
-        
+
                             <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
                                 <mat-label>Related Collection</mat-label>
                                 <mat-select [(ngModel)]="stac.collection" [ngModelOptions]="{standalone: true}">
@@ -59,18 +69,8 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-        
-                        <div style="display: flex;" *ngIf="stac.authentication">
-                            <mat-form-field appearance="outline" style="width: 100%">
-                                <mat-label>Access Token</mat-label>
-                                <input matInput placeholder="User Personal Token" 
-                                        [(ngModel)]="stac.token" 
-                                        (focusout)="getCollectionBySTAC(i)"
-                                        [ngModelOptions]="{standalone: true}">
-                            </mat-form-field>
-                        </div> 
                     </div>
-              
+
                 </mat-tab>
             </mat-tab-group>
 
