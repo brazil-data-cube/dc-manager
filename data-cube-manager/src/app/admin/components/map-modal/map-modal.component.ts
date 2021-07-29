@@ -2,7 +2,7 @@ import { Component, Inject, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { AdminState } from 'app/admin/admin.state';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 import { closeLoading, showLoading } from 'app/app.action';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON } from 'leaflet';
 import { MapData } from './map-model.interface';

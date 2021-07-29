@@ -16,7 +16,7 @@ npm install
 
 ## Running
 
-First of all, you must have an instance of [Cube-Builder](https://github.com/brazil-data-cube/cube-builder) running. After that, you must configure the variable `window.__env.urlCubeBuilder` in the file `src/assets/env.js`. By default, its poinst to `http://localhost:5000`.
+First of all, you must have an instance of [Cube-Builder](https://github.com/brazil-data-cube/cube-builder) running.
 
 ### Development server
 

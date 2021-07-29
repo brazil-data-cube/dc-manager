@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
 import { showLoading, closeLoading } from 'app/app.action';
@@ -60,7 +60,7 @@ export class ReprocessDialogComponent implements OnInit {
     if (this.isCloud()) {
       this.form.addControl('bucket', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
       this.form.addControl('datacube_version', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
-      this.form.addControl('indexes_only_regular_cube', new FormControl({ value: '', disabled: !this.editable }, [Validators.required]));
+      this.form.addControl('indexes_only_regular_cube', new FormControl(false, [Validators.required]));
       this.form.removeControl('collections');
       this.form.removeControl('stac_url');
       this.form.removeControl('token');
