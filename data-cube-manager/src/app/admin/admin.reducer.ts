@@ -22,9 +22,11 @@ const initialState: AdminState = {
     temporal: '',
     function: {},
     bands: [],
+    nodata: null,
     bandsQuicklook: [],
     indexes: [],
-    qualityBand: ''
+    qualityBand: '',
+    qualityNodata: null
   },
   metadata: {
     license: '',
