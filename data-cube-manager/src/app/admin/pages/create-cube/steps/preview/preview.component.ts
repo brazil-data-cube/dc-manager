@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 import { Store, select } from '@ngrx/store';
 import { AdminState, DefinitionCube, MetadataCube } from 'app/admin/admin.state';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -174,9 +174,15 @@ export class CreateCubePreviewComponent implements OnInit {
           public: this.definition.public,
           resolution: this.definition.resolution,
           temporal_composition: JSON.parse(this.definition.temporal),
+          bucket: this.definition.bucket,
           composite_function: this.definition.function['alias'],
           bands: this.definition.bands.map(b => {
-            return {'name': b, 'common_name': b, 'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8'}
+            return {
+              'name': b, 
+              'common_name': b, 
+              'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8',
+              'nodata': b !== this.definition.qualityBand ? this.definition.nodata : this.definition.qualityNodata
+            }
           }),
           bands_quicklook: this.definition.bandsQuicklook,
           indexes: this.definition.indexes,

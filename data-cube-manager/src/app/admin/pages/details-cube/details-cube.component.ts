@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
-import { CubeBuilderService } from '../cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 import { ActivatedRoute } from '@angular/router';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, geoJSON } from 'leaflet';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -240,6 +240,11 @@ export class DetailsCubeComponent implements OnInit {
 
     public getCubeFullName(cube) {
         return `${cube.name}-${cube.version}:${cube.id}`
+    }
+
+    public cubeStarted() {
+        return this.cubeStatus && 
+            (this.cubeStatus.not_done > 0 || this.cubeStatus.done > 0 || this.cubeStatus.error > 0);
     }
 
     /**

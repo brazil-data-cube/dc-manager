@@ -1,6 +1,6 @@
 import { MatDialogRef } from "@angular/material/dialog";
 import { Component } from "@angular/core";
-import { CubeBuilderService } from "app/admin/pages/cube-builder.service";
+import { CubeBuilderService } from "app/services/cube-builder";
 import { closeLoading, showLoading } from "app/app.action";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";

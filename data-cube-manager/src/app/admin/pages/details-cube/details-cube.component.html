@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="btns-check" *ngIf="cubeStatus">
-                    <button *ngIf="cubeStatus.finished && cube.composite_function.toUpperCase() !== 'IDENTITY'" mat-raised-button color="success" (click)="openModalUpdateCube()">
+                    <button *ngIf="(cubeStatus.finished || !cubeStarted()) && cube.composite_function.toUpperCase() !== 'IDENTITY'" mat-raised-button color="success" (click)="openModalUpdateCube()">
                         PROCESS CUBE
                     </button>
                     <a mat-raised-button *ngIf="countTiles > 0" color="primary" [routerLink]="['/check-cube', getCubeFullName(cube)]">
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        <div class="row container_progress" *ngIf="cubeStatus">
+        <div class="row container_progress" *ngIf="cubeStatus && cubeStarted()">
             <div class="col-10 bar">
                 <mat-progress-bar mode="buffer" [value]="getPercentage(cubeStatus)" color="blue" bufferValue="0">
                 </mat-progress-bar>

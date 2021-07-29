@@ -86,7 +86,7 @@
             </mat-form-field>
         </div>
 
-        <div class="col-lg-8 col-md-8 col-sm-12" style="margin-top: 15px;">
+        <div class="col-lg-5 col-md-5 col-sm-12" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
                 <mat-label>Bands</mat-label>
                 <mat-select multiple formControlName="bands">
@@ -99,7 +99,16 @@
                 </mat-error>
             </mat-form-field>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-12">
+        <div class="col-lg-2 col-md-2 col-sm-12" style="margin-top: 15px;">
+            <mat-form-field appearance="outline">
+                <mat-label>Nodata Value</mat-label>
+                <input matInput type="number" placeholder="Nodata Value" min="-32768" max="32767" formControlName="nodata">
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('nodata').errors"></form-field-error>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-12">
             <div class="box-rgb">
                 <p class="title">Bands Quicklook</p>
 
@@ -132,7 +141,7 @@
             </div>
         </div>
 
-        <div class="col-lg-8 col-md-8 col-sm-12" style="margin-top: 15px;">
+        <div class="col-lg-6 col-md-6 col-sm-12" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
                 <mat-label>Indexes</mat-label>
                 <mat-select multiple formControlName="indexes" (selectionChange)="onChangeBandIndex($event)">
@@ -178,6 +187,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-lg-4 col-md-4 col-sm-12" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
                 <mat-label>Quality Band</mat-label>
@@ -188,6 +198,16 @@
                 </mat-select>
                 <mat-error>
                     <form-field-error [errors]="formCreateCube.get('qualityBand').errors"></form-field-error>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="col-lg-2 col-md-2 col-sm-12" style="margin-top: 15px;">
+            <mat-form-field appearance="outline">
+                <mat-label>Quality nodata Value</mat-label>
+                <input matInput type="number" min="-32768" max="32767" placeholder="Nodata Value" formControlName="qualityNodata">
+                <mat-error>
+                    <form-field-error [errors]="formCreateCube.get('qualityNodata').errors"></form-field-error>
                 </mat-error>
             </mat-form-field>
         </div>

@@ -11,8 +11,8 @@ import { AppState } from './app.state';
 /** initial values to App State */
 const initialState: AppState = {
   loading: false,
-  token: sessionStorage.getItem('dc_manager_api_token') || '',
-  urlService: sessionStorage.getItem('dc_manager_url_service') || ''
+  token: sessionStorage.getItem('DC_MANAGER_api_token') || '',
+  urlService: sessionStorage.getItem('DC_MANAGER_url_service') || ''
 };
 
 /**
@@ -27,16 +27,16 @@ const reducerApp = createReducer(initialState,
     return { ...state, loading: false };
   }),
   on(token, (state, payload) => {
-    sessionStorage.setItem('dc_manager_api_token', payload['token']);
+    sessionStorage.setItem('DC_MANAGER_api_token', payload['token']);
     return { ...state, token: payload['token'] };
   }),
   on(setURLCubeBuilder, (state, payload) => {
-    sessionStorage.setItem('dc_manager_url_service', payload['url']);
+    sessionStorage.setItem('DC_MANAGER_url_service', payload['url']);
     return { ...state, urlService: payload['url'] };
   }),
   on(logout, (state) => {
-    sessionStorage.removeItem('dc_manager_api_token');
-    sessionStorage.removeItem('dc_manager_url_service');
+    sessionStorage.removeItem('DC_MANAGER_api_token');
+    sessionStorage.removeItem('DC_MANAGER_url_service');
     return { ...state, token: '', urlService: '' };
   })
 );

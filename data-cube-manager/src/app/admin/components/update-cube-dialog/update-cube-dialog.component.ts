@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -93,9 +93,7 @@ export class UpdateCubeDialog implements OnInit {
     try {
       await this.service.update(this.cube['id'], data);
 
-      if (this.environmentVersion === 'local') {
-        await this.service.updateCubeParameters(this.cube['id'], this.cubeParameters_);
-      }
+      await this.service.updateCubeParameters(this.cube['id'], this.cubeParameters_);
 
       this.snackBar.open('Update datacube has been successfully.', '', {
           duration: 4000,

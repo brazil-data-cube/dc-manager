@@ -1,14 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON, featureGroup, Layer, FeatureGroup, polygon } from 'leaflet';
+import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, Control, geoJSON, featureGroup, FeatureGroup } from 'leaflet';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store, select } from '@ngrx/store';
 import { AdminState } from 'app/admin/admin.state';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { STACService } from 'app/admin/pages/stac.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
+import { STACService } from 'app/services/stac';
 import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
 import { setBandsAvailable, setRangeTemporal, setTiles, setStacList, setSatellite } from 'app/admin/admin.action';

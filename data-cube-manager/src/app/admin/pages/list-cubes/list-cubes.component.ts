@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
-import { CubeBuilderService } from '../cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 
 
 @Component({

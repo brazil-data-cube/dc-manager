@@ -2,7 +2,7 @@ import { Component, OnInit, ɵConsole } from '@angular/core';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
-import { CubeBuilderService } from '../cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { MapModal } from 'app/admin/components/map-modal/map-modal.component';

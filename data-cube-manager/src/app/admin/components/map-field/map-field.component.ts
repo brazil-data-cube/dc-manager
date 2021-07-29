@@ -4,7 +4,7 @@ import { Control, Draw, Map as MapLeaflet, MapOptions, geoJSON, latLng, rectangl
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
 import { showLoading, closeLoading } from 'app/app.action';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 
 @Component({
   selector: 'app-map-field',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import api from "./main";
 
 import { join } from '@fireflysemantics/join';
 
@@ -7,18 +7,18 @@ import { join } from '@fireflysemantics/join';
 export class STACService {
 
     /** start http service client */
-    constructor(private http: HttpClient) { }
+    constructor() { }
 
     /**
      * get stac version
      */
     public async getVersion(url): Promise<any> {
-        const response = await this.http.get(`${url}`).toPromise();
-        if (!response['stac_version']) {
-            const response = await this.http.get(`${url}/stac`).toPromise();
-            return response;
+        const { data } = await api.get(`${url}`);
+        if (!data['stac_version']) {
+            const { data } = await api.get(`${url}/stac`);
+            return data;
         }
-        return response;
+        return data;
     }
 
     /**
@@ -26,8 +26,8 @@ export class STACService {
      */
     public async getCollections(url, params: any = { }): Promise<any> {
         let urlSuffix = '/collections'
-        const response = await this.http.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}}).toPromise()
-        return response;
+        const { data } = await api.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}});
+        return data;
     }
 
     /**
@@ -40,8 +40,8 @@ export class STACService {
         }
 
         let urlSuffix = `/search`
-        const response = await this.http.post(join(url, urlSuffix), q, { params, headers: {'Content-Type': 'application/json'}}).toPromise()
-        return response;
+        const { data } = await api.post(join(url, urlSuffix), q, { params, headers: {'Content-Type': 'application/json'}});
+        return data;
     }
 
     /**
@@ -49,8 +49,8 @@ export class STACService {
      */
     public async getCollectionInfo(url, collection, params: any = { }): Promise<any> {
         let urlSuffix = `/collections/${collection}`
-        const response = await this.http.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}}).toPromise()
-        return response;
+        const { data } = await api.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}});
+        return data;
     }
 
 }

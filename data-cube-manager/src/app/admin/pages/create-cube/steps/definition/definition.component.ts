@@ -6,7 +6,7 @@ import { showLoading, closeLoading } from 'app/app.action'
 import { AdminState } from 'app/admin/admin.state'
 import { TemporalComposition, CompositeFunction } from './definition.interface'
 import { TemporalCompositionModal } from './temporal/temporal.component'
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service'
+import { CubeBuilderService } from 'app/services/cube-builder'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
 import { FormGroup, FormBuilder, Validators } from '@angular/forms'
@@ -53,11 +53,13 @@ export class CreateCubeDefinitionComponent implements OnInit {
       temporalComposite: [{value: '', disabled: true}, [Validators.required]],
       compositeFunction: [null, [Validators.required]],
       bands: [[''], [Validators.required]],
+      nodata: ['', [Validators.required, Validators.min(-32768), , Validators.max(32767)]],
       quicklookR: ['', [Validators.required]],
       quicklookG: ['', [Validators.required]],
       quicklookB: ['', [Validators.required]],
       indexes: [['']],
       qualityBand: ['', [Validators.required]],
+      qualityNodata: ['', [Validators.required, Validators.min(-32768), , Validators.max(32767)]],
       public: [true, [Validators.required]],
       indexesMeta: this.fb.group({})
     });
@@ -166,6 +168,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
             name: bandIndexName,
             common_name: bandIndexName,
             data_type: 'int16',
+            nodata: this.formCreateCube.get('nodata').value,
             metadata: {
               expression: indexFormValue
             }
@@ -184,9 +187,11 @@ export class CreateCubeDefinitionComponent implements OnInit {
           temporal: this.formCreateCube.get('temporalComposite').value,
           function: this.formCreateCube.get('compositeFunction').value,
           bands: this.formCreateCube.get('bands').value,
+          nodata: this.formCreateCube.get('nodata').value,
           bandsQuicklook: this.getBandsQuicklook(),
           indexes: indexes,
           qualityBand: this.formCreateCube.get('qualityBand').value,
+          qualityNodata: this.formCreateCube.get('qualityNodata').value,
           public: this.formCreateCube.get('public').value
         }
       }))
