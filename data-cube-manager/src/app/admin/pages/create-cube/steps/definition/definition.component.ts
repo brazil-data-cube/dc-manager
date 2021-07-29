@@ -168,6 +168,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
             name: bandIndexName,
             common_name: bandIndexName,
             data_type: 'int16',
+            nodata: this.formCreateCube.get('nodata').value,
             metadata: {
               expression: indexFormValue
             }
