@@ -41,9 +41,11 @@ export interface DefinitionCube {
     temporal: string;
     function: object;
     bands: string[];
+    nodata: number;
     bandsQuicklook: string[];
     indexes: IBand[];
     qualityBand: string;
+    qualityNodata: number;
 }
 
 export interface MetadataCube {
