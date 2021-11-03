@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
-import { CubeBuilderService } from 'app/admin/pages/cube-builder.service';
+import { CubeBuilderService } from 'app/services/cube-builder';
 import { closeLoading, showLoading } from 'app/app.action';
 import { AppState } from 'app/app.state';
 
@@ -11,7 +11,7 @@ import { AppState } from 'app/app.state';
 @Component({
   selector: 'app-update-band-dialog',
   templateUrl: './update-band-dialog.component.html',
-  styleUrls: ['./update-band-dialog.component.css']
+  styleUrls: ['./update-band-dialog.component.scss']
 })
 export class UpdateBandDialogComponent implements OnInit {
   public form: FormGroup;

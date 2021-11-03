@@ -102,6 +102,7 @@ import { UpdateBandDialogComponent } from './components/update-band-dialog/updat
     SceneDetailsComponent,
     ReprocessDialogComponent,
     UpdateCubeDialog,
+    UpdateBandDialogComponent,
     BucketsModal,
     MapFieldComponent,
     UpdateBandDialogComponent
