@@ -50,6 +50,7 @@ import { ReprocessDialogComponent } from './components/reprocess-dialog/reproces
 import { BucketsModal } from './pages/create-cube/steps/definition/buckets/buckets.component';
 import { MapFieldComponent } from './components/map-field/map-field.component';
 import { UpdateCubeDialog } from './components/update-cube-dialog/update-cube-dialog.component';
+import { UpdateBandDialogComponent } from './components/update-band-dialog/update-band-dialog.component';
 
 @NgModule({
   imports: [
@@ -102,7 +103,8 @@ import { UpdateCubeDialog } from './components/update-cube-dialog/update-cube-di
     ReprocessDialogComponent,
     UpdateCubeDialog,
     BucketsModal,
-    MapFieldComponent
+    MapFieldComponent,
+    UpdateBandDialogComponent
   ],
   providers: [
     AdminGuardService

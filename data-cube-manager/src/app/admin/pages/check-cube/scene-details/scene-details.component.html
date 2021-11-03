@@ -51,10 +51,10 @@
                 <mat-expansion-panel hideToggle *ngFor="let error of merges[date]['errors']">
                     <mat-expansion-panel-header>
                       <mat-panel-title style="font-size: 11px;">
-                        {{ error.filename }}
+                        {{ error.filename }} - {{ error.band }}
                       </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <p>{{ error.message }}</p>
+                    <p style="color: red">{{ error.message }}</p>
                 </mat-expansion-panel>
             </div>
 
