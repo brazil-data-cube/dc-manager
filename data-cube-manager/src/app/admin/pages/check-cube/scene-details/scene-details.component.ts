@@ -105,12 +105,26 @@ export class SceneDetailsComponent implements OnInit {
     this.dialogRef.close()
   }
 
+  exportSceneIds() {
+    const scenes = [];
+    for(let mergeDate of Object.keys(this.merges)) {
+      const merge = this.merges[mergeDate];
+      for (let error of merge['errors']) {
+        scenes.push(error['filename']);
+      }
+    }
+
+    return this.exportJSONFile(scenes);
+  }
+
   exportMergesURL() {
-    const blob = new Blob([JSON.stringify(this.merges, null, 4)], { type: 'application/json' })
+    return this.exportJSONFile(this.merges);
+  }
 
-    const downloadURL = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));
+  private exportJSONFile(data) {
+    const blob = new Blob([JSON.stringify(data, null, 4)], { type: 'application/json' })
 
-    return downloadURL;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));
   }
 
 }

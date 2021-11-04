@@ -10,7 +10,7 @@ export class AdminGuardService implements CanActivateChild {
   canActivateChild(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | boolean {
-      const token = sessionStorage.getItem('DC_MANAGER_api_token')
+      const token = localStorage.getItem('DC_MANAGER_api_token')
       return token ? true : false;
   }
 }
