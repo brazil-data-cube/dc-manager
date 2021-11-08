@@ -87,21 +87,51 @@ export class CreateCubeDefinitionComponent implements OnInit {
     })
   }
 
-  public addIndexMetaGroup(value) {
-    return this.fb.group({
+  public addIndexMetaGroup(value, bands) {
+    const group = this.fb.group({
       bands: [[''], []],
       value: [[value || ''], []]
     })
+    group.controls.bands.setValue(bands);
+
+    return group;
   }
 
   public onChangeBandIndex(event) {
     const { value } = event;
 
     for(let indexValue of value) {
-      const expression = this.wellKnownIndexes[indexValue];
+      let expression = this.wellKnownIndexes[indexValue];
+
+      let redBand = '';
+      let nirBand = '';
+      let blueBand = '';
+
+      if (this.satellite.startsWith('SENTINEL')) {
+        // TODO: Show error when no required band selected
+        nirBand = 'B8A';
+        redBand = 'B04';
+        blueBand = 'B02';
+      } else if (this.satellite === 'LANDSAT') {
+        nirBand = 'B7';
+        redBand = 'B4';
+        blueBand = 'B2';
+      } else if (this.satellite === 'CBERS') {
+        nirBand = 'BAND16';
+        redBand = 'BAND15';
+        blueBand = 'BAND13';
+      }
+      let bands = [nirBand, redBand];
+      if (indexValue === 'EVI') {
+        bands = [nirBand, redBand, blueBand]
+      }
+
+      expression = expression.replaceAll('NIR_BAND_HERE', nirBand)
+                             .replaceAll('RED_BAND_HERE', redBand)
+                             .replaceAll('BLUE_BAND_HERE', blueBand);
 
       if (!this.formCreateCube.get('indexesMeta').get(indexValue)) {
-        (this.formCreateCube.get('indexesMeta') as any).controls[indexValue] = this.addIndexMetaGroup(expression)
+        (this.formCreateCube.get('indexesMeta') as any).controls[indexValue] = this.addIndexMetaGroup(expression, bands)
       }
     }
   }
@@ -173,7 +203,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
               expression: indexFormValue
             }
           };
-  
+
           indexes.push(bandIndex);
         }
       }

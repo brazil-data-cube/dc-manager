@@ -9,8 +9,8 @@ export class CubeBuilderService {
 
     /** get cube-builder url */
     constructor() {
-        if (!!sessionStorage.getItem('DC_MANAGER_url_service')) {
-            this.urlCubeBuilder = sessionStorage.getItem('DC_MANAGER_url_service');
+        if (!!localStorage.getItem('DC_MANAGER_url_service')) {
+            this.urlCubeBuilder = localStorage.getItem('DC_MANAGER_url_service');
         }
     }
 

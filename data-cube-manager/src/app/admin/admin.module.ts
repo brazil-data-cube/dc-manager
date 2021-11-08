@@ -104,7 +104,8 @@ import { UpdateBandDialogComponent } from './components/update-band-dialog/updat
     UpdateCubeDialog,
     UpdateBandDialogComponent,
     BucketsModal,
-    MapFieldComponent
+    MapFieldComponent,
+    UpdateBandDialogComponent
   ],
   providers: [
     AdminGuardService
