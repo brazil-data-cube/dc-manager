@@ -49,6 +49,16 @@
             <mat-tab-group (selectedTabChange)="onTabChanged($event)">
                 <mat-tab *ngFor="let tile of tiles" label="{{ tile }}">
                     <div class="row" style="margin: 0">
+                        <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top: 20px;">
+                            <mat-card class="card-tile-options" *ngIf="hasErrorInTab">
+                                <mat-card-actions align="end">
+                                    <button mat-icon-button aria-label="Download Error Scenes ID" (click)="downloadErrors(tile)">
+                                        <mat-icon>get_app</mat-icon>
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
+                        </div>
+
                         <ng-template [ngIf]="currentTab === tile">
                             <div class="col-lg-3 col-md-4 col-sm-6" style="margin-top: 20px;"
                                 *ngFor="let item of items[tile] | paginate: { itemsPerPage: perPage, currentPage: pageIndex+1 }">

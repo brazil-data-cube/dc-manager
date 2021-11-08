@@ -62,6 +62,9 @@ export class SceneDetailsComponent implements OnInit {
 
     } else {
       const file = this.merges[date].file;
+      if (!file) {
+          return '';
+      }
       qk = file.replace('.tif', '.png')
       bands.forEach(band => {
         qk = qk.replace(`_${band}`, '')
@@ -83,10 +86,10 @@ export class SceneDetailsComponent implements OnInit {
     }
   }
 
-  getScenePath(file) {
+  getScenePath(file, keepOriginal = false) {
     const parts = file.split('/')
 
-    if (file.includes('.SAFE')) {
+    if (file.includes('.SAFE') && !keepOriginal) {
       const safeFolderPos = file.indexOf('.SAFE') + 5;
       const safeFolder = file.substring(0, safeFolderPos);
       const safeParts = safeFolder.split('/');
