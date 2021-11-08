@@ -1,4 +1,4 @@
-import { Component, OnInit, ɵConsole } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 import { showLoading, closeLoading } from 'app/app.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
@@ -11,6 +11,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { SceneDetailsComponent } from './scene-details/scene-details.component';
 import * as moment from 'moment';
 import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class CheckCubeComponent implements OnInit {
     public currentTab: string = ''
     public items = {} as any
     public form: FormGroup
+    public hasErrorInTab: boolean = false;
 
     constructor(
         private cbs: CubeBuilderService,
@@ -38,7 +40,8 @@ export class CheckCubeComponent implements OnInit {
         private store: Store<AppState>,
         public dialog: MatDialog,
         private fb: FormBuilder,
-        private router: Router
+        private router: Router,
+        private sanitizer: DomSanitizer,
     ) { }
 
     ngOnInit() {
@@ -144,8 +147,11 @@ export class CheckCubeComponent implements OnInit {
                     notFound: true,
                     ...this.parseSceneID(features[0]['name']) } });
 
+            this.hasErrorInTab = dates.length > 0;
+
             return [...dates, ...features];
         }
+        this.hasErrorInTab = false;
 
         return features;
     }
@@ -215,6 +221,44 @@ export class CheckCubeComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             this.form.patchValue({ bbox: result['bbox'] })
         })
+    }
+
+    async downloadErrors(tile) {
+        try {
+            this.store.dispatch(showLoading());
+            const scenes: Set<string> = new Set<string>();
+            for (let item of this.items[tile]) {
+                if (item.notFound) {
+                    const response = await this.cbs.listMerges(this.cube.id, item.start_date, item.end_date, tile);
+
+                    for(let mergeDate of Object.keys(response)) {
+                        const merge = response[mergeDate];
+                        for (let error of merge['errors']) {
+                            scenes.add(error['filename']);
+                        }
+                    }
+                }
+            }
+
+            const link = document.createElement('a');
+            const linkURL = this.exportJSONFile(Array.from(scenes));
+            const res = this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, linkURL);
+
+            link.setAttribute('target', '_blank');
+            link.setAttribute('href', res);
+            link.setAttribute('download', 'scenes-errors.json');
+            document.body.appendChild(link);
+            link.click()
+            link.remove();
+        } finally {
+            this.store.dispatch(closeLoading());
+        }
+    }
+
+    private exportJSONFile(data) {
+        const blob = new Blob([JSON.stringify(data, null, 4)], { type: 'application/json' })
+
+        return this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));
     }
 
     async openDetails(item: any) {

@@ -43,7 +43,7 @@
             <span><b>Images used:</b></span>
             <div class="merges-used">
                 <div class="merge-item" *ngFor="let image of getImagesFromMerge(date)">
-                    <a [href]="getScenePath(image)" target="_blank">
+                    <a [href]="getScenePath(image, true)" target="_blank">
                         <img [src]="getScenePath(image)" style="width: 64px;height: 64px;" onerror="this.onerror=null; this.src='assets/img/not_found.svg'" />
                     </a>
                 </div>

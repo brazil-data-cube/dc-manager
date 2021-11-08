@@ -1,6 +1,6 @@
 .container_check-cube {
     padding: 0 15px;
-    
+
     .search-box {
         background: #FFF;
         padding: 20px 10px 0 10px;
@@ -24,11 +24,11 @@
         padding: 10px;
         margin-bottom: 10px;
         margin-top: 10px;
-        
+
         .card-header-success {
             padding: 0;
             border-radius: 10px;
-            
+
             img {
                 width: 100%;
                 border-radius: 10px;
@@ -45,4 +45,10 @@
             padding: 15px 0 10px 0;
         }
     }
+}
+
+.card-tile-options {
+    display: flex;
+    justify-content: space-between;
+    float: right;
 }
