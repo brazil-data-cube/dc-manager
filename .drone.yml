@@ -27,17 +27,12 @@ steps:
   image: plugins/docker
   network_mode: bridge
   settings:
+    auto_tag: true
+    custom_dns: 150.163.2.4
     repo: registry.dpi.inpe.br/brazildatacube/data-cube-manager
     registry: registry.dpi.inpe.br
-    insecure: true
     username:
       from_secret: registry_user
     password:
       from_secret: registry_pass
-    tags:
-      - latest
-      - ${DRONE_SEMVER}
     dockerfile: deploy/Dockerfile
-  when:
-    event:
-      - tag
