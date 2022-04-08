@@ -92,8 +92,8 @@ export class CreateCubeGridComponent implements OnInit {
 
       // plot grid in map
       this.grid = grid;
-      let response = await this.cbs.getGrids(grid.id)
-      if (response['tiles'].length > 2500) {
+      let response = await this.cbs.getGrids(grid.id, this.map.getBounds().toBBoxString())
+      if (response['tiles'].length > 5000) {
         this.isBigGrid = true
         response = null
 
@@ -112,14 +112,14 @@ export class CreateCubeGridComponent implements OnInit {
         this.bbox = layer.getBounds().toBBoxString()
         this.map.fitBounds(layer.getBounds())
       }
-      
+
     } catch (err) {
       this.snackBar.open('Error when selecting the grid', '', {
         duration: 4000,
         verticalPosition: 'top',
         panelClass: 'app_snack-bar-error'
       });
-      
+
     } finally {
       this.store.dispatch(setGrid({ grid: { infos: this.grid, large: this.isBigGrid } }))
       this.store.dispatch(closeLoading())

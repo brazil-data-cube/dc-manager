@@ -13,7 +13,7 @@ import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/
 import { formatDateUSA } from 'app/shared/helpers/date';
 import { setBandsAvailable, setRangeTemporal, setTiles, setStacList, setSatellite } from 'app/admin/admin.action';
 
-import { intersect } from '@turf/turf';
+import { featureCollection, convex, intersect, multiPolygon } from '@turf/turf';
 import * as L from 'leaflet';
 
 @Component({
@@ -113,8 +113,8 @@ export class CreateCubeImagesComponent implements OnInit {
    *
    * @param layer Leaflet layer with BDC Grid tiles
    */
-  private displayTileOnClick = (layer) => {
-    return layer['feature'].geometry.properties.name;
+  private displayTileOnClick({ feature }) {
+    return feature.geometry.properties.name;
   }
 
   async selectGrid(grid) {
@@ -129,7 +129,13 @@ export class CreateCubeImagesComponent implements OnInit {
 
       // plot grid in map
       if (!this.isBigGrid) {
-        let response = await this.cbs.getGrids(grid)
+        let response = await this.cbs.getGrids(grid, this.map.getBounds().toBBoxString())
+        if (response['tiles'].length >= 5000) {
+          this.isBigGrid = true;
+          return
+        }
+        this.isBigGrid = false;
+
         const features = response['tiles'].map(t => {
           return { ...t['geom_wgs84'], id: t['id'], properties: {name: t['id']} }
         })
@@ -138,7 +144,7 @@ export class CreateCubeImagesComponent implements OnInit {
         }).setStyle({
           fillOpacity: 0.1,
           fillColor:'blue'
-        }).bindPopup(this.displayTileOnClick);
+        }).bindPopup(this.displayTileOnClick.bind(this));
 
         this.map.addLayer(layer)
         this.map.fitBounds(layer.getBounds())
@@ -247,10 +253,23 @@ export class CreateCubeImagesComponent implements OnInit {
             if (stac.url && stac.collection) {
               let params = stac.authentication ? { access_token: stac.token } : {};
 
-              if (this.isBigGrid) {
-                stac.totalImages = null;
-                this.tiles = this.tilesString.split(',').map(t => t.trim());
+              let query = {
+                datetime: `${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`,
+                limit: 1
+              };
 
+              if (this.isBigGrid) {
+                // stac.totalImages = 0;
+                this.tiles = this.tilesString.split(',').map(t => t.trim());
+                const resp = await this.cbs.getGrids(this.grid, null, this.tilesString)
+                const featuresGeom = featureCollection(resp['tiles'].map(tile => {
+                  return multiPolygon(tile.geom_wgs84.coordinates, tile.geom_wgs84.properties)
+                }));
+                query['intersects'] = convex(featuresGeom).geometry;
+
+                const response = await this.ss.getItemsByCollection(stac.url, stac.collection, query, params);
+                const total = totalItemsByVersion(response, stac.version);
+                this.stacList[i] = {...stac, totalImages: total};
                 const bandsByCollection = await this.getBandsAndSaveinStore(stac.collection, satellite, stac.url, startDate, lastDate, params);
                 bands = [...bands, ...bandsByCollection]
 
@@ -261,16 +280,11 @@ export class CreateCubeImagesComponent implements OnInit {
                 });
 
               } else {
-                const featureCollection = featureGroup(this.featuresSelected);
-
-                let query = {
-                    datetime: `${formatDateUSA(startDate)}/${formatDateUSA(lastDate)}`,
-                    limit: 1
-                };
+                const features = featureGroup(this.featuresSelected);
 
                 let total = 0;
 
-                for(let featureLayer of featureCollection.getLayers()) {
+                for(let featureLayer of features.getLayers()) {
                   query['intersects'] = featureLayer['feature']['geometry'];
 
                   const response = await this.ss.getItemsByCollection(stac.url, stac.collection, query, params);
@@ -400,21 +414,58 @@ export class CreateCubeImagesComponent implements OnInit {
     this.map = map
     this.setDrawControl()
     this.setClearSelectedFeaturesControl();
+    this.createSelectROIControl();
+    this.setTilesInput();
   }
 
   private setClearSelectedFeaturesControl() {
+    this.createMapControl(
+      { position: 'topleft', title: 'Refresh Background Tiles' },
+      () => {
+        const map: any = this.map;
+
+        for (let key of Object.keys(map._layers)) {
+          const layer: any = map._layers[key];
+
+          if (layer.hasOwnProperty('feature') && this.tiles.includes(layer.feature['geometry']['id'])) {
+            layer.setStyle({
+              fillOpacity: 0.1,
+              fillColor:'blue'
+            })
+            const index = this.tiles.indexOf(layer.feature['geometry']['id']);
+            this.tiles.splice(index, 1);
+          }
+        }
+      },
+      'delete'
+    );
+  }
+
+  private createSelectROIControl() {
+    this.createMapControl(
+      { position: 'topleft', title: 'Refresh Background Tiles' },
+      () => this.selectGrid(this.grid),
+      'autorenew'
+    );
+  }
+
+  private setTilesInput() {
+    this.createMapControl(
+      { position: 'topleft', title: 'Set tiles manually 2' },
+      () => this.isBigGrid = !this.isBigGrid,
+      'edit'
+    );
+  }
+
+  private createMapControl(options, clickFn, iconName, className='leaflet-control-clear-features') {
     const self = this;
 
     const controlType = L.Control.extend({
-      options: {
-        position: 'topleft',
-        title: 'Clear Selected Features',
-      },
+      options: options,
       onAdd: function(map) {
         let container = L.DomUtil.create('div', 'leaflet-bar');
-        let className = 'leaflet-control-clear-features';
 
-        this._createButton(this.options.title, className, container, this._clearFeatures, this);
+        this._createButton(this.options.title, className, container, clickFn, this);
 
         return container;
       },
@@ -424,7 +475,7 @@ export class CreateCubeImagesComponent implements OnInit {
         this.link.title = title;
 
         const icon = L.DomUtil.create('span', 'material-icons', this.link);
-        icon.append('delete');
+        icon.append(iconName);
         icon.style.fontSize = '20px';
         icon.style.color = '#404040';
 
@@ -437,22 +488,6 @@ export class CreateCubeImagesComponent implements OnInit {
           .addListener(this.link, 'click', fn, context);
 
         return this.link;
-      },
-      _clearFeatures() {
-        const map = this._map;
-
-        for (let key of Object.keys(map._layers)) {
-          const layer: any = map._layers[key];
-
-          if (layer.hasOwnProperty('feature') && self.tiles.includes(layer.feature['geometry']['id'])) {
-            layer.setStyle({
-              fillOpacity: 0.1,
-              fillColor:'blue'
-            })
-            const index = self.tiles.indexOf(layer.feature['geometry']['id']);
-            self.tiles.splice(index, 1);
-          }
-        }
       }
     });
 

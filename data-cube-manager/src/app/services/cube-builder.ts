@@ -56,12 +56,19 @@ export class CubeBuilderService {
     /**
      * get grids metadata
      */
-    public async getGrids(id = null, bbox = null): Promise<any> {
+    public async getGrids(id = null, bbox = null, tiles = null): Promise<any> {
         let urlSuffix = '/grids'
         if (id) {
             urlSuffix += `/${id}`
         }
-        const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`, { params: { bbox }});
+        const params = { }
+        if (!!tiles) {
+            params['tiles'] = tiles
+        }
+        if (!!bbox) {
+            params['bbox'] = bbox
+        }
+        const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`, { params });
         return data;
     }
 
