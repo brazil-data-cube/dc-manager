@@ -154,7 +154,7 @@ export class CreateCubePreviewComponent implements OnInit {
             ...parameters,
             stac_list: this.stacList.map(s => {
               const infos = {
-                url: s['url'], 
+                url: s['url'],
                 collection: s['collection']
               }
               if (s['token']) {
@@ -174,12 +174,11 @@ export class CreateCubePreviewComponent implements OnInit {
           public: this.definition.public,
           resolution: this.definition.resolution,
           temporal_composition: JSON.parse(this.definition.temporal),
-          bucket: this.definition.bucket,
           composite_function: this.definition.function['alias'],
           bands: this.definition.bands.map(b => {
             return {
-              'name': b, 
-              'common_name': b, 
+              'name': b,
+              'common_name': b,
               'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8',
               'nodata': b !== this.definition.qualityBand ? this.definition.nodata : this.definition.qualityNodata
             }
@@ -188,9 +187,20 @@ export class CreateCubePreviewComponent implements OnInit {
           indexes: this.definition.indexes,
           metadata: {license: this.metadata['license'], platform: { code: this.metadata['satellite'], instruments: this.metadata['instruments'] }},
           description: this.metadata['description'],
-          quality_band: this.definition.qualityBand,
           parameters: parameters
         }
+
+        if (this.environmentVersion === 'cloud')
+          cube['bucket'] = this.definition.bucket
+
+        if (cube.composite_function !== 'IDT') {
+          cube['quality_band'] = this.definition.qualityBand
+        }
+        // For Cubes Without any Quality Band (IDT) remove any entry related Mask
+        if (!cube.hasOwnProperty('quality_band') && cube['parameters'].hasOwnProperty('mask')) {
+          delete cube['parameters']['mask'];
+        }
+
         const respCube = await this.cbs.create(cube)
 
         this.cubeCreated = true;
@@ -201,8 +211,23 @@ export class CreateCubePreviewComponent implements OnInit {
         });
 
       } catch (error) {
-        const err = error && error.response ? error.response : 'Error creating cube'
-        this.snackBar.open(err, '', {
+        let errorMessage = 'Error creating cube '
+        if (error && error.response) {
+          let resp = error.response
+          if (resp.status === 400) {
+            if (resp.data.hasOwnProperty('_schema')) {
+              for (let msg of resp.data['_schema']) {
+                errorMessage += msg;
+              }
+            } else {
+              for (let key of Object.keys(resp.data)) {
+                const value = resp.data[key]
+                errorMessage += `${key} - ${value}; `
+              }
+            }
+          }
+        }
+        this.snackBar.open(errorMessage, '', {
           duration: 4000,
           verticalPosition: 'top',
           panelClass: 'app_snack-bar-error'

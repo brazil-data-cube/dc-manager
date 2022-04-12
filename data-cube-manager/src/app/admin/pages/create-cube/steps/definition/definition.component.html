@@ -75,8 +75,8 @@
         <div class="col-lg-6 col-md-6 col-sm-12">
             <mat-form-field appearance="outline">
                 <mat-label>Composite Function</mat-label>
-                <mat-select formControlName="compositeFunction">
-                    <mat-option *ngFor="let func of compositeFunctions" [value]="func">
+                <mat-select formControlName="compositeFunction" (selectionChange)="onCompositeFunctionChange($event)">
+                    <mat-option *ngFor="let func of compositeFunctions" [value]="func" >
                         {{ func.name }} ({{ func.description }})
                     </mat-option>
                 </mat-select>
@@ -170,6 +170,14 @@
 
                                     <mat-error>
                                         <form-field-error [errors]="formCreateCube.get('indexesMeta.' + selectedIndex + '.bands').errors"></form-field-error>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Nodata Value</mat-label>
+                                    <input matInput type="number" placeholder="Nodata Value" min="-32768" max="32767" formControlName="nodata" value="-9999">
+                                    <mat-error>
+                                        <form-field-error [errors]="formCreateCube.get('indexesMeta.' + selectedIndex + '.nodata').errors"></form-field-error>
                                     </mat-error>
                                 </mat-form-field>
 
