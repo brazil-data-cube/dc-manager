@@ -219,7 +219,8 @@ export class CheckCubeComponent implements OnInit {
             }
         })
         dialogRef.afterClosed().subscribe(result => {
-            this.form.patchValue({ bbox: result['bbox'] })
+            if (result)
+                this.form.patchValue({ bbox: result['bbox'] })
         })
     }
 

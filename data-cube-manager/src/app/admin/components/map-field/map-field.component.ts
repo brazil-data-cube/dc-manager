@@ -133,8 +133,10 @@ export class MapFieldComponent implements OnInit {
                 }
             })
 
+            const boundsView = this.map.getBounds();
+
             // plot grid in map
-            const response = await this.service.getGrids(grid)
+            const response = await this.service.getGrids(grid, boundsView.toBBoxString())
             const features = response['tiles'].map(t => {
                 return { ...t['geom_wgs84'], id: t['id'] }
             })

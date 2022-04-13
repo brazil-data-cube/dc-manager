@@ -23,6 +23,7 @@ export class CreateCubeMetadataComponent implements OnInit {
 
   public formMetadataCube: FormGroup
   public definitionCompleted: boolean
+  public definition: any
   private cubeParameters_: any
 
   constructor(
@@ -42,6 +43,7 @@ export class CreateCubeMetadataComponent implements OnInit {
 
     this.store.pipe(select('admin' as any)).subscribe(res => {
       if (res.definitionInfos && res.definitionInfos.resolution) {
+        this.definition = res.definitionInfos
         this.definitionCompleted = true
       }
       if (res.satellite) {
@@ -67,8 +69,9 @@ export class CreateCubeMetadataComponent implements OnInit {
 
   private isValidParameters() {
     const obj = JSON.parse(this.cubeParameters);
+    const qualityBandRequired = !!this.definition.qualityBand
 
-    return obj.mask && obj.mask.clear_data
+    return qualityBandRequired ? obj.mask && obj.mask.clear_data : true
   }
 
   saveInfosInStore() {

@@ -14,6 +14,9 @@
             <div leaflet class="container_map" [leafletOptions]="options" (leafletMapReady)="onMapReady($event)">
                 <div class="map-disclaimer" *ngIf="isBigGrid">
                     <input matInput placeholder="set tiles (tile_id) comma-separated" name="tiles" [(ngModel)]="tilesString">
+                    <button matSuffix mat-icon-button aria-label="Clear" (click)="isBigGrid=false">
+                        <mat-icon>close</mat-icon>
+                    </button>
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { AdminState } from 'app/admin/admin.state';
 import { CubeBuilderService } from 'app/services/cube-builder';
 import { closeLoading, showLoading } from 'app/app.action';
-import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON } from 'leaflet';
+import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, rectangle, Control, geoJSON, polygon } from 'leaflet';
 import { MapData } from './map-model.interface';
 
 @Component({
@@ -104,11 +104,12 @@ export class MapModal {
 
     async addGrid() {
         try {
-            this.store.dispatch(showLoading())
             this.removeGrid(this.cube['grid_ref_sys_id'])
 
+            const boundsView = this.map.getBounds();
+
             // plot grid in map
-            const response = await this.cbs.getGrids(this.cube['grid_ref_sys_id'])
+            const response = await this.cbs.getGrids(this.cube['grid_ref_sys_id'], boundsView.toBBoxString())
             const features = response['tiles'].map(t => {
                 return { ...t['geom_wgs84'], id: t['id'] }
             })

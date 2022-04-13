@@ -26,10 +26,11 @@ export class SceneDetailsComponent implements OnInit {
     const { cube, itemDate, itemId } = this.data
 
     this.itemId = itemId;
+    const mergeDate = itemDate.substring(0, 10);
 
     if (cube && cube.split('_').length === 2) {
-      this.isIrregular = true
-      this.merges = { [itemDate]: this.merges[itemDate] }
+      this.isIrregular = true;
+      this.merges = { [mergeDate]: this.merges[mergeDate] }
     }
   }
 

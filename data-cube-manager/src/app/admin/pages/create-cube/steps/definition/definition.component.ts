@@ -58,8 +58,8 @@ export class CreateCubeDefinitionComponent implements OnInit {
       quicklookG: ['', [Validators.required]],
       quicklookB: ['', [Validators.required]],
       indexes: [['']],
-      qualityBand: ['', [Validators.required]],
-      qualityNodata: ['', [Validators.required, Validators.min(-32768), , Validators.max(32767)]],
+      qualityBand: ['', []],
+      qualityNodata: ['', [Validators.min(-32768), , Validators.max(32767)]],
       public: [true, [Validators.required]],
       indexesMeta: this.fb.group({})
     });
@@ -90,7 +90,8 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public addIndexMetaGroup(value, bands) {
     const group = this.fb.group({
       bands: [[''], []],
-      value: [[value || ''], []]
+      value: [[value || ''], []],
+      nodata: [-9999, []]
     })
     group.controls.bands.setValue(bands);
 
@@ -113,9 +114,9 @@ export class CreateCubeDefinitionComponent implements OnInit {
         redBand = 'B04';
         blueBand = 'B02';
       } else if (this.satellite === 'LANDSAT') {
-        nirBand = 'B7';
-        redBand = 'B4';
-        blueBand = 'B2';
+        nirBand = 'SR_B7';
+        redBand = 'SR_B4';
+        blueBand = 'SR_B2';
       } else if (this.satellite === 'CBERS') {
         nirBand = 'BAND16';
         redBand = 'BAND15';
@@ -198,7 +199,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
             name: bandIndexName,
             common_name: bandIndexName,
             data_type: 'int16',
-            nodata: this.formCreateCube.get('nodata').value,
+            nodata: indexFormValue['nodata'],
             metadata: {
               expression: indexFormValue
             }
@@ -326,6 +327,23 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
     } finally {
       this.store.dispatch(closeLoading())
+    }
+  }
+
+  onCompositeFunctionChange(event) {
+    const selectedFunction = event.value
+    if (!!selectedFunction) {
+      const controlBand = this.formCreateCube.controls['qualityBand']
+      const controlBandNodata = this.formCreateCube.controls['qualityBand']
+      if (selectedFunction.alias !== 'IDT') {
+        controlBand.setValidators([Validators.required]);
+        controlBandNodata.setValidators([Validators.required]);
+      } else {
+        controlBand.clearValidators();
+        controlBandNodata.clearValidators();
+        controlBand.setValue(null);
+        controlBandNodata.setValue(null)
+      }
     }
   }
 }
