@@ -1,0 +1,10 @@
+<div mat-dialog-content>
+    <p>Type the index band name</p>
+    <mat-form-field appearance="fill">
+      <mat-label>Band name</mat-label>
+      <input matInput [(ngModel)]="data.band">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onClose()" cdkFocusInitial>Ok</button>
+</div>

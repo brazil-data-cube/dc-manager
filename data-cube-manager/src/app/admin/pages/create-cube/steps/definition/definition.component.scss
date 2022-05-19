@@ -9,7 +9,7 @@
         .mat-form-field {
             width: 100% !important;
         }
-        
+
         .btn_suffix {
             margin-left: 5px;
             width: 40px;
@@ -27,7 +27,7 @@
             padding: 0 5px;
         }
         .content {
-            display: flex; 
+            display: flex;
             justify-content: space-between;
             margin-top: -15px;
         }
@@ -43,4 +43,20 @@
             padding: 10px 20px;
         }
     }
+}
+
+footer{
+    border-top:2px solid rgba(0,0,0,0.09);
+    height: 57px;
+    padding-top: 10px;
+    text-align:right;
+
+    button {
+        margin-right: 10px;
+    }
+}
+
+.band-index-panel {
+    max-height: 200px;
+    overflow: auto;
 }

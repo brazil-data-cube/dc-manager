@@ -51,6 +51,7 @@ import { BucketsModal } from './pages/create-cube/steps/definition/buckets/bucke
 import { MapFieldComponent } from './components/map-field/map-field.component';
 import { UpdateCubeDialog } from './components/update-cube-dialog/update-cube-dialog.component';
 import { UpdateBandDialogComponent } from './components/update-band-dialog/update-band-dialog.component';
+import { CustomBandDialogComponent } from './pages/create-cube/steps/definition/custom-band-dialog/custom-band-dialog.component';
 
 @NgModule({
   imports: [
@@ -105,7 +106,8 @@ import { UpdateBandDialogComponent } from './components/update-band-dialog/updat
     UpdateBandDialogComponent,
     BucketsModal,
     MapFieldComponent,
-    UpdateBandDialogComponent
+    UpdateBandDialogComponent,
+    CustomBandDialogComponent
   ],
   providers: [
     AdminGuardService

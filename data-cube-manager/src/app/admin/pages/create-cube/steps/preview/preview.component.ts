@@ -124,9 +124,18 @@ export class CreateCubePreviewComponent implements OnInit {
   }
 
   getCubeName(func) {
-    return func !== 'IDT' ?
-      `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${func}` :
-      `${this.definition.name}_${this.definition.resolution}`
+    let cubeName = this.definition.name
+    let complement = '';
+
+    if (func !== 'IDT') {
+      complement = `_${this.getComplementCubeName(this.definition.temporal)}`;
+
+      if (this.environmentVersion === 'cloud') {
+        complement = `-${complement.split('_')[2]}`
+      }
+    }
+
+    return `${cubeName}${complement}`
   }
 
   getComplementCubeName(temporalSchema) {
