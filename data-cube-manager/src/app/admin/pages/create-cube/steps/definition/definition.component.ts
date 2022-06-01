@@ -12,6 +12,7 @@ import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
 import { FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { setDefinition } from 'app/admin/admin.action'
 import { BucketsModal } from './buckets/buckets.component'
+import { CustomBandDialogComponent } from './custom-band-dialog/custom-band-dialog.component'
 
 @Component({
   selector: 'app-create-cube-definition',
@@ -34,7 +35,8 @@ export class CreateCubeDefinitionComponent implements OnInit {
 
   public wellKnownIndexes = {
     'NDVI': '10000. * ((NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + RED_BAND_HERE))',
-    'EVI': '10000. * 2.5 * (NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + 6. * RED_BAND_HERE - 7.5 * BLUE_BAND_HERE + 10000)'
+    'EVI': '10000. * 2.5 * (NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + 6. * RED_BAND_HERE - 7.5 * BLUE_BAND_HERE + 10000)',
+    'CUSTOM': 'B1 / B2'
   }
 
   public environmentVersion = window['__env'].environmentVersion
@@ -104,6 +106,10 @@ export class CreateCubeDefinitionComponent implements OnInit {
     for(let indexValue of value) {
       let expression = this.wellKnownIndexes[indexValue];
 
+      if (expression === undefined) {
+        continue
+      }
+
       let redBand = '';
       let nirBand = '';
       let blueBand = '';
@@ -135,6 +141,23 @@ export class CreateCubeDefinitionComponent implements OnInit {
         (this.formCreateCube.get('indexesMeta') as any).controls[indexValue] = this.addIndexMetaGroup(expression, bands)
       }
     }
+  }
+
+  addCustomIndex() {
+    const dialogRef = this.dialog.open(CustomBandDialogComponent, {
+      width: '250px',
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!!result) {
+        if (!this.indexesAvailable.includes(result)) {
+          this.indexesAvailable.push(result);
+          this.wellKnownIndexes[result] = 'B1 / B2'
+        }
+      }
+
+    });
   }
 
   ngOnInit() {

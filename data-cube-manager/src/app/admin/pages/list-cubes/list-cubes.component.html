@@ -11,7 +11,7 @@
                 <a [routerLink]="['/details-cube', getCubeFullName(cube)]">
                     <div class="card card-chart">
                         <div [ngClass]="['card-header', getCubeClass(cube)]">
-                            <h4 class="card-title text-center">{{ cube.name }}</h4>
+                            <h4 class="card-title text-center">{{ cube.name }}-{{ cube.version }}</h4>
                         </div>
                         <div class="card-body">
                             <p class="card-category text-justify">

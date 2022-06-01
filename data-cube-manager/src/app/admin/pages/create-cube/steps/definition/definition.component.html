@@ -145,9 +145,15 @@
             <mat-form-field appearance="outline">
                 <mat-label>Indexes</mat-label>
                 <mat-select multiple formControlName="indexes" (selectionChange)="onChangeBandIndex($event)">
-                    <mat-option *ngFor="let index of indexesAvailable" [value]="index">
-                        {{ index }}
-                    </mat-option>
+                    <div class="band-index-panel">
+                        <mat-option *ngFor="let index of indexesAvailable" [value]="index">
+                            {{ index }}
+                        </mat-option>
+                    </div>
+
+                    <footer>
+                        <button mat-raised-button (click)="addCustomIndex()">Add custom band</button>
+                    </footer>
                 </mat-select>
                 <mat-error>
                     <form-field-error [errors]="formCreateCube.get('indexes').errors"></form-field-error>
