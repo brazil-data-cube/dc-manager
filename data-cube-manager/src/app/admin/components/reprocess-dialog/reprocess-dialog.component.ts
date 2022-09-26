@@ -49,7 +49,8 @@ export class ReprocessDialogComponent implements OnInit {
 
     this.form = this.fb.group({
       tiles: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      collections: [{ value: '', disabled: !this.firstRun }, [Validators.required]], // You cannot change collection
+      // You should change collection.
+      collections: [{ value: '' }, [Validators.required]],
       start_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
@@ -89,7 +90,7 @@ export class ReprocessDialogComponent implements OnInit {
   async dispatch() {
     if (this.form.invalid) {
       return;
-    }  
+    }
 
     try {
       this.store.dispatch(showLoading());

@@ -1,7 +1,6 @@
 # Data Cube Manager - Brazil Data Cube
 
-[![Software License](https://img.shields.io/badge/license-MIT-green)](https://github.com//brazil-data-cube/dc-manager/blob/master/LICENSE)
-[![Build Status](https://drone.dpi.inpe.br/api/badges/brazil-data-cube/dc-manager/status.svg)](https://drone.dpi.inpe.br/brazil-data-cube/dc-manager)
+[![Software License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com//brazil-data-cube/dc-manager/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/tag/brazil-data-cube/dc-manager.svg)](https://github.com/brazil-data-cube/dc-manager/releases)
 [![Software Life Cycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Join us at Discord](https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8)](https://discord.com/channels/689541907621085198#)

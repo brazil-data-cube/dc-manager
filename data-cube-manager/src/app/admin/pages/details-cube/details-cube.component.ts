@@ -154,6 +154,7 @@ export class DetailsCubeComponent implements OnInit {
                     title: `Update Cube ${this.cube.name}`,
                     grid: this.cube.grid,
                     datacube: this.cube.name,
+                    datacube_version: this.cube.version,
                     tiles: tiles,
                     editable: true,
                     end_date: null,
@@ -243,7 +244,7 @@ export class DetailsCubeComponent implements OnInit {
     }
 
     public cubeStarted() {
-        return this.cubeStatus && 
+        return this.cubeStatus &&
             (this.cubeStatus.not_done > 0 || this.cubeStatus.done > 0 || this.cubeStatus.error > 0);
     }
 

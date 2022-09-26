@@ -1,7 +1,7 @@
 {
   "name": "data-cube-manager",
   "version": "0.6.0",
-  "license": "MIT",
+  "license": "GPLv3",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

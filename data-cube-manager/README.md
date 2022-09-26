@@ -20,6 +20,14 @@ First of all, you must have an instance of [Cube-Builder](https://github.com/bra
 
 ### Development server
 
+Create or Edit the file ``assets/env.js`` and set the required variables:
+
+- ``environmentVersion``: Flag to set ``Data Cube Manager`` application context.
+    The available options are: ``local`` for on-premise cube-builder and ``cloud`` for AWS environment. Defaults to ``local``.
+- ``itemPrefix``: Base prefix for identity/composed data cubes. Defaults to ``/cubes``.
+- ``itemBaseUrl``: Base URL for HTTP image preview. Defaults to ``https://brazildatacube.dpi.inpe.br``.
+
+
 To launch the development server, use the command:
 
 ```bash

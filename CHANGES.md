@@ -1,5 +1,19 @@
 # Changes
 
+
+## Version 0.6.0 (2022-09-26)
+
+- Change LICENSE to GPLv3
+- Fix bug related with AWS integration [`#110`](https://github.com/brazil-data-cube/dc-manager/issues/110).
+- Fix filter area in check cube page [`#106`](https://github.com/brazil-data-cube/dc-manager/issues/106).
+- Add support to generate data cube from any GRID (MGRS) [`#108`](https://github.com/brazil-data-cube/dc-manager/issues/108).
+- Add way to export errors scenes in merges [`#88`](https://github.com/brazil-data-cube/dc-manager/issues/88).
+- Improve data management in ``localStorage`` ``sessionStorage`` [`#86`](https://github.com/brazil-data-cube/dc-manager/issues/86).
+- Add modal to update band definition [`#83`](https://github.com/brazil-data-cube/dc-manager/issues/83).
+- Add modal to update data cube parameters execution [`#81`](https://github.com/brazil-data-cube/dc-manager/issues/81).
+- Fix bug related grid tiles drawing [`#74`](https://github.com/brazil-data-cube/dc-manager/issues/74).
+
+
 ## Version 0.4.0 (2021-04-16)
 
 - Allow search by tile_id in check-cube page - [`#27`](https://github.com/brazil-data-cube/dc-manager/issues/27).

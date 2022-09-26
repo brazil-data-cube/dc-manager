@@ -205,6 +205,10 @@ export class CreateCubeDefinitionComponent implements OnInit {
     }
   }
 
+  private isString(value) {
+    return typeof value === 'string' || value instanceof String;
+  }
+
   saveInfosInStore() {
     if (this.formCreateCube.status !== 'VALID') {
       this.snackBar.open('Fill in all fields correctly', '', {
@@ -224,7 +228,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
             data_type: 'int16',
             nodata: indexFormValue['nodata'],
             metadata: {
-              expression: indexFormValue
+              expression: this.isString(indexFormValue) ? indexFormValue : indexFormValue[0]
             }
           };
 
