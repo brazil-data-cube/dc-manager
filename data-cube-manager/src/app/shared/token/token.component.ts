@@ -4,6 +4,7 @@ import { CubeBuilderService } from "app/services/cube-builder";
 import { Store } from "@ngrx/store";
 import { token, showLoading, closeLoading, setURLCubeBuilder } from "app/app.action";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { setCubeBuilderVersion } from "../helpers/cube";
 
 @Component({
     selector: 'token-modal',
@@ -24,9 +25,11 @@ export class TokenModal {
     async verify() {
         try {
             this.store.dispatch(showLoading())
-            const _ = await this.cbs.verifyToken(this.urlService, this.token)
+            const resp = await this.cbs.verifyToken(this.urlService, this.token)
             this.store.dispatch(token({ token: this.token }))
             this.store.dispatch(setURLCubeBuilder({ url: this.urlService }))
+
+            setCubeBuilderVersion(resp.version);
             window.location.reload();
             this.dialogRef.close()
 
@@ -36,7 +39,7 @@ export class TokenModal {
                 verticalPosition: 'top',
                 panelClass: 'app_snack-bar-error'
             });
-            
+
         } finally {
             this.store.dispatch(closeLoading())
         }

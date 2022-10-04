@@ -12,6 +12,7 @@ import { SceneDetailsComponent } from './scene-details/scene-details.component';
 import * as moment from 'moment';
 import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/reprocess-dialog.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { isIdentity } from 'app/shared/helpers/cube';
 
 
 @Component({
@@ -325,7 +326,7 @@ export class CheckCubeComponent implements OnInit {
     }
 
     isIdentity() {
-        return this.cube && this.cube.name.split('_').length === 2;
+        return isIdentity(this.cube);
     }
 
 }
