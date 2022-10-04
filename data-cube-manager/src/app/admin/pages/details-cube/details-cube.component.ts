@@ -11,6 +11,7 @@ import { ReprocessDialogComponent } from 'app/admin/components/reprocess-dialog/
 import { UpdateCubeDialog } from 'app/admin/components/update-cube-dialog/update-cube-dialog.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UpdateBandDialogComponent } from 'app/admin/components/update-band-dialog/update-band-dialog.component';
+import { getCompositeFunction } from 'app/shared/helpers/cube';
 
 @Component({
     selector: 'app-details-cube',
@@ -246,6 +247,10 @@ export class DetailsCubeComponent implements OnInit {
     public cubeStarted() {
         return this.cubeStatus &&
             (this.cubeStatus.not_done > 0 || this.cubeStatus.done > 0 || this.cubeStatus.error > 0);
+    }
+
+    public getCompositeFunction() {
+        return getCompositeFunction(this.cube);
     }
 
     /**

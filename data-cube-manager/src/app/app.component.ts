@@ -28,16 +28,20 @@ export class AppComponent implements OnInit {
         this.spinner.hide()
       }
 
-      if (res.token) {
+      if (this.validToken(res.token)) {
         this.token = res.token
       }
     });
   }
 
   ngOnInit() {
-    if (!this.token) {
+    if (!this.validToken(this.token)) {
       this.openTokenModal()
     }
+  }
+
+  private validToken(token) {
+    return token || token === "";
   }
 
   openTokenModal() {

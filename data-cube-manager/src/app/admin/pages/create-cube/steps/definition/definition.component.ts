@@ -13,6 +13,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { setDefinition } from 'app/admin/admin.action'
 import { BucketsModal } from './buckets/buckets.component'
 import { CustomBandDialogComponent } from './custom-band-dialog/custom-band-dialog.component'
+import { getCubeBuilderVersion } from 'app/shared/helpers/cube'
 
 @Component({
   selector: 'app-create-cube-definition',
@@ -49,7 +50,11 @@ export class CreateCubeDefinitionComponent implements OnInit {
     public dialog: MatDialog) {
     this.formCreateCube = this.fb.group({
       bucket: ['', this.environmentVersion === 'cloud' ? [Validators.required] : []],
-      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9-]*$')]],
+      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9-_]*$')]],
+      identity: ['', this.supportsIdentityField() ?
+        [Validators.required, Validators.pattern('^[a-zA-Z0-9-_]*$')] :
+        []
+      ],
       version: ['', [Validators.required]],
       resolution: ['', [Validators.required]],
       temporalComposite: [{value: '', disabled: true}, [Validators.required]],
@@ -235,8 +240,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
           indexes.push(bandIndex);
         }
       }
-
-      this.store.dispatch(setDefinition({
+      const data = {
         definition: {
           bucket: this.formCreateCube.get('bucket').value,
           name: this.formCreateCube.get('name').value,
@@ -252,25 +256,26 @@ export class CreateCubeDefinitionComponent implements OnInit {
           qualityNodata: this.formCreateCube.get('qualityNodata').value,
           public: this.formCreateCube.get('public').value
         }
-      }))
+      }
+      if (this.supportsIdentityField()) {
+        data.definition['identity'] = this.formCreateCube.get('identity').value;
+      }
+
+      this.store.dispatch(setDefinition(data))
       this.definitonCompleted = true
     }
   }
 
   getCubeFullName() {
     const name = this.formCreateCube.get('name').value
-    const resolution = this.formCreateCube.get('resolution').value
     if (this.formCreateCube.get('temporalComposite').value.length) {
       const temporalComposite = JSON.parse(this.formCreateCube.get('temporalComposite').value)
       const unit = temporalComposite['unit'].replace('day', 'D').replace('month', 'M').replace('year', 'Y')
-      if (unit === 'null') {
-        return `${name}_${resolution}`
-      } else {
-        return `${name}_${resolution}_${temporalComposite['step']}${unit}`
+      if (unit !== 'null') {
+        return `${name}-${temporalComposite['step']}${unit}`
       }
-    } else {
-      return `${name}_${resolution}`
     }
+    return name;
   }
 
   getSelectedIndexes() {
@@ -372,5 +377,17 @@ export class CreateCubeDefinitionComponent implements OnInit {
         controlBandNodata.setValue(null)
       }
     }
+  }
+
+  supportsIdentityField(): boolean {
+    const builderVersion = getCubeBuilderVersion();
+    if (!builderVersion || this.environmentVersion === 'cloud')
+      return false;
+
+    let [major, minor, patch] = builderVersion.split(".").map(value => Number.parseInt(value));
+
+    // Supported only >= 0.8.3
+    return (major == 0 && minor >= 8 && patch >= 3) ||
+           (major >= 1 && minor >= 0 && patch >= 0);
   }
 }
