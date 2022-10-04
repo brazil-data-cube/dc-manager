@@ -35,6 +35,7 @@ export interface IBand {
 export interface DefinitionCube {
     bucket: string;
     name: string;
+    identity: string;
     version: number;
     public: boolean;
     resolution: number;

@@ -1,6 +1,11 @@
 # Changes
 
 
+## Version 0.6.1 (2022-10-04)
+
+- Add support to customize data cube name of IDT/Temporal Composed [`#119`](https://github.com/brazil-data-cube/dc-manager/issues/119)
+
+
 ## Version 0.6.0 (2022-09-26)
 
 - Change LICENSE to GPLv3

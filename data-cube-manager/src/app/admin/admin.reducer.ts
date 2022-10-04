@@ -16,6 +16,7 @@ const initialState: AdminState = {
   definitionInfos: {
     bucket: '',
     name: '',
+    identity: '',
     version: null,
     public: true,
     resolution: null,

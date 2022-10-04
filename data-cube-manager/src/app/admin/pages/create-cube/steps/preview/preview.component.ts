@@ -124,18 +124,7 @@ export class CreateCubePreviewComponent implements OnInit {
   }
 
   getCubeName(func) {
-    let cubeName = this.definition.name
-    let complement = '';
-
-    if (func !== 'IDT') {
-      complement = `_${this.getComplementCubeName(this.definition.temporal)}`;
-
-      if (this.environmentVersion === 'cloud') {
-        complement = `-${complement.split('_')[2]}`
-      }
-    }
-
-    return `${cubeName}${complement}`
+    return this.definition.name
   }
 
   getComplementCubeName(temporalSchema) {
@@ -197,6 +186,10 @@ export class CreateCubePreviewComponent implements OnInit {
           metadata: {license: this.metadata['license'], platform: { code: this.metadata['satellite'], instruments: this.metadata['instruments'] }},
           description: this.metadata['description'],
           parameters: parameters
+        }
+
+        if (this.definition.identity !== '') {
+          cube['datacube_identity'] = this.definition.identity
         }
 
         if (this.environmentVersion === 'cloud')
