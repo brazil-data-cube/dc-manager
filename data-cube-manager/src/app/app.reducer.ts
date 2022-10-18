@@ -11,7 +11,7 @@ import { AppState } from './app.state';
 /** initial values to App State */
 const initialState: AppState = {
   loading: false,
-  token: localStorage.getItem('DC_MANAGER_api_token') || '',
+  token: localStorage.getItem('DC_MANAGER_api_token'),
   urlService: localStorage.getItem('DC_MANAGER_url_service') || ''
 };
 

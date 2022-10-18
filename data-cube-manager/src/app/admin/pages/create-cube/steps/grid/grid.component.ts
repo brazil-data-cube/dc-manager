@@ -38,11 +38,12 @@ export class CreateCubeGridComponent implements OnInit {
     private fb: FormBuilder,
     private ref: ChangeDetectorRef) {
     this.formCreateGrid = this.fb.group({
-      name: ['', [Validators.required]],
+      names: ['', [Validators.required]],
       description: ['', [Validators.required]],
       meridian: [null, [Validators.required]],
-      degreesx: [{value: 1.5}, [Validators.required]],
-      degreesy: [{value: 1}, [Validators.required]]
+      shape: [null, [Validators.required]],
+      tile_factor: [null, [Validators.required]],
+      srid: [null, [Validators.required]],
     });
   }
 
@@ -67,11 +68,12 @@ export class CreateCubeGridComponent implements OnInit {
       crs: ''
     }
     this.formCreateGrid.setValue({
-      name: '',
+      names: '',
       description: '',
       meridian: null,
-      degreesx: 1.5,
-      degreesy: 1
+      shape: null,
+      tile_factor: null,
+      srid: null,
     })
   }
 
@@ -153,6 +155,34 @@ export class CreateCubeGridComponent implements OnInit {
             projection: 'aea',
             bbox: this.formatBBox(this.bbox)
           }
+          // Transform into list
+          data['tile_factor'] = [data['tile_factor']]
+          data['names'] = data['names'].split(',');
+          data['shape'] = data['shape'].split(',').map(value => parseInt(value))
+
+          if (data['tile_factor'][0].includes(';')) {
+            data['tile_factor'] = data['tile_factor'][0].split(';')
+          }
+
+          let tileFactorList = [];
+          for (let tileFactor of data['tile_factor']) {
+            const [pixelX, pixelY] = tileFactor.split(',')
+            tileFactorList.push([parseInt(pixelX), parseInt(pixelY)]);
+          }
+
+          if (tileFactorList.length !== data['names'].length) {
+            this.snackBar.open(`The grids ${data['names']} not match with ${tileFactorList}. It must have same dimension.`, '', {
+              duration: 4000,
+              verticalPosition: 'top',
+              panelClass: 'app_snack-bar-error'
+            });
+            return;
+          }
+
+          if (tileFactorList.length > 0) {
+            data['tile_factor'] = tileFactorList;
+          }
+
           const response = await this.cbs.createGrid(data)
           this.action = 'select'
           this.getGrids()
@@ -185,8 +215,7 @@ export class CreateCubeGridComponent implements OnInit {
   }
 
   private formatBBox(bbox) {
-    const parts = bbox.split(',')
-    return `${parts[0]},${parts[3]},${parts[2]},${parts[1]}`
+    return bbox.split(',').map(value => parseFloat(value));
   }
 
   /**

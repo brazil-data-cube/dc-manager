@@ -267,6 +267,8 @@ export class CheckCubeComponent implements OnInit {
         try {
             this.store.dispatch(showLoading());
 
+            const tileId = item.tile_id || this.currentTab;
+
             const cubeName = this.cube.name;
             let start = item.start_date;
             let end = item.end_date;
@@ -276,7 +278,7 @@ export class CheckCubeComponent implements OnInit {
                 end = moment(start).endOf('month').format('YYYY-MM-DD');
             }
 
-            const response = await this.cbs.listMerges(this.cube.id, start, end, item.tile_id);
+            const response = await this.cbs.listMerges(this.cube.id, start, end, tileId);
             const dialogRef = this.dialog.open(SceneDetailsComponent, {
                 width: '600px',
                 height: '90%',
@@ -285,7 +287,7 @@ export class CheckCubeComponent implements OnInit {
                     cube: this.cube.name,
                     merges: response,
                     itemDate: item.start_date,
-                    tileId: item.tile_id,
+                    tileId,
                     itemId: item.name
                 }
             })
@@ -310,7 +312,7 @@ export class CheckCubeComponent implements OnInit {
                     grid: this.cube.grid,
                     datacube: this.cube.name,
                     datacube_version: this.cube.version,
-                    tiles: [item.tile_id],
+                    tiles: [this.currentTab],
                     editable: false,
                     start_date: item.start_date,
                     end_date: item.end_date,
