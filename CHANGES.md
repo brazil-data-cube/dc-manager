@@ -1,6 +1,11 @@
 # Changes
 
 
+## Version 0.6.2 (2022-10-18)
+
+- Fix grid creation on create cube page [`#122`](https://github.com/brazil-data-cube/dc-manager/issues/122)
+
+
 ## Version 0.6.1 (2022-10-04)
 
 - Add support to customize data cube name of IDT/Temporal Composed [`#119`](https://github.com/brazil-data-cube/dc-manager/issues/119)
