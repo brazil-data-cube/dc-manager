@@ -46,9 +46,9 @@
                 <form [formGroup]="formCreateGrid" (ngSubmit)="createGrid()">
                     <mat-form-field appearance="outline">
                         <mat-label>Name</mat-label>
-                        <input matInput placeholder="Name" formControlName="name">
+                        <input matInput placeholder="Name (Names delimited by comma)" formControlName="names">
                         <mat-error>
-                            <form-field-error [errors]="formCreateGrid.get('name').errors"></form-field-error>
+                            <form-field-error [errors]="formCreateGrid.get('names').errors"></form-field-error>
                         </mat-error>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
@@ -58,27 +58,47 @@
                             <form-field-error [errors]="formCreateGrid.get('description').errors"></form-field-error>
                         </mat-error>
                     </mat-form-field>
-                    <mat-form-field appearance="outline">
-                        <mat-label>Meridian</mat-label>
-                        <input matInput type="number" placeholder="Central Meridian" formControlName="meridian">
-                        <mat-error>
-                            <form-field-error [errors]="formCreateGrid.get('meridian').errors"></form-field-error>
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline">
-                        <mat-label>Width (in graus)</mat-label>
-                        <input matInput type="number" placeholder="Width Tile" formControlName="degreesx">
-                        <mat-error>
-                            <form-field-error [errors]="formCreateGrid.get('degreesx').errors"></form-field-error>
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline">
-                        <mat-label>Height (in graus)</mat-label>
-                        <input matInput type="number" placeholder="Height Tile" formControlName="degreesy">
-                        <mat-error>
-                            <form-field-error [errors]="formCreateGrid.get('degreesy').errors"></form-field-error>
-                        </mat-error>
-                    </mat-form-field>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Meridian</mat-label>
+                                <input matInput type="number" placeholder="Central Meridian" formControlName="meridian">
+                                <mat-error>
+                                    <form-field-error [errors]="formCreateGrid.get('meridian').errors"></form-field-error>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Custom SRID</mat-label>
+                                <input matInput type="number" placeholder="Custom SRID Number to create" formControlName="srid">
+                                <mat-error>
+                                    <form-field-error [errors]="formCreateGrid.get('srid').errors"></form-field-error>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Cell Shape (Row,Col)</mat-label>
+                                <input matInput type="text" placeholder="Cell Shape (Row,Col)" formControlName="shape">
+                                <mat-error>
+                                    <form-field-error [errors]="formCreateGrid.get('shape').errors"></form-field-error>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <mat-form-field appearance="outline" matTooltip="Tile Resolution Factor (in meters)">
+                                <mat-label>Tile Resolution Factor (in meters)</mat-label>
+                                <input matInput type="text" placeholder="Tile Resolution delimited by comma and semi colon" formControlName="tile_factor">
+                                <mat-error>
+                                    <form-field-error [errors]="formCreateGrid.get('tile_factor').errors"></form-field-error>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
 
                     <button mat-raised-button class="btn" type="submit">CREATE GRID</button>
                 </form>

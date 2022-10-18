@@ -169,7 +169,7 @@ export class CubeBuilderService {
      * create grid (grs_schema)
      */
     public async createGrid(infos): Promise<any> {
-        const urlSuffix = `/create-grs`;
+        const urlSuffix = `/create-grids`;
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
     }
