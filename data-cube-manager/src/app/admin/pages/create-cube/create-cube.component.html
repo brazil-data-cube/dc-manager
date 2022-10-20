@@ -10,8 +10,8 @@
                 </mat-step>
                 <mat-step>
                     <ng-template matStepLabel>REGION</ng-template>
-                    <app-step-layout>
-                        <app-create-cube-images></app-create-cube-images>
+                    <app-step-layout [removeAll]="true">
+                        <app-create-cube-images [stepper]="stepper"></app-create-cube-images>
                     </app-step-layout>
                 </mat-step>
                 <mat-step>

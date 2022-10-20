@@ -14,11 +14,14 @@ export const totalItemsByVersion = (data, version) => {
  * @param stac STAC Response object
  * @returns List of bands found in stac response.
  */
-export function getBands(stac: Map<string, any>): string[] {
+export function getBands(stac: Map<string, any>): [string[], any] {
     let bands = [];
+    let objectRef = null;
 
     // When STAC response supports item-assets extension
     if (stac['stac_extensions'] && stac['stac_extensions'].includes('item-assets')) {
+        objectRef = stac['item_assets'];
+
         for(let property of Object.keys(stac['item_assets'])) {
             if (stac['item_assets'][property]['roles'].includes('data')) {
                 bands.push(property);
@@ -29,6 +32,7 @@ export function getBands(stac: Map<string, any>): string[] {
 
         for(let property of maybeProperties) {
             if (stac['properties'][property]) {
+                objectRef = stac['properties'][property];
                 if (!stac['properties'][property]['0']) {
                     bands = Object.keys(stac['properties'][property])
                 } else {
@@ -39,7 +43,7 @@ export function getBands(stac: Map<string, any>): string[] {
         }
     }
 
-    return bands;
+    return [bands, objectRef];
 }
 
 function version1collections(data) {

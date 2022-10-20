@@ -21,119 +21,189 @@
             </div>
         </div>
 
-        <form class="col-lg-4 col-md-4 col-sm-12 form" (ngSubmit)="searchImages()" [formGroup]="formSearchImages">
-            <!-- STAC Box -->
-            <mat-tab-group mat-align-tabs="start">
-                <mat-tab [label]="'STAC ' + (i+1)"
-                         *ngFor="let stac of stacList; let i = index">
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div mat-subheader>Data Source</div>
 
-                    <div style="padding: 10px">
-                        <div style="display: flex; margin: 5px 0 10px 10px; justify-content: flex-start;">
-                            <mat-checkbox (change)="stac.authentication = $event.checked" [checked]="stac.authentication">Authentication</mat-checkbox>
-                        </div>
+            <mat-radio-group aria-label="Select an option" class="data-source">
+                <mat-radio-button class="data-source-margin"
+                                  *ngFor="let source of dataSources" value="{{ source.value }}"
+                                  [checked]="source.checked"
+                                  [disabled]="environmentVersion === 'cloud' && source.value === 'LOCAL'"
+                                  (change)="dataSource = $event.value">
+                    {{ source.name }}
+                </mat-radio-button>
+            </mat-radio-group>
 
-                        <div style="display: block; position: absolute; z-index: 999; top: 0px; right: 30px;">
-                            <button type="button" mat-icon-button color="primary" (click)="addStac()" [disabled]="environmentVersion !== 'cloud'">
-                                <mat-icon>plus_one</mat-icon>
-                            </button>
-                        </div>
+            <!-- Local Data Source -->
+            <form class="form" [formGroup]="formLocalSource" *ngIf="dataSource === 'LOCAL'">
+                <mat-form-field appearance="outline" style="width: 100%">
+                    <mat-label>Folder</mat-label>
+                    <input matInput placeholder="/data" formControlName="local">
+                </mat-form-field>
 
-                        <div style="display: block; position: absolute; z-index: 999; top: 0px; right: 0px;">
-                            <button type="button" mat-icon-button color="error" (click)="removeStac(i)" [disabled]="stacList.length <= 1">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </div>
-
-                        <div style="display: flex;" *ngIf="stac.authentication">
-                            <mat-form-field appearance="outline" style="width: 100%">
-                                <mat-label>Access Token</mat-label>
-                                <input matInput placeholder="User Personal Token"
-                                        [(ngModel)]="stac.token"
-                                        (focusout)="getCollectionBySTAC(i)"
-                                        [ngModelOptions]="{standalone: true}">
-                            </mat-form-field>
-                        </div>
-
-                        <div style="display: flex;">
-                            <mat-form-field appearance="outline" style="width: 48%">
-                                <mat-label>URL STAC</mat-label>
-                                <input matInput placeholder="URL STAC"
-                                        [(ngModel)]="stac.url"
-                                        (focusout)="getCollectionBySTAC(i)"
-                                        [ngModelOptions]="{standalone: true}">
-                            </mat-form-field>
-
-                            <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
-                                <mat-label>Related Collection</mat-label>
-                                <mat-select [(ngModel)]="stac.collection" [ngModelOptions]="{standalone: true}">
-                                    <mat-option *ngFor="let collection of stac.collections" [value]="collection">
-                                        {{ collection }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <mat-form-field appearance="outline" style="width: 100%">
+                            <mat-label>Format File</mat-label>
+                            <input matInput placeholder="examples/formats/bdc-sentinel-2-l2a-cogs.json" formControlName="format">
+                        </mat-form-field>
                     </div>
 
-                </mat-tab>
-            </mat-tab-group>
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <mat-form-field appearance="outline" style="width: 100%">
+                            <mat-label>Pattern</mat-label>
+                            <input matInput placeholder=".tif" formControlName="pattern">
+                        </mat-form-field>
+                    </div>
 
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Start Date</mat-label>
+                            <input matInput [matDatepicker]="start_date" name="start_date" formControlName="startDate">
+                            <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
+                            <mat-datepicker #start_date></mat-datepicker>
+                            <mat-error>
+                                <form-field-error [errors]="formLocalSource.get('startDate').errors"></form-field-error>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Satellite</mat-label>
-                <mat-select formControlName="satellite">
-                    <mat-option *ngFor="let satellite of satellites" [value]="satellite">
-                        {{ satellite }}
-                    </mat-option>
-                </mat-select>
-                <mat-error>
-                    <form-field-error [errors]="formSearchImages.get('satellite').errors"></form-field-error>
-                </mat-error>
-            </mat-form-field>
+                    <div class="col-md-6 col-lg-6 col-sm-12">
+                        <mat-form-field appearance="outline" style="margin-left: 4%;">
+                            <mat-label>Last Date</mat-label>
+                            <input matInput [matDatepicker]="last_date" name="last_date" formControlName="endDate">
+                            <mat-datepicker-toggle matSuffix [for]="last_date"></mat-datepicker-toggle>
+                            <mat-datepicker #last_date></mat-datepicker>
+                            <mat-error>
+                                <form-field-error [errors]="formLocalSource.get('endDate').errors"></form-field-error>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
 
-            <div style="display: flex;">
-                <mat-form-field appearance="outline" style="width: 48%">
-                    <mat-label>Start Date</mat-label>
-                    <input matInput [matDatepicker]="start_date" name="start_date" formControlName="startDate">
-                    <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
-                    <mat-datepicker #start_date></mat-datepicker>
+                <section class="data-source">
+                    <mat-checkbox class="data-source-margin" formControlName="recursive">Recursive</mat-checkbox>
+                </section>
+            </form>
+
+            <form class="form" (ngSubmit)="searchImages()" [formGroup]="formSearchImages" *ngIf="dataSource === 'STAC'">
+                <!-- STAC Box -->
+                <mat-tab-group mat-align-tabs="start">
+                    <mat-tab [label]="'STAC ' + (i+1)"
+                            *ngFor="let stac of stacList; let i = index">
+
+                        <div style="padding: 10px">
+                            <div style="display: flex; margin: 5px 0 10px 10px; justify-content: flex-start;">
+                                <mat-checkbox (change)="stac.authentication = $event.checked" [checked]="stac.authentication">Authentication</mat-checkbox>
+                            </div>
+
+                            <div style="display: block; position: absolute; z-index: 999; top: 0px; right: 30px;">
+                                <button type="button" mat-icon-button color="primary" (click)="addStac()" [disabled]="environmentVersion !== 'cloud'">
+                                    <mat-icon>plus_one</mat-icon>
+                                </button>
+                            </div>
+
+                            <div style="display: block; position: absolute; z-index: 999; top: 0px; right: 0px;">
+                                <button type="button" mat-icon-button color="error" (click)="removeStac(i)" [disabled]="stacList.length <= 1">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+
+                            <div style="display: flex;" *ngIf="stac.authentication">
+                                <mat-form-field appearance="outline" style="width: 100%">
+                                    <mat-label>Access Token</mat-label>
+                                    <input matInput placeholder="User Personal Token"
+                                            [(ngModel)]="stac.token"
+                                            (focusout)="getCollectionBySTAC(i)"
+                                            [ngModelOptions]="{standalone: true}">
+                                </mat-form-field>
+                            </div>
+
+                            <div style="display: flex;">
+                                <mat-form-field appearance="outline" style="width: 48%">
+                                    <mat-label>URL STAC</mat-label>
+                                    <input matInput placeholder="URL STAC"
+                                            [(ngModel)]="stac.url"
+                                            (focusout)="getCollectionBySTAC(i)"
+                                            [ngModelOptions]="{standalone: true}">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
+                                    <mat-label>Related Collection</mat-label>
+                                    <mat-select [(ngModel)]="stac.collection" [ngModelOptions]="{standalone: true}">
+                                        <mat-option *ngFor="let collection of stac.collections" [value]="collection">
+                                            {{ collection }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                    </mat-tab>
+                </mat-tab-group>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Satellite</mat-label>
+                    <mat-select formControlName="satellite">
+                        <mat-option *ngFor="let satellite of satellites" [value]="satellite">
+                            {{ satellite }}
+                        </mat-option>
+                    </mat-select>
                     <mat-error>
-                        <form-field-error [errors]="formSearchImages.get('startDate').errors"></form-field-error>
+                        <form-field-error [errors]="formSearchImages.get('satellite').errors"></form-field-error>
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
-                    <mat-label>Last Date</mat-label>
-                    <input matInput [matDatepicker]="last_date" name="last_date" formControlName="lastDate">
-                    <mat-datepicker-toggle matSuffix [for]="last_date"></mat-datepicker-toggle>
-                    <mat-datepicker #last_date></mat-datepicker>
-                    <mat-error>
-                        <form-field-error [errors]="formSearchImages.get('lastDate').errors"></form-field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+                <div style="display: flex;">
+                    <mat-form-field appearance="outline" style="width: 48%">
+                        <mat-label>Start Date</mat-label>
+                        <input matInput [matDatepicker]="start_date" name="start_date" formControlName="startDate">
+                        <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
+                        <mat-datepicker #start_date></mat-datepicker>
+                        <mat-error>
+                            <form-field-error [errors]="formSearchImages.get('startDate').errors"></form-field-error>
+                        </mat-error>
+                    </mat-form-field>
 
-            <div style="display: flex; margin-bottom: 40px;">
-                <button mat-raised-button type="submit" style="display: block; margin: 0 auto;">SEARCH</button>
-            </div>
+                    <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
+                        <mat-label>Last Date</mat-label>
+                        <input matInput [matDatepicker]="last_date" name="last_date" formControlName="lastDate">
+                        <mat-datepicker-toggle matSuffix [for]="last_date"></mat-datepicker-toggle>
+                        <mat-datepicker #last_date></mat-datepicker>
+                        <mat-error>
+                            <form-field-error [errors]="formSearchImages.get('lastDate').errors"></form-field-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
 
-            <div class="catalog">
-                <div class="card card-chart">
-                    <div class="card-header-success">
-                        <h4 class="card-title">
-                            <mat-icon>folder</mat-icon>
-                            <span style="margin-left: 10px;">CATALOG</span>
-                        </h4>
-                    </div>
-                    <div class="card-body" style="padding-top: 25px">
-                        <div class="card-category text-justify">
-                            <p *ngFor="let stac of stacList; let i = index">
-                                <mat-icon>cloud_done</mat-icon>
-                                <b>Total Images ({{ 'STAC ' + (i + 1) }}):</b> <span style="font-size: 1.4em; margin-left: 10px"><b>{{ stac.totalImages }}</b></span>
-                            </p>
+                <div style="display: flex; margin-bottom: 40px;">
+                    <button mat-raised-button type="submit" style="display: block; margin: 0 auto;">SEARCH</button>
+                </div>
+
+                <div class="catalog">
+                    <div class="card card-chart">
+                        <div class="card-header-success">
+                            <h4 class="card-title">
+                                <mat-icon>folder</mat-icon>
+                                <span style="margin-left: 10px;">CATALOG</span>
+                            </h4>
+                        </div>
+                        <div class="card-body" style="padding-top: 25px">
+                            <div class="card-category text-justify">
+                                <p *ngFor="let stac of stacList; let i = index">
+                                    <mat-icon>cloud_done</mat-icon>
+                                    <b>Total Images ({{ 'STAC ' + (i + 1) }}):</b> <span style="font-size: 1.4em; margin-left: 10px"><b>{{ stac.totalImages }}</b></span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
+    </div>
+
+    <div class="row footer">
+        <button mat-raised-button matStepperPrevious>Back</button>
+        <button mat-raised-button color="primary" (click)="checkNextStep()">Next</button>
     </div>
 </div>

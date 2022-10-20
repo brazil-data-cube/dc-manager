@@ -1,6 +1,6 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import {
-  setGrid, setBandsAvailable, setRangeTemporal, setTiles, setDefinition, setMetadata, setSatellite, setStacList
+  setGrid, setBandsAvailable, setRangeTemporal, setTiles, setDefinition, setMetadata, setSatellite, setStacList, setLocalDataSource, setCustomBands
 } from './admin.action';
 import { AdminState } from './admin.state';
 
@@ -13,6 +13,7 @@ const initialState: AdminState = {
   startDate: null,
   lastDate: null,
   tiles: [],
+  customBands: [],
   definitionInfos: {
     bucket: '',
     name: '',
@@ -32,7 +33,8 @@ const initialState: AdminState = {
   metadata: {
     license: '',
     description: ''
-  }
+  },
+  localDataSource: null
 };
 
 /**
@@ -64,6 +66,12 @@ const reducerAdmin = createReducer(initialState,
   on(setStacList, (state, payload) => {
     return { ...state, stacList: payload['stacList'] };
   }),
+  on(setLocalDataSource, (state, payload) => {
+    return { ...state, localDataSource: payload }
+  }),
+  on(setCustomBands, (state, payload) => {
+    return { ...state, customBands: payload }
+  })
 );
 
 export function reducer(state: AdminState | undefined, action: Action) {

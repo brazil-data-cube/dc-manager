@@ -1,0 +1,22 @@
+.dialog-content {
+    margin: 15px;
+    max-height: 360px;
+    height: 360px;
+    overflow-y: auto;
+
+    .add-band-btn {
+        float: right;
+        margin: 5px 5px;
+    }
+}
+
+.box_btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+
+    button {
+        font-size: x-large;
+        padding: 10px 20px;
+    }
+}

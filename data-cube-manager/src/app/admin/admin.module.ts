@@ -22,6 +22,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatBadgeModule } from '@angular/material/badge';
 
 import { AdminRoutes } from './admin.routing';
 
@@ -52,6 +54,7 @@ import { MapFieldComponent } from './components/map-field/map-field.component';
 import { UpdateCubeDialog } from './components/update-cube-dialog/update-cube-dialog.component';
 import { UpdateBandDialogComponent } from './components/update-band-dialog/update-band-dialog.component';
 import { CustomBandDialogComponent } from './pages/create-cube/steps/definition/custom-band-dialog/custom-band-dialog.component';
+import { BandsDialogComponent } from './components/bands-dialog/bands-dialog.component';
 
 @NgModule({
   imports: [
@@ -60,6 +63,8 @@ import { CustomBandDialogComponent } from './pages/create-cube/steps/definition/
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
+    MatBadgeModule,
+    MatRadioModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatChipsModule,
@@ -107,7 +112,8 @@ import { CustomBandDialogComponent } from './pages/create-cube/steps/definition/
     BucketsModal,
     MapFieldComponent,
     UpdateBandDialogComponent,
-    CustomBandDialogComponent
+    CustomBandDialogComponent,
+    BandsDialogComponent,
   ],
   providers: [
     AdminGuardService

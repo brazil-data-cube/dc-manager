@@ -1,7 +1,7 @@
 <section class="body_step">
     <ng-content></ng-content>
 
-    <div class="row footer">
+    <div class="row footer" *ngIf="!removeAll">
         <button mat-raised-button [disabled]="first" matStepperPrevious>Back</button>
         <button mat-raised-button color="primary" *ngIf="!removeNext" matStepperNext>{{ titleNext }}</button>
     </div>

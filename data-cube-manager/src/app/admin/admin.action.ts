@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { DataSourceLocal } from './admin.state';
 
 export const setGrid = createAction(
     '[Loading Component] setGrid',
@@ -37,5 +38,15 @@ export const setMetadata = createAction(
 
 export const setStacList = createAction(
     '[Loading Component] setStacList',
+    props<object>()
+);
+
+export const setLocalDataSource = createAction(
+    '[Admin Component] setLocalDataSource',
+    props<DataSourceLocal>()
+);
+
+export const setCustomBands = createAction(
+    '[Admin Component] setCustomBands',
     props<object>()
 );
