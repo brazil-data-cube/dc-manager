@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { latLng, MapOptions, Map as MapLeaflet, tileLayer, Draw, Control, geoJSON, featureGroup, FeatureGroup } from 'leaflet';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'app/shared/helpers/date.adapter';
@@ -11,10 +11,11 @@ import { CubeBuilderService } from 'app/services/cube-builder';
 import { STACService } from 'app/services/stac';
 import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/helpers/stac';
 import { formatDateUSA } from 'app/shared/helpers/date';
-import { setBandsAvailable, setRangeTemporal, setTiles, setStacList, setSatellite } from 'app/admin/admin.action';
+import { setBandsAvailable, setRangeTemporal, setTiles, setStacList, setSatellite, setLocalDataSource } from 'app/admin/admin.action';
 
 import { featureCollection, convex, intersect, multiPolygon } from '@turf/turf';
 import * as L from 'leaflet';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-create-cube-images',
@@ -28,6 +29,7 @@ import * as L from 'leaflet';
   }]
 })
 export class CreateCubeImagesComponent implements OnInit {
+  @Input() stepper: MatStepper
 
   /** pointer to reference map */
   public map: MapLeaflet
@@ -35,7 +37,8 @@ export class CreateCubeImagesComponent implements OnInit {
   public options: MapOptions
 
   public satellites: string[]
-  public formSearchImages: FormGroup
+  public formSearchImages: FormGroup;
+  public formLocalSource: FormGroup;
   public stacVersion: string
   public grid: string
   public totalImages: number
@@ -44,6 +47,13 @@ export class CreateCubeImagesComponent implements OnInit {
   public featuresSelected: any[]
   public isBigGrid = false
   public stacList = [];
+
+  private dataSources = [
+    {name: "SpatioTemporal Asset Catalog (STAC)", value: "STAC", checked: true},
+    {name: "Local Folder", value: "LOCAL"},
+  ]
+
+  public dataSource: string = "STAC";
 
   public environmentVersion = window['__env'].environmentVersion;
 
@@ -59,6 +69,14 @@ export class CreateCubeImagesComponent implements OnInit {
       startDate: ['', [Validators.required]],
       lastDate: ['', [Validators.required]]
     });
+    this.formLocalSource = this.fb.group({
+      'local': ['', [Validators.required]],
+      'recursive': [false, []],
+      'format': ['', [Validators.required]],
+      'pattern': ['.tif', [Validators.required]],
+      startDate: ['', [Validators.required]],
+      endDate: ['', [Validators.required]]
+    })
     this.tiles = [];
     this.featuresSelected = [];
   }
@@ -311,6 +329,8 @@ export class CreateCubeImagesComponent implements OnInit {
             panelClass: 'app_snack-bar-success'
           });
 
+          return true;
+
         } catch (err) {
           console.log(err)
           this.snackBar.open('Images not found!', '', {
@@ -323,13 +343,15 @@ export class CreateCubeImagesComponent implements OnInit {
         }
       }
     }
+
+    return false;
   }
 
   async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, token) {
     try {
       const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection, token)
 
-      const bands = getBands(respCollection);
+      const [bands, objectRef] = getBands(respCollection);
 
       this.store.dispatch(setTiles({ tiles: this.tiles }))
       this.store.dispatch(setSatellite({ satellite }))
@@ -493,5 +515,53 @@ export class CreateCubeImagesComponent implements OnInit {
 
     const control = new controlType();
     control.addTo(this.map);
+  }
+
+  async checkNextStep() {
+    if (this.dataSource === 'STAC') {
+      const valid = await this.searchImages();
+      if (!valid) {
+        this.formSearchImages.updateValueAndValidity()
+        return;
+      }
+    } else if (this.dataSource === 'LOCAL') {
+      if (!this.validateLocal())
+        return;
+
+      const data = this.formLocalSource.value;
+
+      const { startDate, endDate } = data;
+      delete data.startDate;
+      delete data.endDate;
+
+      this.store.dispatch(setTiles({ tiles: this.tiles }));
+      this.store.dispatch(setLocalDataSource(data));
+      this.store.dispatch(setRangeTemporal({
+        startDate: formatDateUSA(startDate),
+        lastDate: formatDateUSA(endDate)
+      }));
+    }
+
+    this.stepper.next();
+  }
+
+  validateLocal(): boolean {
+    if (this.formLocalSource.invalid) {
+      this.snackBar.open('Fill all fields properly', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+      return false;
+    }
+    if (this.tiles.length === 0) {
+      this.snackBar.open('Please select tiles in map.', '', {
+        duration: 4000,
+        verticalPosition: 'top',
+        panelClass: 'app_snack-bar-error'
+      });
+      return false;
+    }
+    return true;
   }
 }

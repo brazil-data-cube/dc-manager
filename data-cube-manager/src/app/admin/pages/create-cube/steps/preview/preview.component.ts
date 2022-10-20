@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CubeBuilderService } from 'app/services/cube-builder';
 import { Store, select } from '@ngrx/store';
-import { AdminState, DefinitionCube, MetadataCube } from 'app/admin/admin.state';
+import { AdminState, DataSourceLocal, DefinitionCube, MetadataCube } from 'app/admin/admin.state';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { showLoading, closeLoading } from 'app/app.action';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -27,6 +27,8 @@ export class CreateCubePreviewComponent implements OnInit {
   public rangeDates: string[]
   public cost = {}
   public cubeCreated = false
+  public localDataSource: DataSourceLocal;
+  public customBands: any;
 
   public environmentVersion = window['__env'].environmentVersion
 
@@ -65,11 +67,13 @@ export class CreateCubePreviewComponent implements OnInit {
       if (res.startDate && res.lastDate) {
         this.rangeDates = [res.startDate, res.lastDate]
       }
-
-      // if (this.environmentVersion === 'cloud' &&
-      //     this.gridCompleted && this.regionCompleted && this.definitionCompleted) {
-      //   this.getCost()
-      // }
+      if (res.localDataSource) {
+        this.localDataSource = res.localDataSource;
+        this.regionCompleted = true;
+      }
+      if (res.customBands) {
+        this.customBands = res.customBands;
+      }
     })
   }
 
@@ -77,50 +81,6 @@ export class CreateCubePreviewComponent implements OnInit {
     this.gridCompleted = false
     this.regionCompleted = false
     this.definitionCompleted = false
-  }
-
-  async getCost() {
-    try {
-      this.store.dispatch(showLoading())
-      const data = {
-        start_date: this.rangeDates[0],
-        last_date: this.rangeDates[1],
-        satellite: this.satellite,
-        resolution: this.definition.resolution,
-        grid: this.grid,
-        quantity_bands: this.definition.bands.length,
-        quantity_tiles: this.tiles.length,
-        quantity_indexes: this.definition.indexes.length
-      }
-
-      const response = await this.cbs.estimateCost(data)
-      const funcs = ['', 'STK', 'MED']
-      funcs.forEach(func => {
-        if (!func || func === '') {
-          this.cost['IDENTITY'] = {
-            tasks: response['build']['quantity_merges'] + response['build']['quantity_merges'],
-            items: response['build']['collection_items_irregular'],
-            assets: response['build']['quantity_merges'],
-            price: response['build']['price_merges'] + response['build']['price_publish'],
-            priceStorage: response['storage']['price_irregular_cube'],
-            size: response['storage']['size_irregular_cube']
-          }
-        } else {
-          this.cost[func] = {
-            tasks: response['build']['quantity_blends'] + response['build']['quantity_publish'],
-            items: response['build']['collection_items'] / 2,
-            assets: response['build']['quantity_blends'] / 2,
-            price: (response['build']['price_blends'] + response['build']['price_publish']) / 2,
-            priceStorage: response['storage']['price_cubes'] / 2,
-            size: response['storage']['size_cubes'] / 2
-          }
-        }
-      })
-
-    } catch(err) {
-    } finally {
-      this.store.dispatch(closeLoading())
-    }
   }
 
   getCubeName(func) {
@@ -163,6 +123,25 @@ export class CreateCubePreviewComponent implements OnInit {
           }
         }
 
+        let bands = [];
+        if (!!this.customBands && this.customBands.length > 0) {
+          bands = this.customBands.map(band => ({
+            name: band.name,
+            common_name: band.common_name,
+            data_type: band.data_type,
+            nodata: band.nodata
+          }))
+        } else {
+          bands = this.definition.bands.map(b => {
+            return {
+              'name': b,
+              'common_name': b,
+              'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8',
+              'nodata': b !== this.definition.qualityBand ? this.definition.nodata : this.definition.qualityNodata
+            }
+          })
+        }
+
         // CREATE CUBES METADATA
         const cube = {
           datacube: this.definition.name,
@@ -173,14 +152,7 @@ export class CreateCubePreviewComponent implements OnInit {
           resolution: this.definition.resolution,
           temporal_composition: JSON.parse(this.definition.temporal),
           composite_function: this.definition.function['alias'],
-          bands: this.definition.bands.map(b => {
-            return {
-              'name': b,
-              'common_name': b,
-              'data_type': b !== this.definition.qualityBand ? 'int16' : 'uint8',
-              'nodata': b !== this.definition.qualityBand ? this.definition.nodata : this.definition.qualityNodata
-            }
-          }),
+          bands,
           bands_quicklook: this.definition.bandsQuicklook,
           indexes: this.definition.indexes,
           metadata: {license: this.metadata['license'], platform: { code: this.metadata['satellite'], instruments: this.metadata['instruments'] }},
@@ -246,7 +218,7 @@ export class CreateCubePreviewComponent implements OnInit {
       this.store.dispatch(showLoading());
 
       // START CUBE CREATION
-      const process = {
+      let process = {
         bucket: this.definition.bucket,
         datacube_version: this.definition.version,
         tiles: this.tiles,
@@ -259,17 +231,26 @@ export class CreateCubePreviewComponent implements OnInit {
         delete process['bucket']
         delete process['datacube_version']
 
-        process['collections'] = [this.stacList[0]['collection']]
-        process['stac_url'] = this.stacList[0]['url']
-        process['token'] = this.stacList[0]['token']
+        if (this.localDataSource) {
+          process = {
+            ...process,
+            ...this.localDataSource
+          }
+          delete this.localDataSource['type'];
+        } else {
+          process['collections'] = [this.stacList[0]['collection']]
+          process['stac_url'] = this.stacList[0]['url']
+          process['token'] = this.stacList[0]['token']
+        }
+
       }
 
       const compositeFunctions = [this.definition.function].filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
       if (compositeFunctions.length !== 0) {
-        process['datacube'] = `${this.definition.name}_${this.getComplementCubeName(this.definition.temporal)}_${compositeFunctions[0]}`;
+        process['datacube'] = this.definition.name;
       } else {
         // Only IDENTITY selected
-        process['datacube'] = this.definition.name
+        process['datacube'] = this.definition.identity
       }
 
       const respStart = await this.cbs.start(process)

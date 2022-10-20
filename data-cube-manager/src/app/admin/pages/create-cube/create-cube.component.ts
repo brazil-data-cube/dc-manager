@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
     selector: 'app-create-cube',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./create-cube.component.scss']
 })
 export class CreateCubeComponent implements OnInit {
+    @ViewChild('stepper', { }) stepper: MatStepper;
 
     constructor() { }
 

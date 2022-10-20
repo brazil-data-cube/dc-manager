@@ -32,7 +32,7 @@
                             </p>
                             <div class="box_content">
                                 <p><b>Version:</b> {{ definition.version }}</p>
-                                <p><b>Range Temporal:</b> {{ rangeDates[0] }}/{{ rangeDates[1] }}</p>
+                                <p *ngIf="rangeDates"><b>Range Temporal:</b> {{ rangeDates[0] }}/{{ rangeDates[1] }}</p>
                                 <p><b>Resolution:</b> {{ definition.resolution }}</p>
                                 <p><b>Temporal Composition:</b> {{ definition.temporal }}</p>
                                 <p><b>Composite Function:</b> {{ func.name }}</p>
@@ -52,7 +52,7 @@
                             <p class="title">
                                 <mat-icon>folder_shared</mat-icon> Data Aquisition:
                             </p>
-                            <div class="box_content">
+                            <div class="box_content" *ngIf="!localDataSource">
                                 <div *ngFor="let stac of stacList" style="padding: 0 10px;">
                                     <p><b>URL STAC:</b> {{ stac['url'] }}</p>
                                     <p><b>Collection:</b> {{ stac['collection'] }}</p>
@@ -61,22 +61,11 @@
                                 <p><b>Satellite:</b> {{ satellite }}</p>
                                 <p *ngIf="environmentVersion === 'cloud'"><b>Bucket to save the Cube:</b> {{ definition.bucket }}</p>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="col-lg-4 col-md-12 col-sm-12 box" *ngIf="environmentVersion === 'cloud'">
-                        <div class="container" *ngIf="cost[func || 'IDENTITY']">
-                            <p class="title">
-                                <mat-icon>attach_money</mat-icon> Cost:
-                            </p>
-                            <div class="box_content">
-                                <p><b>Tasks:</b> {{ cost[func || 'IDENTITY']['tasks'] }}</p>
-                                <p><b>Collection Items:</b> {{ cost[func || 'IDENTITY']['items'] }}</p>
-                                <p><b>Assets:</b> {{ cost[func || 'IDENTITY']['assets'] }}</p>
-                                <p><b>Price to generate:</b> U$ ~{{ cost[func || 'IDENTITY']['price'] }}</p>
-                                <hr />
-                                <p><b>Storage:</b> {{ cost[func || 'IDENTITY']['size'] }}GB</p>
-                                <p><b>Price to store the cube:</b> U$ ~{{ cost[func || 'IDENTITY']['priceStorage'] }}/month</p>
+                            <div class="box_content" *ngIf="localDataSource">
+                                <p><b><mat-icon>folder</mat-icon> Directory:</b> {{ localDataSource.local }}</p>
+                                <p><b><mat-icon>search</mat-icon> Pattern:</b> {{ localDataSource.pattern }}</p>
+                                <p><b><mat-icon>list_alt</mat-icon> Format:</b> {{ localDataSource.format }}</p>
                             </div>
                         </div>
                     </div>
