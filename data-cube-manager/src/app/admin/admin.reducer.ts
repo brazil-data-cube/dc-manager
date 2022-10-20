@@ -32,7 +32,8 @@ const initialState: AdminState = {
   metadata: {
     license: '',
     description: ''
-  }
+  },
+  localDataSource: null
 };
 
 /**

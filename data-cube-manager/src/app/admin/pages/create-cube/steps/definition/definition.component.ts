@@ -10,10 +10,11 @@ import { CubeBuilderService } from 'app/services/cube-builder'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
 import { FormGroup, FormBuilder, Validators } from '@angular/forms'
-import { setDefinition } from 'app/admin/admin.action'
+import { setBandsAvailable, setDefinition } from 'app/admin/admin.action'
 import { BucketsModal } from './buckets/buckets.component'
 import { CustomBandDialogComponent } from './custom-band-dialog/custom-band-dialog.component'
 import { getCubeBuilderVersion } from 'app/shared/helpers/cube'
+import { BandsDialogComponent } from 'app/admin/components/bands-dialog/bands-dialog.component'
 
 @Component({
   selector: 'app-create-cube-definition',
@@ -33,6 +34,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public rangeDates: string[]
   public tiles: string[]
   public grid: string
+  private customBands: any = [];
 
   public wellKnownIndexes = {
     'NDVI': '10000. * ((NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + RED_BAND_HERE))',
@@ -389,5 +391,26 @@ export class CreateCubeDefinitionComponent implements OnInit {
     // Supported only >= 0.8.3
     return (major == 0 && minor >= 8 && patch >= 3) ||
            (major >= 1 && minor >= 0 && patch >= 0);
+  }
+
+  openBandModal() {
+    const dialogRef = this.dialog.open(BandsDialogComponent, {
+      width: '800px',
+      height: '600px',
+      data: {
+        bands: this.customBands
+      }
+    })
+
+    dialogRef.afterClosed().subscribe(bands => {
+      if (bands) {
+        const bandNames = bands.map(band => band.name);
+        this.store.dispatch(setBandsAvailable({ bands: bandNames }));
+
+        this.formCreateCube.controls['bands'].setValue(bandNames);
+        // Keep custom band definition
+        this.customBands = bands;
+      }
+    })
   }
 }

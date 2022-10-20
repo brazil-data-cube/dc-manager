@@ -8,6 +8,7 @@ export interface AdminState {
     readonly tiles: String[];
     readonly definitionInfos: DefinitionCube;
     readonly metadata: MetadataCube;
+    readonly localDataSource: DataSourceLocal;
 }
 
 export interface STAC {
@@ -52,4 +53,11 @@ export interface DefinitionCube {
 export interface MetadataCube {
     license: string;
     description: string;
+}
+
+export interface DataSourceLocal {
+    local: string;
+    recursive: boolean;
+    format: string;
+    pattern: string;
 }

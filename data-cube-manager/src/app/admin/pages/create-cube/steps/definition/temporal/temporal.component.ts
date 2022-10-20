@@ -28,7 +28,7 @@ export class TemporalCompositionModal {
             temporalCompositeCyclicUnit: [values['cyclic'] ? values['cyclic']['unit'] : null],
             temporalCompositeCyclicIntervals: [values['cyclic'] ? values['cyclic']['intervals'] : null]
         });
-        
+
     }
 
     close(result): void {
@@ -51,7 +51,7 @@ export class TemporalCompositionModal {
                 intervals: this.formTemporalCreate.get('temporalCompositeIntervals').value
             }
 
-            if (newSchema['schema'] === 'cyclic') {
+            if (newSchema['schema'] === 'Cyclic') {
                 if (!this.formTemporalCreate.get('temporalCompositeCyclicStep').value ||
                     !this.formTemporalCreate.get('temporalCompositeCyclicUnit').value) {
                         this.snackBar.open('Cyclic Step and Unit is required!', '', {

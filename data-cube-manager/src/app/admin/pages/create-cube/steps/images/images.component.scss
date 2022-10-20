@@ -50,3 +50,21 @@
         }
     }
 }
+
+.data-source {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+
+    .data-source-margin {
+        margin: 0 10px;
+    }
+}
+
+.footer {
+    margin-top: 10px;
+    padding: 0 20px;
+    border: none;
+    justify-content: space-between;
+}

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CubeBuilderService } from 'app/services/cube-builder';
 import { Store, select } from '@ngrx/store';
-import { AdminState, DefinitionCube, MetadataCube } from 'app/admin/admin.state';
+import { AdminState, DataSourceLocal, DefinitionCube, MetadataCube } from 'app/admin/admin.state';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { showLoading, closeLoading } from 'app/app.action';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -27,6 +27,7 @@ export class CreateCubePreviewComponent implements OnInit {
   public rangeDates: string[]
   public cost = {}
   public cubeCreated = false
+  public localDataSource: DataSourceLocal;
 
   public environmentVersion = window['__env'].environmentVersion
 
@@ -64,6 +65,10 @@ export class CreateCubePreviewComponent implements OnInit {
       }
       if (res.startDate && res.lastDate) {
         this.rangeDates = [res.startDate, res.lastDate]
+      }
+      if (res.localDataSource) {
+        this.localDataSource = res.localDataSource;
+        this.regionCompleted = true;
       }
 
       // if (this.environmentVersion === 'cloud' &&

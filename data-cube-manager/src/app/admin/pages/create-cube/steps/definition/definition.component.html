@@ -91,7 +91,7 @@
             </mat-form-field>
         </div>
 
-        <div class="col-lg-5 col-md-5 col-sm-12" style="margin-top: 15px;">
+        <div class="col-lg-5 col-md-5 col-sm-12 box_input_with_button" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
                 <mat-label>Bands</mat-label>
                 <mat-select multiple formControlName="bands">
@@ -99,10 +99,14 @@
                         {{ band }}
                     </mat-option>
                 </mat-select>
+
                 <mat-error>
                     <form-field-error [errors]="formCreateCube.get('bands').errors"></form-field-error>
                 </mat-error>
             </mat-form-field>
+            <button mat-icon-button matSuffix (click)="openBandModal()" type="button" class="btn_suffix">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-12" style="margin-top: 15px;">
             <mat-form-field appearance="outline">
