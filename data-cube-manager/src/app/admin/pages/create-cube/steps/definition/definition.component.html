@@ -4,7 +4,7 @@
         <span style="margin-left: 10px;">Fill in the Information</span>
     </h3>
 
-    <app-alert type="warning" *ngIf="bandsAvailable.length == 0"
+    <app-alert type="warning" *ngIf="!localDataSource"
         message="Select a region of interest in the REGION step!"></app-alert>
 
     <form class="row" [formGroup]="formCreateCube" (ngSubmit)="saveInfosInStore()">

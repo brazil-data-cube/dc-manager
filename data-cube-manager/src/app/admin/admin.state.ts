@@ -9,6 +9,7 @@ export interface AdminState {
     readonly definitionInfos: DefinitionCube;
     readonly metadata: MetadataCube;
     readonly localDataSource: DataSourceLocal;
+    readonly customBands: any;
 }
 
 export interface STAC {

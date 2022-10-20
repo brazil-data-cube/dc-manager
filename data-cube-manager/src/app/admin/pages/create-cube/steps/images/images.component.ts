@@ -73,7 +73,9 @@ export class CreateCubeImagesComponent implements OnInit {
       'local': ['', [Validators.required]],
       'recursive': [false, []],
       'format': ['', [Validators.required]],
-      'pattern': ['.tif', [Validators.required]]
+      'pattern': ['.tif', [Validators.required]],
+      startDate: ['', [Validators.required]],
+      endDate: ['', [Validators.required]]
     })
     this.tiles = [];
     this.featuresSelected = [];
@@ -526,8 +528,18 @@ export class CreateCubeImagesComponent implements OnInit {
       if (!this.validateLocal())
         return;
 
+      const data = this.formLocalSource.value;
+
+      const { startDate, endDate } = data;
+      delete data.startDate;
+      delete data.endDate;
+
       this.store.dispatch(setTiles({ tiles: this.tiles }));
-      this.store.dispatch(setLocalDataSource(this.formLocalSource.value));
+      this.store.dispatch(setLocalDataSource(data));
+      this.store.dispatch(setRangeTemporal({
+        startDate: formatDateUSA(startDate),
+        lastDate: formatDateUSA(endDate)
+      }));
     }
 
     this.stepper.next();

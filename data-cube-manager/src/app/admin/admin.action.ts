@@ -45,3 +45,8 @@ export const setLocalDataSource = createAction(
     '[Admin Component] setLocalDataSource',
     props<DataSourceLocal>()
 );
+
+export const setCustomBands = createAction(
+    '[Admin Component] setCustomBands',
+    props<object>()
+);

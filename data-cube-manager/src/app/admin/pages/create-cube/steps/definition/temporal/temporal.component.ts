@@ -48,7 +48,14 @@ export class TemporalCompositionModal {
                 schema: this.formTemporalCreate.get('temporalSchema').value,
                 step: this.formTemporalCreate.get('temporalCompositeStep').value,
                 unit: this.formTemporalCreate.get('temporalCompositeUnit').value,
-                intervals: this.formTemporalCreate.get('temporalCompositeIntervals').value
+            }
+            const intervals = this.formTemporalCreate.get('temporalCompositeIntervals').value;
+            if (!!intervals) {
+                if (intervals.hasOwnProperty('intervals')) {
+                    delete intervals.intervals;
+                }
+
+                newSchema.intervals = intervals
             }
 
             if (newSchema['schema'] === 'Cyclic') {
@@ -65,9 +72,12 @@ export class TemporalCompositionModal {
                             ...newSchema,
                             cycle: {
                                 step: this.formTemporalCreate.get('temporalCompositeCyclicStep').value,
-                                unit: this.formTemporalCreate.get('temporalCompositeCyclicUnit').value,
-                                intervals: this.formTemporalCreate.get('temporalCompositeCyclicIntervals').value
+                                unit: this.formTemporalCreate.get('temporalCompositeCyclicUnit').value
                             }
+                        }
+                        const cycleIntervals = this.formTemporalCreate.get('temporalCompositeCyclicIntervals').value;
+                        if (!!cycleIntervals) {
+                            newSchema.cycle['intervals'] = cycleIntervals;
                         }
                         this.close(JSON.stringify(newSchema))
                     }

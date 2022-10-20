@@ -10,7 +10,7 @@ import { CubeBuilderService } from 'app/services/cube-builder'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EstimateCostModal } from './estimate-cost/estimate-cost.component'
 import { FormGroup, FormBuilder, Validators } from '@angular/forms'
-import { setBandsAvailable, setDefinition } from 'app/admin/admin.action'
+import { setBandsAvailable, setCustomBands, setDefinition } from 'app/admin/admin.action'
 import { BucketsModal } from './buckets/buckets.component'
 import { CustomBandDialogComponent } from './custom-band-dialog/custom-band-dialog.component'
 import { getCubeBuilderVersion } from 'app/shared/helpers/cube'
@@ -35,6 +35,7 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public tiles: string[]
   public grid: string
   private customBands: any = [];
+  private localDataSource: any = null;
 
   public wellKnownIndexes = {
     'NDVI': '10000. * ((NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + RED_BAND_HERE))',
@@ -92,6 +93,9 @@ export class CreateCubeDefinitionComponent implements OnInit {
       }
       if (res.grid && res.grid !== '') {
         this.grid = res.grid
+      }
+      if (res.localDataSource) {
+        this.localDataSource = res.localDataSource;
       }
     })
   }
@@ -264,6 +268,11 @@ export class CreateCubeDefinitionComponent implements OnInit {
       }
 
       this.store.dispatch(setDefinition(data))
+
+      if (this.localDataSource) {
+        this.store.dispatch(setCustomBands(this.customBands));
+      }
+
       this.definitonCompleted = true
     }
   }
