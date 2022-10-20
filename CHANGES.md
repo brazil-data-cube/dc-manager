@@ -1,6 +1,14 @@
 # Changes
 
 
+## Version 1.0.0a1 (2022-10-20)
+
+- Add way create data cube for local folder [`#125`](https://github.com/brazil-data-cube/dc-manager/issues/125)
+- Add way to customize bands on data cube creation
+- Fix bug related misspelled ``Cyclic`` and ``Continuous`` temporal composition
+- Improve check cube merges
+
+
 ## Version 0.6.2 (2022-10-18)
 
 - Fix grid creation on create cube page [`#122`](https://github.com/brazil-data-cube/dc-manager/issues/122)
