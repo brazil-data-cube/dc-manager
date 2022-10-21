@@ -34,6 +34,7 @@ export class CheckCubeComponent implements OnInit {
     public items = {} as any
     public form: FormGroup
     public hasErrorInTab: boolean = false;
+    public itemBaseUrl = window['__env'].itemBaseUrl;
 
     constructor(
         private cbs: CubeBuilderService,
@@ -200,9 +201,9 @@ export class CheckCubeComponent implements OnInit {
                 return `https://${bucket}.s3.amazonaws.com${qk.replace(bucket, '')}`;
             } else {
                 if (qk.startsWith('/tmp/') || qk.startsWith('/e006/')) {
-                    return `http://brazildatacube.dpi.inpe.br/dev${qk}`;
+                    return `${this.itemBaseUrl}/dev${qk}`;
                 } else {
-                    return `http://brazildatacube.dpi.inpe.br${qk}`;
+                    return `${this.itemBaseUrl}${qk}`;
                 }
             }
         }
@@ -270,8 +271,8 @@ export class CheckCubeComponent implements OnInit {
             const tileId = item.tile_id || this.currentTab;
 
             const cubeName = this.cube.name;
-            let start = item.start_date;
-            let end = item.end_date;
+            let start = moment(item.start_date).format('YYYY-MM-DD');
+            let end = moment(item.end_date).format('YYYY-MM-DD');
 
             if (cubeName.split('_').length === 2) {
                 start = moment(start).startOf('month').format('YYYY-MM-DD');

@@ -247,10 +247,10 @@ export class CreateCubePreviewComponent implements OnInit {
 
       const compositeFunctions = [this.definition.function].filter(fn => fn['alias'] !== 'IDT').map(fn => fn['alias']);
       if (compositeFunctions.length !== 0) {
-        process['datacube'] = this.definition.name;
+        process['datacube'] = `${this.definition.name}-${this.definition.version}`;
       } else {
         // Only IDENTITY selected
-        process['datacube'] = this.definition.identity
+        process['datacube'] = `${this.definition.identity}-${this.definition.version}`
       }
 
       const respStart = await this.cbs.start(process)
