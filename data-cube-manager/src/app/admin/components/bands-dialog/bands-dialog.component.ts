@@ -70,7 +70,7 @@ export class BandsDialogComponent implements OnInit {
         }
     }
 
-    private async submitImportForm() {
+    public async submitImportForm() {
         if (!this.stac || !this.stac.url) {
             this.snackBar.open('Fill in all fields correctly', '', {
                 duration: 4000,

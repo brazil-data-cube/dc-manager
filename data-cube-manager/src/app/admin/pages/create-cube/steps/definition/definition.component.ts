@@ -34,8 +34,8 @@ export class CreateCubeDefinitionComponent implements OnInit {
   public rangeDates: string[]
   public tiles: string[]
   public grid: string
-  private customBands: any = [];
-  private localDataSource: any = null;
+  public customBands: any = [];
+  public localDataSource: any = null;
 
   public wellKnownIndexes = {
     'NDVI': '10000. * ((NIR_BAND_HERE - RED_BAND_HERE) / (NIR_BAND_HERE + RED_BAND_HERE))',
