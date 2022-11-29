@@ -48,7 +48,7 @@ export class CreateCubeImagesComponent implements OnInit {
   public isBigGrid = false
   public stacList = [];
 
-  private dataSources = [
+  public dataSources = [
     {name: "SpatioTemporal Asset Catalog (STAC)", value: "STAC", checked: true},
     {name: "Local Folder", value: "LOCAL"},
   ]
