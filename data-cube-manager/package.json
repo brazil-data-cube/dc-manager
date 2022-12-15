@@ -44,7 +44,7 @@
     "chartist": "0.11.2",
     "classlist.js": "1.1.20150312",
     "core-js": "3.1.3",
-    "express": "4.17.1",
+    "express": "4.17.3",
     "hammerjs": "2.0.8",
     "jquery": "3.5.0",
     "leaflet": "^1.6.0",
