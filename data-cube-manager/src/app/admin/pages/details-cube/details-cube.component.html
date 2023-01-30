@@ -19,7 +19,10 @@
                                     <td class="text-success">Bands:</td>
                                     <td>
                                         <mat-chip-list>
-                                            <mat-chip *ngFor="let band of cube.bands" (click)="openUpdateBandModal(band)">
+                                            <mat-chip class="clickable"
+                                                *ngFor="let band of cube.bands"
+                                                (click)="openUpdateBandModal(band)"
+                                                matTooltip="Edit band {{ band.name }} info">
                                                 {{ band.name }}</mat-chip>
                                         </mat-chip-list>
                                     </td>

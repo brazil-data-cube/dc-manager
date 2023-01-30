@@ -33,9 +33,9 @@ export class STACService {
     /**
      * get items by collections
      */
-    public async getItemsByCollection(url, collection, query, params: any = { }): Promise<any> {
+    public async getItemsByCollection(url, collections, query, params: any = { }): Promise<any> {
         const q = {
-            collections: [collection],
+            collections,
             ...query
         }
 

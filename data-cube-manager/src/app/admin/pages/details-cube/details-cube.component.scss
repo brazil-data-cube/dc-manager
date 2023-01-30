@@ -12,10 +12,10 @@
             }
         }
     }
-    
+
     .container_details {
         padding: 0 25px;
-    
+
         .mat-standard-chip {
             min-height: 20px !important;
             font-size: small;
@@ -31,14 +31,14 @@
     .container_cards {
         margin-top: 20px;
     }
-    
+
     .container_map {
         margin-top: 15px;
         height: 500px;
         width: 100%;
         box-shadow: 0px 0px 6px rgba(#000, 0.25);
     }
-    
+
     .btns-check {
         display: flex;
         width: 100%;
@@ -50,4 +50,8 @@
             font-size: 1.2em;
         }
     }
+}
+
+.clickable {
+    cursor: pointer;
 }
