@@ -130,7 +130,7 @@
 
                                 <mat-form-field appearance="outline" style="width: 48%; margin-left: 4%;">
                                     <mat-label>Related Collection</mat-label>
-                                    <mat-select [(ngModel)]="stac.collection" [ngModelOptions]="{standalone: true}">
+                                    <mat-select [(ngModel)]="stac.collection" [ngModelOptions]="{standalone: true}" multiple>
                                         <mat-option *ngFor="let collection of stac.collections" [value]="collection">
                                             {{ collection }}
                                         </mat-option>

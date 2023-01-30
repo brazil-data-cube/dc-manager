@@ -238,7 +238,12 @@ export class CreateCubePreviewComponent implements OnInit {
           }
           delete this.localDataSource['type'];
         } else {
-          process['collections'] = [this.stacList[0]['collection']]
+          let stacCollection = this.stacList[0]['collection'];
+          if (!Array.isArray(stacCollection)) {
+            stacCollection = stacCollection.split(',');
+          }
+
+          process['collections'] = stacCollection;
           process['stac_url'] = this.stacList[0]['url']
           process['token'] = this.stacList[0]['token']
         }
