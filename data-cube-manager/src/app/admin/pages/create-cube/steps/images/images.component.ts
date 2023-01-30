@@ -311,8 +311,15 @@ export class CreateCubeImagesComponent implements OnInit {
 
                 this.stacList[i] = {...stac, totalImages: total};
 
-                const bandsByCollection = await this.getBandsAndSaveinStore(stac.collection, satellite, stac.url, startDate, lastDate, params);
-                bands = [...bands, ...bandsByCollection.filter(band => bands.indexOf(band) < 0)];
+                let stacCollections = stac.collection;
+                if (!Array.isArray(stacCollections)) {
+                  stacCollections = stacCollections.split(',');
+                }
+
+                for (let collection_ of stacCollections) {
+                  const bandsByCollection = await this.getBandsAndSaveinStore(collection_, satellite, stac.url, startDate, lastDate, params);
+                  bands = [...bands, ...bandsByCollection.filter(band => bands.indexOf(band) < 0)];
+                }
               }
             }
           }

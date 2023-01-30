@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../../../environments/environment'
 
 declare const $: any;
 declare interface RouteInfo {
@@ -31,4 +32,8 @@ export class SidebarComponent implements OnInit {
       }
       return true;
   };
+
+  getVersion() {
+    return environment.appVersion;
+  }
 }

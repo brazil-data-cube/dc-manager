@@ -50,11 +50,11 @@ export class ReprocessDialogComponent implements OnInit {
     this.form = this.fb.group({
       tiles: [{ value: '', disabled: !this.editable }, [Validators.required]],
       // You should change collection.
-      collections: [{ value: '' }, [Validators.required]],
+      collections: ['', [Validators.required]],
       start_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       end_date: [{ value: '', disabled: !this.editable }, [Validators.required]],
       datacube: [{ value: '', disabled: !this.editable }, [Validators.required]],
-      stac_url: [{ value: '' }, [Validators.required]],
+      stac_url: ['', [Validators.required]],
       token: [''],
     });
 
