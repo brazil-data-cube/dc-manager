@@ -1,6 +1,14 @@
 # Changes
 
 
+## Version 1.0.0a2 (2023-01-30)
+
+- Fix cube creation and start cube when dealing with combined collections
+- Improvements on details cube - edit cube band info
+- Display repository version on page
+- Review compatibility table for multiple stac versions
+
+
 ## Version 1.0.0a1 (2022-10-20)
 
 - Add way create data cube for local folder [`#125`](https://github.com/brazil-data-cube/dc-manager/issues/125)
