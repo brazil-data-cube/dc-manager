@@ -6,6 +6,41 @@
             message="You have no cubes created. Create your first now!"></app-alert>
 
         <div class="row">
+            <div class="col-md-12">
+                <form [formGroup]="form">
+                    <div class="search-box">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Search</mat-label>
+                                    <input matInput formControlName="cubeName" placeholder="Filter data cube by name" (change)="filterCubes()">
+                                    <button mat-icon-button matSuffix>
+                                        <mat-icon>search</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                            </div>
+        
+                            <div class="col-lg-3 col-md-3 col-sm-6">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Type</mat-label>
+                                    <select matNativeControl formControlName="collectionType" (change)="filterCubes()">
+                                        <option value="all">All</option>
+                                        <option value="cube">Cube</option>
+                                        <option value="mosaic">Mosaic</option>
+                                    </select>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-4">
+                                <section style="padding-top: 15px">
+                                    <mat-checkbox formControlName="isPublic" (click)="filterCubes()">Public</mat-checkbox>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </form>
+            </div>
+
             <div class="col-md-3"
                 *ngFor="let cube of cubes">
                 <a [routerLink]="['/details-cube', getCubeFullName(cube)]">
@@ -20,7 +55,10 @@
                         </div>
                         <div class="card-footer">
                             <div class="stats">
-                                <i class="material-icons">search</i> click here for more information
+                                <i class="material-icons">search</i>
+                                <mat-chip-list>
+                                    <mat-chip class="clickable">{{ cube.collection_type }}</mat-chip>
+                                </mat-chip-list>
                             </div>
                         </div>
                     </div>
