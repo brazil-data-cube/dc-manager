@@ -219,4 +219,10 @@ export class CubeBuilderService {
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
     }
+
+    public async getBuilderVersion() {
+        const urlSuffix = `/`;
+        const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`);
+        return data.version;
+    }
 }

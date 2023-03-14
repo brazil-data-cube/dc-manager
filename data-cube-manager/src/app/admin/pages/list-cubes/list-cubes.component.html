@@ -7,7 +7,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form [formGroup]="form">
+                <form [formGroup]="form" *ngIf="filterSupported">
                     <div class="search-box">
                         <div class="row">
                             <div class="col-lg-3 col-md-3 col-sm-6">

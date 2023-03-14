@@ -5,6 +5,8 @@ import { AppState } from 'app/app.state';
 import { CubeBuilderService } from 'app/services/cube-builder';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
+import { environment } from '../../../../environments/environment'
+
 
 @Component({
     selector: 'app-list-cubes',
@@ -14,11 +16,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class ListCubesComponent implements OnInit {
     public cubes;
     public form: FormGroup;
+    public filterSupported: boolean = false;
 
     constructor(
         private cbs: CubeBuilderService,
         private store: Store<AppState>,
-        private fb: FormBuilder) { }
+        private fb: FormBuilder) {}
 
     ngOnInit() {
         this.cubes = [];
@@ -28,6 +31,13 @@ export class ListCubesComponent implements OnInit {
             isPublic: [true]
         })
         this.getCubes();
+        this.cbs.getBuilderVersion()
+            .then((version) => {
+                const [major, minor, patch] = version.split(".");
+                if (major && parseInt(major) > 0) {
+                    this.filterSupported = true;
+                }
+            })
     }
 
     async getCubes() {
