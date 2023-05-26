@@ -111,7 +111,7 @@ export class ReprocessDialogComponent implements OnInit {
         data.collections = !Array.isArray(collections) ? collections.split(',') : collections;
       }
 
-      data.datacube = data.datacube;
+      data.datacube = `${data.datacube}-${this.data.datacube_version}`;
       data.force = !!this.data.force;
 
       await this.service.start(data);

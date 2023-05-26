@@ -174,7 +174,7 @@ export class DetailsCubeComponent implements OnInit {
         cloneCubeObject['metadata'] = cloneCubeObject._metadata;
         delete cloneCubeObject._metadata;
 
-        this.removeProperty(cloneCubeObject, ['grid_ref_sys_id', 'composite_function_id'])
+        this.removeProperty(cloneCubeObject, ['grid_ref_sys_id', 'composite_function_id', 'summary'])
 
         for (let band of cloneCubeObject.bands) {
             this.removeProperty(band, ['_metadata', 'id', 'collection_id']);

@@ -84,8 +84,8 @@ export class CheckCubeComponent implements OnInit {
 
             if (this.cube.temporal_composition_schema) {
                 const data = {
-                    start_date: this.cube.start_date,
-                    last_date: this.cube.end_date,
+                    start_date: moment(this.cube.start_date).format(),
+                    last_date: moment(this.cube.end_date).format(),
                     ...this.cube.temporal_composition_schema
                 }
                 const respTimeline = await this.cbs.getTimeline(data);
