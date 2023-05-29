@@ -2,7 +2,7 @@
 
 [![Software License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com//brazil-data-cube/dc-manager/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/tag/brazil-data-cube/dc-manager.svg)](https://github.com/brazil-data-cube/dc-manager/releases)
-[![Software Life Cycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Software Life Cycle](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![Join us at Discord](https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8)](https://discord.com/channels/689541907621085198#)
 
 
@@ -19,7 +19,7 @@ Web-based user interface to manage data cubes.
 
 Make sure you have the following libraries installed:
 
-- [`Node.js >= 8.x`](https://nodejs.org/en/)
+- [`Node.js >= 8.x,<17`](https://nodejs.org/en/)
 - [`Angular CLI >= 7`](https://angular.io/)
 
 ## Running
