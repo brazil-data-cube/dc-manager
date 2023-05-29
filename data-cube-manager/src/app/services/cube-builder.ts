@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import api from "./main";
 
+interface ICubesFilter {
+    name?: string;
+    public?: boolean;
+    collection_type?: 'all' | 'cube' | 'mosaic'
+}
+
 @Injectable({ providedIn: 'root' })
 export class CubeBuilderService {
 
@@ -26,12 +32,16 @@ export class CubeBuilderService {
     /**
      * get cube metadata
      */
-    public async getCubes(id = null): Promise<any> {
+    public async getCubes(id = null, params: ICubesFilter = null): Promise<any> {
         let urlSuffix = '/cubes'
         if (id) {
             urlSuffix += `/${id}`
         }
-        const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`);
+        if (params === null) {
+            params = {}
+        }
+
+        const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`, { params });
         return data;
     }
 
@@ -208,5 +218,11 @@ export class CubeBuilderService {
         const urlSuffix = `/estimate-cost`;
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
+    }
+
+    public async getBuilderVersion() {
+        const urlSuffix = `/`;
+        const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`);
+        return data.version;
     }
 }
