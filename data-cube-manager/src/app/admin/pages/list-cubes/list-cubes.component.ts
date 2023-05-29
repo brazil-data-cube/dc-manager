@@ -74,7 +74,7 @@ export class ListCubesComponent implements OnInit {
 
         try {
             this.store.dispatch(showLoading());
-            const response = await this.cbs.getCubes(null, { collection_type: collectionType, public: isPublic, name: cubeName });
+            const response = await this.cbs.getCubes(null, { collection_type: collectionType, public: !isPublic, name: cubeName });
             this.cubes = response.map(c => {
                 return { ...c, status: c.status.toLowerCase() === 'error' ? 'danger' : c.status }
             })
