@@ -2,6 +2,12 @@
 
 The `Data Cube Manager` supports a number of [cube-builder] and [bdc-stac] releases.
 
+## NodeJS
+
+- **node** - >=13,<=16+. For versions 17+, make sure to use the following variable in order to launch application: ``NODE_OPTIONS=--openssl-legacy-provider``.
+- **npm** - 8+.
+
+
 ## Services supported
 
 The versions of web services compatible to be run with the `Data Cube Manager` are:

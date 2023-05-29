@@ -3,6 +3,9 @@ import { showLoading, closeLoading } from 'app/app.action';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/app.state';
 import { CubeBuilderService } from 'app/services/cube-builder';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+import { environment } from '../../../../environments/environment'
 
 
 @Component({
@@ -12,14 +15,29 @@ import { CubeBuilderService } from 'app/services/cube-builder';
 })
 export class ListCubesComponent implements OnInit {
     public cubes;
+    public form: FormGroup;
+    public filterSupported: boolean = false;
 
     constructor(
         private cbs: CubeBuilderService,
-        private store: Store<AppState>) { }
+        private store: Store<AppState>,
+        private fb: FormBuilder) {}
 
     ngOnInit() {
         this.cubes = [];
+        this.form = this.fb.group({
+            cubeName: [''],
+            collectionType: ['all'],
+            isPublic: [true]
+        })
         this.getCubes();
+        this.cbs.getBuilderVersion()
+            .then((version) => {
+                const [major, minor, patch] = version.split(".");
+                if (major && parseInt(major) > 0) {
+                    this.filterSupported = true;
+                }
+            })
     }
 
     async getCubes() {
@@ -49,6 +67,23 @@ export class ListCubesComponent implements OnInit {
 
     public getCubeFullName(cube) {
         return `${cube.name}-${cube.version}:${cube.id}`
+    }
+
+    public async filterCubes() {
+        const { cubeName, collectionType, isPublic } = this.form.value;
+
+        try {
+            this.store.dispatch(showLoading());
+            const response = await this.cbs.getCubes(null, { collection_type: collectionType, public: isPublic, name: cubeName });
+            this.cubes = response.map(c => {
+                return { ...c, status: c.status.toLowerCase() === 'error' ? 'danger' : c.status }
+            })
+
+        } catch (err) {
+            this.cubes = [];
+        } finally {
+            this.store.dispatch(closeLoading());
+        }
     }
 
 }

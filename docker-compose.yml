@@ -2,11 +2,10 @@ version: "3"
 
 services:
   datacube-manager:
-    image: registry.dpi.inpe.br/brazildatacube/data-cube-manager:1.0.0a1
+    image: registry.dpi.inpe.br/brazil-data-cube/dc-manager:1.0.0
     ports:
       - "8080:8080"
     environment:
-      - URL_CUBE_BUILDER=http://localhost:5000
-      - ENVIRONMENT_VERSION=local
-      - ITEM_PREFIX=/cubes
-      - ITEM_BASE_URL=https://brazildatacube.dpi.inpe.br
+      - DC_MANAGER_MODE=local
+      - DC_MANAGER_ITEM_PREFIX=/cubes
+      - DC_MANAGER_ITEM_BASE_URL=https://brazildatacube.dpi.inpe.br

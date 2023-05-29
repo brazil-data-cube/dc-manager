@@ -34,9 +34,10 @@
                                 <tr style="border-bottom: 1px dotted #CCC; padding: 10px">
                                     <td class="text-success">Bands Quicklook:</td>
                                     <td>
-                                        <mat-chip-list>
-                                            <mat-chip *ngFor="let band of cube.quicklook">
-                                                {{ band }}</mat-chip>
+                                        <mat-chip-list *ngIf="cube.quicklook">
+                                            <mat-chip style="background-color: rgb(255, 114, 114);">{{ cube.quicklook[0] }}</mat-chip>
+                                            <mat-chip style="background-color: rgb(32, 200, 32);">{{ cube.quicklook[1] }}</mat-chip>
+                                            <mat-chip style="background-color: rgb(118, 159, 255);">{{ cube.quicklook[2] }}</mat-chip>
                                         </mat-chip-list>
                                     </td>
                                 </tr>

@@ -1,0 +1,12 @@
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+.vscode
+
+data-cube-manager/node_modules/
+deploy/dist/
+data-cube-manager/src/assets/env.js
