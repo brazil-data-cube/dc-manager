@@ -117,12 +117,6 @@ import { BandsDialogComponent } from './components/bands-dialog/bands-dialog.com
   ],
   providers: [
     AdminGuardService
-  ],
-  entryComponents: [
-    TemporalCompositionModal,
-    EstimateCostModal,
-    MapModal,
-    BucketsModal
   ]
 })
 
