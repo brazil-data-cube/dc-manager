@@ -58,7 +58,8 @@
 
                 <div class="col-12">
                     <mat-label>Metadata:</mat-label>
-                    <ace-editor [(text)]="metadata" [theme]="'eclipse'" mode="json" style="height: 200px;"></ace-editor>
+                    <!-- <ace-editor [(text)]="metadata" [theme]="'eclipse'" mode="json" style="height: 200px;"></ace-editor> -->
+                    <ace [mode]="'text'" [theme]="'github'" [(value)]="metadata" style="height: 200px;"></ace>
                 </div>
             </div>
         </form>

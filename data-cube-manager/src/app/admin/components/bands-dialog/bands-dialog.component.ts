@@ -129,8 +129,8 @@ export class BandsDialogComponent implements OnInit {
 
         const url = this.stac.url.replace(parsed.search, '');
         let accessToken = null;
-        if (urlParser.queryParams && urlParser.queryParams.access_token) {
-            accessToken = urlParser.queryParams.access_token;
+        if (urlParser.queryParams && urlParser.queryParams["access_token"]) {
+            accessToken = urlParser.queryParams["access_token"];
         }
 
         try {

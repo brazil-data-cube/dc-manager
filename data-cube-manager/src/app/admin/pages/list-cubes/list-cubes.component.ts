@@ -5,8 +5,6 @@ import { AppState } from 'app/app.state';
 import { CubeBuilderService } from 'app/services/cube-builder';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { environment } from '../../../../environments/environment'
-
 
 @Component({
     selector: 'app-list-cubes',

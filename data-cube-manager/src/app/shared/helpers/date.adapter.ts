@@ -11,7 +11,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     /**
      * parser initial date to EN format (YYYY/mm/dd)
      */
-    parse(value: any): Date | null {
+    override parse(value: any): Date | null {
         if ((typeof value === 'string') && (value.indexOf('/') > -1)) {
             const str = value.split('/');
             const year = Number(str[0]);
@@ -27,7 +27,7 @@ export class AppDateAdapter extends NativeDateAdapter {
      * format date result to EN format (YYYY/mm/dd)
      * possibles: with or without days
      */
-    format(date: Date, displayFormat: string): string {
+    override format(date: Date, displayFormat: string): string {
         // tslint:disable-next-line
         const momentDate = moment.utc(date.toISOString());
 

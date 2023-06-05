@@ -13,7 +13,9 @@ import { collectionsByVersion, getBands, totalItemsByVersion } from 'app/shared/
 import { formatDateUSA } from 'app/shared/helpers/date';
 import { setBandsAvailable, setRangeTemporal, setTiles, setStacList, setSatellite, setLocalDataSource } from 'app/admin/admin.action';
 
-import { featureCollection, convex, intersect, multiPolygon } from '@turf/turf';
+import convex from "@turf/convex";
+import intersect from "@turf/convex";
+import { featureCollection, multiPolygon } from "@turf/helpers";
 import * as L from 'leaflet';
 import { MatStepper } from '@angular/material/stepper';
 
@@ -354,7 +356,7 @@ export class CreateCubeImagesComponent implements OnInit {
     return false;
   }
 
-  async getBandsAndSaveinStore(collection, satellite, urlSTAC, startDate, lastDate, token) {
+  async getBandsAndSaveinStore(collection: any, satellite: any, urlSTAC: string, startDate: any, lastDate: any, token: any) {
     try {
       const respCollection = await this.ss.getCollectionInfo(urlSTAC, collection, token)
 
@@ -378,7 +380,7 @@ export class CreateCubeImagesComponent implements OnInit {
     } finally {
       this.store.dispatch(closeLoading());
     }
-
+    return null;
   }
 
   /**
@@ -491,7 +493,7 @@ export class CreateCubeImagesComponent implements OnInit {
 
     const controlType = L.Control.extend({
       options: options,
-      onAdd: function(map) {
+      onAdd: function(map: any) {
         let container = L.DomUtil.create('div', 'leaflet-bar');
 
         this._createButton(this.options.title, className, container, clickFn, this);

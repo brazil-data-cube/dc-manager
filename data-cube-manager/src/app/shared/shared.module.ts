@@ -36,9 +36,6 @@ import { FormFieldErrorComponent } from './form-field-input/form-field-error.com
     MatInputModule,
     MatSnackBarModule,
     NgxSpinnerModule
-  ],
-  entryComponents: [
-    TokenModal
   ]
 })
 export class SharedModule { }

@@ -376,6 +376,11 @@ fieldset[disabled] .form-group .form-control{
   display: block !important;
 }
 
+// Force form field width (compatibility)
+.mat-mdc-form-field {
+  width: 100% !important;
+}
+
 .has-success{
   .mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
   .mat-form-field-empty.mat-form-field-label{

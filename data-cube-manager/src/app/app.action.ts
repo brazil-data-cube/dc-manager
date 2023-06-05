@@ -19,7 +19,7 @@ export const closeLoading = createAction(
  */
 export const token = createAction(
     'token',
-    props<object>()
+    props<any>()
 );
 
 /**
@@ -27,7 +27,7 @@ export const token = createAction(
  */
 export const setURLCubeBuilder = createAction(
     'URL Cube Builder',
-    props<object>()
+    props<any>()
 );
 
 /**

@@ -3,42 +3,42 @@ import { DataSourceLocal } from './admin.state';
 
 export const setGrid = createAction(
     '[Loading Component] setGrid',
-    props<object>()
+    props<any>()
 );
 
 export const setBandsAvailable = createAction(
     '[Loading Component] setBandsAvailable',
-    props<object>()
+    props<any>()
 );
 
 export const setSatellite = createAction(
     '[Loading Component] setSatellite',
-    props<object>()
+    props<any>()
 );
 
 export const setRangeTemporal = createAction(
     '[Loading Component] setRangeTemporal',
-    props<object>()
+    props<any>()
 );
 
 export const setTiles = createAction(
     '[Loading Component] setTiles',
-    props<object>()
+    props<any>()
 );
 
 export const setDefinition = createAction(
     '[Loading Component] setDefinition',
-    props<object>()
+    props<any>()
 );
 
 export const setMetadata = createAction(
     '[Loading Component] setMetadata',
-    props<object>()
+    props<any>()
 );
 
 export const setStacList = createAction(
     '[Loading Component] setStacList',
-    props<object>()
+    props<any>()
 );
 
 export const setLocalDataSource = createAction(
@@ -48,5 +48,5 @@ export const setLocalDataSource = createAction(
 
 export const setCustomBands = createAction(
     '[Admin Component] setCustomBands',
-    props<object>()
+    props<any>()
 );

@@ -20,12 +20,14 @@
 
                 <div class="col-12">
                     <mat-label>Metadata:</mat-label>
-                    <ace-editor [(text)]="codeMetadata" [theme]="'eclipse'" mode="json" style="height: 200px;"></ace-editor>
+                    <!-- <ace-editor [(text)]="codeMetadata" [theme]="'eclipse'" mode="json" style="height: 200px;"></ace-editor> -->
+                    <ace [mode]="'text'" [theme]="'github'" [(value)]="codeMetadata" style="height: 200px;"></ace>
                 </div>
 
                 <div class="col-12" *ngIf="environmentVersion == 'local'">
                     <mat-label>Parameters:</mat-label>
-                    <ace-editor [(text)]="cubeParameters" [durationBeforeCallback]="3000" [theme]="'eclipse'" mode="json" style="height: 150px;"></ace-editor>
+                    <!-- <ace-editor [(text)]="cubeParameters" [durationBeforeCallback]="3000" [theme]="'eclipse'" mode="json" style="height: 150px;"></ace-editor> -->
+                    <ace [mode]="'text'" [theme]="'github'" [(value)]="cubeParameters" style="height: 150px;"></ace>
                 </div>
 
                 <div class="col-12" class="checkbox_container">
