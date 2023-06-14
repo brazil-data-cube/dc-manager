@@ -47,10 +47,7 @@ export class AdminLayoutComponent implements OnInit {
                  window.scrollTo(0, 0);
          }
       });
-      this._router = (this.router.events as any).filter(event => event instanceof NavigationEnd).subscribe((event: NavigationEnd) => {
-           elemMainPanel.scrollTop = 0;
-           elemSidebar.scrollTop = 0;
-      });
+
       if (window.matchMedia(`(min-width: 960px)`).matches && !this.isMac()) {
           let ps = new PerfectScrollbar(elemMainPanel);
           ps = new PerfectScrollbar(elemSidebar);

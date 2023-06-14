@@ -63,13 +63,13 @@ export class CreateCubeDefinitionComponent implements OnInit {
       temporalComposite: [{value: '', disabled: true}, [Validators.required]],
       compositeFunction: [null, [Validators.required]],
       bands: [[''], [Validators.required]],
-      nodata: ['', [Validators.required, Validators.min(-32768), , Validators.max(32767)]],
+      nodata: ['', [Validators.required]],
       quicklookR: ['', [Validators.required]],
       quicklookG: ['', [Validators.required]],
       quicklookB: ['', [Validators.required]],
       indexes: [['']],
       qualityBand: ['', []],
-      qualityNodata: ['', [Validators.min(-32768), , Validators.max(32767)]],
+      qualityNodata: ['', []],
       public: [true, [Validators.required]],
       indexesMeta: this.fb.group({})
     });
