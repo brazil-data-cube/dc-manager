@@ -35,7 +35,7 @@ COPY ./data-cube-manager /build/data-cube-manager
 WORKDIR /build/data-cube-manager
 
 RUN npm install && \
-    npm run build -- --prod --base-href ${DC_MANAGER_BASE_URL} --deploy-url ${DC_MANAGER_BASE_URL}
+    npm run build -- --configuration production --base-href ${DC_MANAGER_BASE_URL}
 
 
 # Final small image

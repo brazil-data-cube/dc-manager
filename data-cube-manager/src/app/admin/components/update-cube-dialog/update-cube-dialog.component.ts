@@ -37,6 +37,7 @@ export class UpdateCubeDialog implements OnInit {
   ) {
     this.cube = data['cube'];
     this.cubeParameters_ = data['parameters'];
+    this.metadata = this.cube['metadata_'] || this.cube['_metadata'];
   }
 
   ngOnInit(): void {
@@ -51,8 +52,6 @@ export class UpdateCubeDialog implements OnInit {
       description: this.cube['description'],
       public: this.cube['is_public']
     });
-
-    this.metadata = this.cube['_metadata'];
   }
 
   get cubeParameters () {

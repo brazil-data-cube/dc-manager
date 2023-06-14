@@ -9,6 +9,7 @@ import { AppState } from 'app/app.state';
 import { showLoading, closeLoading } from 'app/app.action';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AxiosError } from 'axios';
 
 @Component({
   selector: 'app-reprocess-dialog',
@@ -127,10 +128,14 @@ export class ReprocessDialogComponent implements OnInit {
     } catch (err) {
       let message = null;
 
-      if (err.status === 0 || err.status === 500) {
-        message = 'Server error. Please contact the system administrator';
+      if (err instanceof AxiosError) {
+        message = err.response.data.description;
       } else {
-        message = err.error.description;
+        if (err.status === 0 || err.status === 500) {
+          message = 'Server error. Please contact the system administrator';
+        } else {
+          message = err.error.description;
+        }
       }
 
       this.snackBar.open(message, '', {

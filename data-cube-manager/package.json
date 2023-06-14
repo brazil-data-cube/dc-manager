@@ -13,7 +13,6 @@
   },
   "private": true,
   "dependencies": {
-    "@agm/core": "^1.1.0",
     "@angular/animations": "^16.0.0",
     "@angular/cdk": "^16.0.0",
     "@angular/common": "^16.0.0",
@@ -39,7 +38,7 @@
     "chartist": "0.11.2",
     "classlist.js": "1.1.20150312",
     "core-js": "3.30.2",
-    "express": "4.17.1",
+    "express": "^4.18.2",
     "hammerjs": "2.0.8",
     "jquery": "3.5.0",
     "leaflet": "^1.6.0",
@@ -50,6 +49,7 @@
     "ngx-spinner": "^16.0.0",
     "perfect-scrollbar": "1.1.0",
     "rxjs": "7.8.1",
+    "tslib": "^2.3.0",
     "web-animations-js": "2.3.1",
     "zone.js": "~0.13.0"
   },
@@ -60,22 +60,20 @@
     "@angular/language-service": "^16.0.0",
     "@types/bootstrap": "4.3.0",
     "@types/chartist": "0.9.46",
-    "@types/googlemaps": "3.36.4",
-    "@types/jasmine": "3.3.13",
+    "@types/google.maps": "3.53.4",
+    "@types/jasmine": "4.3.2",
     "@types/jquery": "3.3.29",
     "@types/leaflet": "^1.5.12",
     "@types/leaflet-draw": "^1.0.2",
     "@types/node": "^18.16.0",
     "axios": "^1.4.0",
-    "codelyzer": "5.2.1",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.0.0",
-    "protractor": "~7.0.0",
-    "tslint": "~6.1.0",
-    "typescript": "~5.0.2"
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "eslint": "~8.42.0",
+    "typescript": "~5.1.3"
   }
 }

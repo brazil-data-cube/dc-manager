@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReprocessDialogComponent } from './reprocess-dialog.component';
 
@@ -6,7 +6,7 @@ describe('ReprocessDialogComponent', () => {
   let component: ReprocessDialogComponent;
   let fixture: ComponentFixture<ReprocessDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ReprocessDialogComponent ]
     })
