@@ -110,8 +110,4 @@ export class CreateCubeMetadataComponent implements OnInit {
       }))
     }
   }
-
-  debug() {
-    console.log(this.cubeParameters);
-  }
 }
