@@ -1,22 +1,24 @@
-<h3 mat-dialog-title>
-    <mat-icon>lock</mat-icon>
-    Token
-</h3>
-
-<div mat-dialog-content>
-    <p>Cube Builder URL:</p>
-    <mat-form-field appearance="outline">
-        <mat-label>URL Cube Builder</mat-label>
-        <input matInput [(ngModel)]="urlService">
-    </mat-form-field>
-
-    <p>Token:</p>
-    <mat-form-field appearance="outline">
-        <mat-label>Token</mat-label>
-        <input matInput [(ngModel)]="token" type="password">
-    </mat-form-field>
-</div>
-
-<div mat-dialog-actions>
-    <button mat-raised-button (click)="verify()" color="primary">ENTRAR</button>
+<div class="token-modal">
+    <h3 mat-dialog-title>
+        <mat-icon>lock</mat-icon>
+        Token
+    </h3>
+    
+    <div mat-dialog-content>
+        <p>Cube Builder URL:</p>
+        <mat-form-field appearance="outline">
+            <mat-label>URL Cube Builder</mat-label>
+            <input matInput [(ngModel)]="urlService">
+        </mat-form-field>
+    
+        <p>Token:</p>
+        <mat-form-field appearance="outline">
+            <mat-label>Token</mat-label>
+            <input matInput [(ngModel)]="token" type="password">
+        </mat-form-field>
+    </div>
+    
+    <div mat-dialog-actions>
+        <button mat-raised-button (click)="verify()" color="primary">ENTRAR</button>
+    </div>
 </div>

@@ -4,7 +4,7 @@ The `Data Cube Manager` supports a number of [cube-builder] and [bdc-stac] relea
 
 ## NodeJS
 
-- **node** - >=13,<=16+. For versions 17+, make sure to use the following variable in order to launch application: ``NODE_OPTIONS=--openssl-legacy-provider``.
+- **node** - 18+
 - **npm** - 8+.
 
 
