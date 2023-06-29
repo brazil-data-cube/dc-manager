@@ -241,7 +241,7 @@ export class CreateCubeGridComponent implements OnInit {
     // remove last bbox
     this.map.on(Draw.Event.DRAWSTART, _ => {
       this.map.eachLayer(l => {
-        if (l['options'].className === 'previewBbox') {
+        if ((l['options'] as any).className === 'previewBbox') {
           this.map.removeLayer(l);
         }
       })

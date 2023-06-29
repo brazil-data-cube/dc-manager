@@ -69,6 +69,11 @@ export class CreateCubeMetadataComponent implements OnInit {
 
   private isValidParameters() {
     const obj = JSON.parse(this.cubeParameters);
+
+    if (this.definition === undefined) {
+      return false;
+    }
+
     const qualityBandRequired = !!this.definition.qualityBand
 
     return qualityBandRequired ? obj.mask && obj.mask.clear_data : true

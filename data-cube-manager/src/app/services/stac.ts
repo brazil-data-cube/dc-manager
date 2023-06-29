@@ -12,7 +12,7 @@ export class STACService {
     /**
      * get stac version
      */
-    public async getVersion(url): Promise<any> {
+    public async getVersion(url: string): Promise<any> {
         const { data } = await api.get(`${url}`);
         if (!data['stac_version']) {
             const { data } = await api.get(`${url}/stac`);
@@ -24,7 +24,7 @@ export class STACService {
     /**
      * get collections
      */
-    public async getCollections(url, params: any = { }): Promise<any> {
+    public async getCollections(url: string, params: any = { }): Promise<any> {
         let urlSuffix = '/collections'
         const { data } = await api.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}});
         return data;
@@ -33,7 +33,7 @@ export class STACService {
     /**
      * get items by collections
      */
-    public async getItemsByCollection(url, collections, query, params: any = { }): Promise<any> {
+    public async getItemsByCollection(url: string, collections: string[], query: any, params: any = { }): Promise<any> {
         const q = {
             collections,
             ...query
@@ -47,7 +47,7 @@ export class STACService {
     /**
      * get collection informations
      */
-    public async getCollectionInfo(url, collection, params: any = { }): Promise<any> {
+    public async getCollectionInfo(url: string, collection: string, params: any = { }): Promise<any> {
         let urlSuffix = `/collections/${collection}`
         const { data } = await api.get(`${url}${urlSuffix}`, { params, headers: {'Content-Type': 'application/json'}});
         return data;

@@ -84,8 +84,8 @@ export class CheckCubeComponent implements OnInit {
 
             if (this.cube.temporal_composition_schema) {
                 const data = {
-                    start_date: moment(this.cube.start_date).format(),
-                    last_date: moment(this.cube.end_date).format(),
+                    start_date: moment(this.cube.start_date).utc().format(),
+                    last_date: moment(this.cube.end_date).utc().format(),
                     ...this.cube.temporal_composition_schema
                 }
                 const respTimeline = await this.cbs.getTimeline(data);
@@ -173,9 +173,7 @@ export class CheckCubeComponent implements OnInit {
     async getAllItems(tileId?: string, bbox?: string, start?: string, end?: string) {
         const result = await this.listItems(this.cube.id, bbox, start, end, this.pageIndex + 1, tileId);
 
-        let container = [...result.items];
-
-        return container;
+        return result.items;
     }
 
     async listItems(cube: string, bbox?: string, start?: string, end?: string, page?: number, tiles?: string) {

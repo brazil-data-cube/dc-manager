@@ -20,7 +20,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { AceEditorModule } from 'ng2-ace-editor';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -56,6 +55,12 @@ import { UpdateBandDialogComponent } from './components/update-band-dialog/updat
 import { CustomBandDialogComponent } from './pages/create-cube/steps/definition/custom-band-dialog/custom-band-dialog.component';
 import { BandsDialogComponent } from './components/bands-dialog/bands-dialog.component';
 
+import { ACE_CONFIG, AceConfigInterface, AceModule } from 'ngx-ace-wrapper';
+import { MatDialogModule } from '@angular/material/dialog';
+
+const DEFAULT_ACE_CONFIG: AceConfigInterface = {
+};
+
 @NgModule({
   imports: [
     CommonModule,
@@ -64,6 +69,7 @@ import { BandsDialogComponent } from './components/bands-dialog/bands-dialog.com
     ReactiveFormsModule,
     SharedModule,
     MatBadgeModule,
+    MatDialogModule,
     MatRadioModule,
     MatButtonModule,
     MatButtonToggleModule,
@@ -83,8 +89,8 @@ import { BandsDialogComponent } from './components/bands-dialog/bands-dialog.com
     LeafletDrawModule,
     MatPaginatorModule,
     MatCheckboxModule,
-    AceEditorModule,
-    MatTooltipModule
+    MatTooltipModule,
+    AceModule
   ],
   declarations: [
     AdminLayoutComponent,
@@ -116,14 +122,11 @@ import { BandsDialogComponent } from './components/bands-dialog/bands-dialog.com
     BandsDialogComponent,
   ],
   providers: [
-    AdminGuardService
-  ],
-  entryComponents: [
-    TemporalCompositionModal,
-    EstimateCostModal,
-    MapModal,
-    BucketsModal
+    AdminGuardService,
+    {
+      provide: ACE_CONFIG,
+      useValue: DEFAULT_ACE_CONFIG
+    }
   ]
 })
-
 export class AdminModule {}

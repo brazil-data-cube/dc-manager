@@ -1,11 +1,29 @@
-export const collectionsByVersion = (data, version) => {
-    const func = dictVersion[version]['collections']
+export const collectionsByVersion = (data: any, version: any) => {
+    const func = (dictVersion as any)[version]['collections']
     return func(data)
 }
 
-export const totalItemsByVersion = (data, version) => {
-    const func = dictVersion[version]['totalItems']
+export const totalItemsByVersion = (data: any, version: any) => {
+    const func = (dictVersion as any)[version]['totalItems']
     return func(data)
+}
+
+export interface ILink {
+    href: string;
+    rel: string;
+    title?: string;
+}
+
+export interface IContext {
+    matched: number;
+    returned: number;
+}
+
+export interface IFeatureCollection {
+    type: "FeatureCollection",
+    links: ILink[],
+    context?: IContext,
+    features: any[]
 }
 
 /**
@@ -14,7 +32,7 @@ export const totalItemsByVersion = (data, version) => {
  * @param stac STAC Response object
  * @returns List of bands found in stac response.
  */
-export function getBands(stac: Map<string, any>): [string[], any] {
+export function getBands(stac: { [key: string]: any }): [string[], any] {
     let bands = [];
     let objectRef = null;
 
@@ -36,7 +54,7 @@ export function getBands(stac: Map<string, any>): [string[], any] {
                 if (!stac['properties'][property]['0']) {
                     bands = Object.keys(stac['properties'][property])
                 } else {
-                    bands = stac['properties'][property].map(band => band['name']);
+                    bands = stac['properties'][property].map((band: any) => band['name']);
                 }
                 break;
             }
@@ -46,43 +64,43 @@ export function getBands(stac: Map<string, any>): [string[], any] {
     return [bands, objectRef];
 }
 
-function version1collections(data) {
+function version1collections(data: any) {
     const links = data['collections']
-    return links.map(d => d.id)
+    return links.map((d: any) => d.id)
 }
 
-function version1totalItems(data) {
+function version1totalItems(data: any) {
     return data['numberMatched']
 }
 
-function version9collections(data) {
+function version9collections(data: any) {
     const links = data['collections']
-    return links.map(d => d.id)
+    return links.map((d: any) => d.id)
 }
 
-function version9totalItems(data) {
-    return data['context']['matched']
+function version9totalItems(data: IFeatureCollection) {
+    return data.context?.matched
 }
 
-function version8collections(data) {
+function version8collections(data: any) {
     const links = data['links']
-    return links.filter(d => d.title).map(d => d.title)
+    return links.filter((d: ILink) => d.title).map((d: ILink) => d.title)
 }
 
-function version8totalItems(data) {
+function version8totalItems(data: any) {
     return data['numberMatched']
 }
 
-function version6_7collections(data) {
+function version6_7collections(data: any) {
     const links = data['collections']
-    return links.map(d => d.id)
+    return links.map((d: any) => d.id)
 }
 
-function version6totalItems(data) {
+function version6totalItems(data: any) {
     return data['meta']['found']
 }
 
-function version7totalItems(data) {
+function version7totalItems(data: any) {
     return data['context']['matched']
 }
 

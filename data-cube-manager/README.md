@@ -1,24 +1,27 @@
 # Data Cube Manager (Web Application)
 
-Web Application to manager cubes on Brazil Data Cube project
+Data Cube Manager is a web application for [`cube-builder`](https://github.com/brazil-data-cube/cube-builder), built on top of Angular to manage Data Cubes on Brazil Data Cube project.
 
 ## Installation
+
 ### Requirements
 
 Make sure you have the following libraries installed:
 
-- [`Node.js >= 8.x`](https://nodejs.org/en/)
-- [`Angular CLI >= 7`](https://angular.io/)
+- [`Node.js >= 18.x`](https://nodejs.org/en/)
+- [`Angular CLI >= 16`](https://angular.io/)
 
-```
+Install the dependencies with ``npm`` as following:
+
+```bash
 npm install
 ```
 
 ## Running
 
-First of all, you must have an instance of [Cube-Builder](https://github.com/brazil-data-cube/cube-builder) running.
+First of all, you must have an instance of [Cube-Builder](https://github.com/brazil-data-cube/cube-builder) up and running.
 
-### Development server
+### Development Setup
 
 Create or Edit the file ``assets/env.js`` and set the required variables:
 
@@ -36,14 +39,15 @@ npm start
 
 And then navigate to `http://localhost:4200`. The app will automatically reload if you change any of the source files.
 
-## Build
+## Production Setup - Build
 
-To build package as `development` mode, use the following command line:
+To build package as `production` mode, use the following command line:
 
 ```bash
-ng build
+npm run build
+# ng build # if you have installed the angular cli globally.
 ```
 
-The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a `production` build.
+The build artifacts will be stored in the `dist/` directory.
 
 You can also build the `Data Cube Manager` with [`Docker Image`](../deploy).

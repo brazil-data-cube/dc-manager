@@ -23,6 +23,8 @@ export class AlertComponent {
         return 'error_outline';
       case 'warning':
         return 'warning';
+      default:
+        return "";
     }
   }
 

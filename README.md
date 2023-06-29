@@ -19,12 +19,12 @@ Web-based user interface to manage data cubes.
 
 Make sure you have the following libraries installed:
 
-- [`Node.js >= 8.x,<17`](https://nodejs.org/en/)
-- [`Angular CLI >= 7`](https://angular.io/)
+- [`Node.js >= 18`](https://nodejs.org/en/)
+- [`Angular CLI >= 16`](https://angular.io/)
 
 ## Running
 
-- To development or Manual Build => [`data-cube-manager`](./data-cube-manager)
+- Development setup => [`data-cube-manager`](./data-cube-manager)
 - With Docker => [`deploy`](./deploy)
 
 ## Compatibility

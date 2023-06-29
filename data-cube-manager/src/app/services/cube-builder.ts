@@ -11,7 +11,7 @@ interface ICubesFilter {
 export class CubeBuilderService {
 
     /** url base of Cube Builder*/
-    private urlCubeBuilder = null;
+    private urlCubeBuilder: null|string = null;
 
     /** get cube-builder url */
     constructor() {
@@ -23,7 +23,7 @@ export class CubeBuilderService {
     /**
      * verify token
      */
-    public async verifyToken(urlService, token = null): Promise<any> {
+    public async verifyToken(urlService: string, token: null|string = null): Promise<any> {
         const headers = token ? { headers: { 'x-api-key': token } } : {}
         const { data } = await api.get(`${urlService}/`, headers);
         return data;
@@ -32,7 +32,7 @@ export class CubeBuilderService {
     /**
      * get cube metadata
      */
-    public async getCubes(id = null, params: ICubesFilter = null): Promise<any> {
+    public async getCubes(id = null, params: null|ICubesFilter = null): Promise<any> {
         let urlSuffix = '/cubes'
         if (id) {
             urlSuffix += `/${id}`
@@ -48,7 +48,7 @@ export class CubeBuilderService {
     /**
      * get cube status
      */
-    public async getCubeStatus(cubeFullName): Promise<any> {
+    public async getCubeStatus(cubeFullName: string): Promise<any> {
         let urlSuffix = `/cube-status?cube_name=${cubeFullName}`
         const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`);
         return data;
@@ -57,7 +57,7 @@ export class CubeBuilderService {
     /**
      * get cube geojson (tiles)
      */
-    public async getGeoJSON(id): Promise<any> {
+    public async getGeoJSON(id: string): Promise<any> {
         let urlSuffix = `/cubes/${id}/tiles/geom`;
         const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`);
         return data;
@@ -71,7 +71,7 @@ export class CubeBuilderService {
         if (id) {
             urlSuffix += `/${id}`
         }
-        const params = { }
+        const params: { [key: string]: string } = { }
         if (!!tiles) {
             params['tiles'] = tiles
         }
@@ -85,7 +85,7 @@ export class CubeBuilderService {
     /**
      * create cube metadata
      */
-    public async create(infos): Promise<any> {
+    public async create(infos: any): Promise<any> {
         const urlSuffix = '/cubes';
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
@@ -94,7 +94,7 @@ export class CubeBuilderService {
     /**
      * start cube proccesses
      */
-    public async start(infos): Promise<any> {
+    public async start(infos: any): Promise<any> {
         const urlSuffix = '/start';
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
@@ -103,7 +103,7 @@ export class CubeBuilderService {
     /**
      * start cube proccesses
      */
-    public async update(cubeId, infos): Promise<any> {
+    public async update(cubeId: string, infos: any): Promise<any> {
         const urlSuffix = `/cubes/${cubeId}`;
         const { data } = await api.put(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
@@ -115,7 +115,7 @@ export class CubeBuilderService {
      * @param cubeId Data Cube Identifier.
      * @param parameters Map of parameters to be set on Data Cube Instance.
      */
-    public async updateCubeParameters(cubeId, parameters: any): Promise<any> {
+    public async updateCubeParameters(cubeId: string, parameters: any): Promise<any> {
         const urlSuffix = `/cubes/${cubeId}/parameters`;
         const { data } = await api.put(`${this.urlCubeBuilder}${urlSuffix}`, parameters);
         return data;
@@ -124,7 +124,7 @@ export class CubeBuilderService {
     /**
      * create raster size schema
      */
-    public async createBucket(infos): Promise<any> {
+    public async createBucket(infos: any): Promise<any> {
         const urlSuffix = '/create-bucket';
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
@@ -133,7 +133,7 @@ export class CubeBuilderService {
     /**
      * list merges by blend
      */
-    public async listMerges(cube_id, start_date, end_date, tileID): Promise<any> {
+    public async listMerges(cube_id: string, start_date: string, end_date: string, tileID: string): Promise<any> {
         const options = {} as any;
         options.params = {
             cube_id,
@@ -150,7 +150,7 @@ export class CubeBuilderService {
     /**
      * get cube timeline
      */
-    public async getTimeline(dataQuery): Promise<any> {
+    public async getTimeline(dataQuery: any): Promise<any> {
         const urlSuffix = `/list-periods`;
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, dataQuery);
         return data;
@@ -178,7 +178,7 @@ export class CubeBuilderService {
     /**
      * create grid (grs_schema)
      */
-    public async createGrid(infos): Promise<any> {
+    public async createGrid(infos: any): Promise<any> {
         const urlSuffix = `/create-grids`;
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;
@@ -202,7 +202,7 @@ export class CubeBuilderService {
         return data;
     }
 
-    public async listItemsTiles(id) {
+    public async listItemsTiles(id: string) {
         const urlSuffix = `/cubes/${id}/tiles`;
         const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`);
         return data;
@@ -214,7 +214,7 @@ export class CubeBuilderService {
         return data;
     }
 
-    public async estimateCost(infos) {
+    public async estimateCost(infos: any) {
         const urlSuffix = `/estimate-cost`;
         const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, infos);
         return data;

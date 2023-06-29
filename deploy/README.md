@@ -10,24 +10,24 @@ See also the [`tutorial on how to install Docker Compose`](https://docs.docker.c
 
 Make sure you have the following libraries installed:
 
-- [`Node.js >= 8.x,<17`](https://nodejs.org/en/)
-- [`Angular CLI >= 7`](https://angular.io/)
+- [`Node.js >= 18`](https://nodejs.org/en/)
+- [`Angular CLI >= 16`](https://angular.io/)
 
 
 ## Build and Running
 
-Use the following command to build docker image ``brazil-data-cube/dc-manager:1.0.0``:
+Use the following command to build docker image ``brazil-data-cube/dc-manager:1.1.0`` (root repo dir):
 
 ```bash
-docker build --tag brazil-data-cube/dc-manager:1.0.0 \
-             --build-arg DC_MANAGER_VERSION=1.0.0 \
+docker build --tag brazil-data-cube/dc-manager:1.1.0 \
+             --build-arg DC_MANAGER_VERSION=1.1.0 \
              -f deploy/Dockerfile .
 ```
 
 If the above command runs successfully, you will be able to list the docker image:
 
 ```bash
-brazil-data-cube/dc-manager           1.0.0            c1a745bfd47e   11 minutes ago   74.7MB
+brazil-data-cube/dc-manager           1.1.0            a801f493c3f0   23 seconds ago   73.8MB
 ```
 
 In order to launch docker image, you may pass the following command:
@@ -35,13 +35,14 @@ In order to launch docker image, you may pass the following command:
 ```bash
 docker run --interactive \
            --tty \
+           --rm \
            --name dc-manager \
            --env DC_MANAGER_MODE=local \
            --env DC_MANAGER_ITEM_PREFIX=/cubes \
            --env DC_MANAGER_ITEM_BASE_URL=https://brazildatacube.dpi.inpe.br \
            --publish 8080:8080 \
            --env DC_MANAGER_BASE_URL=/ \
-           brazil-data-cube/dc-manager:1.0.0
+           brazil-data-cube/dc-manager:1.1.0
 ```
 
 You may need to replace the definition of some environment variables:

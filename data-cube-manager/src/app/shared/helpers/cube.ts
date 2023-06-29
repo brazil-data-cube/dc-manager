@@ -14,9 +14,9 @@ export function isIdentity(cube: any): boolean {
 }
 
 
-export function getCompositeFunction(cube: any): string {
+export function getCompositeFunction(cube: any): string|null {
     if (!cube) {
-        return ;
+        return null;
     }
     // For compatibility
     let alias = cube.composite_function;
@@ -27,7 +27,7 @@ export function getCompositeFunction(cube: any): string {
 }
 
 
-export function getCubeBuilderVersion(): string {
+export function getCubeBuilderVersion(): string|null {
     return localStorage.getItem("DC_MANAGER_BUILDER_VERSION");
 }
 

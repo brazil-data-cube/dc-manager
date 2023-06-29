@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateCubeComponent } from './create-cube.component';
 
@@ -7,7 +7,7 @@ describe('CreateCubeComponent', () => {
   let component: CreateCubeComponent;
   let fixture: ComponentFixture<CreateCubeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ CreateCubeComponent ]
     })

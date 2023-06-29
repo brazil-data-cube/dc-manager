@@ -35,14 +35,14 @@ COPY ./data-cube-manager /build/data-cube-manager
 WORKDIR /build/data-cube-manager
 
 RUN npm install && \
-    npm run build -- --prod --base-href ${DC_MANAGER_BASE_URL} --deploy-url ${DC_MANAGER_BASE_URL}
+    npm run build -- --configuration production --base-href ${DC_MANAGER_BASE_URL}
 
 
 # Final small image
 FROM python:3.11-alpine
 
 # Build arguments
-ARG DC_MANAGER_VERSION="1.0.0"
+ARG DC_MANAGER_VERSION="1.1.0"
 ARG DC_MANAGER_INSTALL_PATH="/opt/dc-manager/${DC_MANAGER_VERSION}"
 ENV DC_MANAGER_BASE_URL="/"
 ENV DC_MANAGER_VERSION=${DC_MANAGER_VERSION}

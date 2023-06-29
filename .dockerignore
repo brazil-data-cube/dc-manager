@@ -10,3 +10,7 @@
 data-cube-manager/node_modules/
 deploy/dist/
 data-cube-manager/src/assets/env.js
+
+# Javascript / Angular
+data-cube-manager/.angular/
+node_modules

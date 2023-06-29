@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.1.0
+
+- Upgrade Angular to 16 and dependencies
+- Review docs related setup and build
+- Adjust support of Ace Editor with newest libraries
+
 
 ## Version 1.0.0 (2023-05-29)
 

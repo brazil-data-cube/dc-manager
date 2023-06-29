@@ -5,8 +5,6 @@ import { AppState } from 'app/app.state';
 import { CubeBuilderService } from 'app/services/cube-builder';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { environment } from '../../../../environments/environment'
-
 
 @Component({
     selector: 'app-list-cubes',
@@ -70,11 +68,11 @@ export class ListCubesComponent implements OnInit {
     }
 
     public async filterCubes() {
-        const { cubeName, collectionType, isPublic } = this.form.value;
+        let { cubeName, collectionType, isPublic } = this.form.value;
 
         try {
             this.store.dispatch(showLoading());
-            const response = await this.cbs.getCubes(null, { collection_type: collectionType, public: !isPublic, name: cubeName });
+            const response = await this.cbs.getCubes(null, { collection_type: collectionType, public: isPublic, name: cubeName });
             this.cubes = response.map(c => {
                 return { ...c, status: c.status.toLowerCase() === 'error' ? 'danger' : c.status }
             })
