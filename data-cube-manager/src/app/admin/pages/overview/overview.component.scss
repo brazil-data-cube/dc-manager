@@ -2,23 +2,23 @@ table {
     width: 100%;
 }
 
-tr.example-detail-row {
+tr.overview-detail-row {
     height: 0;
 }
 
-tr.example-element-row:not(.example-expanded-row):hover {
+tr.overview-element-row:not(.overview-expanded-row):hover {
     background: whitesmoke;
 }
 
-tr.example-element-row:not(.example-expanded-row):active {
+tr.overview-element-row:not(.overview-expanded-row):active {
     background: #efefef;
 }
 
-.example-element-row td {
+.overview-element-row td {
     border-bottom-width: 0;
 }
 
-.example-element-detail {
+.overview-row-entry {
     overflow: hidden;
     display: flex;
 }

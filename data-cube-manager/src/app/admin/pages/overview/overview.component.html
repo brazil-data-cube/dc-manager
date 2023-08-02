@@ -55,7 +55,7 @@
             <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
-                    <div class="example-element-detail" *ngIf="element == expandedElement"
+                    <div class="overview-row-entry" *ngIf="element == expandedElement"
                         [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
 
                         <div class="row" style="margin: 0; overflow-y: auto; max-height: 450px;">
@@ -94,11 +94,11 @@
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-            <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
-                [class.example-expanded-row]="expandedElement === element"
+            <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="overview-element-row"
+                [class.overview-expanded-row]="expandedElement === element"
                 (click)="expandedElement = expandedElement === element ? null : element">
             </tr>
-            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="overview-detail-row"></tr>
         </table>
 
         <mat-paginator #paginator [length]="100"
