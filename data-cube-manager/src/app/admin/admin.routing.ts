@@ -5,10 +5,12 @@ import { DetailsCubeComponent } from './pages/details-cube/details-cube.componen
 
 import { CheckCubeComponent } from './pages/check-cube/check-cube.component';
 import { CreateCubeComponent } from './pages/create-cube/create-cube.component';
+import { OverviewComponent } from './pages/overview/overview.component';
 
 export const AdminRoutes: Routes = [
     { path: 'list-cubes', component: ListCubesComponent },
     { path: 'details-cube/:cube', component: DetailsCubeComponent },
     { path: 'check-cube/:cube', component: CheckCubeComponent },
+    { path: 'overview/:cube', component: OverviewComponent },
     { path: 'create-cube', component: CreateCubeComponent },
 ];

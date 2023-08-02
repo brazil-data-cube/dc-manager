@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormFieldErrorComponent } from './form-field-input/form-field-error.component';
+import { BrowserUtil } from './browser';
 
 /**
  * Shared Module
@@ -21,8 +22,9 @@ import { FormFieldErrorComponent } from './form-field-input/form-field-error.com
     LoadingComponent,
     TokenModal,
     AlertComponent,
-    FormFieldErrorComponent
+    FormFieldErrorComponent,
   ],
+  providers: [BrowserUtil],
   exports: [
     LoadingComponent,
     AlertComponent,

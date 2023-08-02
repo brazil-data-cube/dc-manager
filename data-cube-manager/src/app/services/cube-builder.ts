@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import api from "./main";
+import { BrowserUtil } from 'app/shared/browser';
 
 interface ICubesFilter {
     name?: string;
@@ -14,7 +15,9 @@ export class CubeBuilderService {
     private urlCubeBuilder: null|string = null;
 
     /** get cube-builder url */
-    constructor() {
+    constructor(
+        private browserSvc: BrowserUtil
+    ) {
         if (!!localStorage.getItem('DC_MANAGER_url_service')) {
             this.urlCubeBuilder = localStorage.getItem('DC_MANAGER_url_service');
         }
@@ -224,5 +227,33 @@ export class CubeBuilderService {
         const urlSuffix = `/`;
         const { data } = await api.get(`${this.urlCubeBuilder}${urlSuffix}`);
         return data.version;
+    }
+
+    /**
+     * start cube proccesses
+     */
+    public async reprocess(cubeId: string, tiles?: string[]): Promise<any> {
+        const body = { }
+        if (!!tiles) {
+            body["tiles"] = tiles
+        }
+
+        const urlSuffix = `/cubes/${cubeId}/complete`;
+        const { data } = await api.post(`${this.urlCubeBuilder}${urlSuffix}`, body);
+        return data;
+    }
+
+    async downloadMergeScenes(cubeId: string, tileId: string, startDate: string, endDate: string, fileName: string) {
+        const scenes: Set<string> = new Set<string>()
+        const response = await this.listMerges(cubeId, startDate, endDate, tileId)
+
+        for(let mergeDate of Object.keys(response)) {
+            const merge = response[mergeDate];
+            for (let error of merge['errors']) {
+                scenes.add(error['filename'])
+            }
+        }
+
+        this.browserSvc.downloadEntries(Array.from(scenes), fileName)
     }
 }

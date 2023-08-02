@@ -1,0 +1,104 @@
+table {
+    width: 100%;
+}
+
+tr.example-detail-row {
+    height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+}
+
+.example-element-row td {
+    border-bottom-width: 0;
+}
+
+.example-element-detail {
+    overflow: hidden;
+    display: flex;
+}
+
+.example-element-diagram {
+    min-width: 80px;
+    border: 2px solid black;
+    padding: 8px;
+    font-weight: lighter;
+    margin: 8px 0;
+    height: 104px;
+}
+
+.example-element-symbol {
+    font-weight: bold;
+    font-size: 40px;
+    line-height: normal;
+}
+
+.example-element-description {
+    padding: 16px;
+}
+
+.example-element-description-attribution {
+    opacity: 0.5;
+}
+
+.card-tile-info {
+    padding: 3px;
+    width: 100%;
+    border-radius: var(--mdc-elevated-card-container-shape);
+    background-color: var(--mdc-elevated-card-container-color);
+    border-width: 0;
+    border-style: solid;
+    margin-bottom: 5px;
+    border-color: var(--mdc-elevated-card-container-color);
+    box-shadow: var(--mdc-elevated-card-container-elevation);
+    margin-bottom: 15px;
+}
+
+.card-tile-info span {
+    padding: 10px;
+    color: red;
+    border-bottom: 1px solid rgb(0, 0, 0, 0.12);
+    border-top: 1px solid rgb(0, 0, 0, 0.12);
+    border-left: 1px solid rgb(0, 0, 0, 0.12);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.section-card {
+    background: #FFF;
+    padding: 20px 10px 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .row {
+        margin: 0;
+        width: 100%;
+    }
+
+    button {
+        margin-top: -20px;
+        margin-right: 10px;
+    }
+    margin-bottom: 15px;
+}
+
+.cell-right {
+    float: right;
+}
+
+.tile-paginator > .mat-mdc-paginator-page-size-select {
+    width: 84px !important;
+    color: red !important;
+}
+
+.general-control-btn {
+    display: flex;
+    float: right;
+    margin-bottom: 10px;
+}

@@ -11,11 +11,23 @@
     background: rgba(#339966, 0.9) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
+
+    .mdc-snackbar__surface {
+        background: rgba(#339966, 0.9) !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
 }
 .app_snack-bar-error {
     background: rgba(#ff4d4d, 0.9) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
+
+    .mdc-snackbar__surface {
+        background: rgba(#ff4d4d, 0.9) !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
 }
 
 // LEAFLET PLUGINS
@@ -32,4 +44,19 @@
         font-size: 1.5em;
         font-weight: 700;
     }
+}
+
+
+.mat-mdc-form-field-icon-suffix {
+  margin-top: 20px;
+}
+
+
+.mdc-form-field label {
+  padding-top: 10px;
+}
+
+.mat-mdc-text-field-wrapper {
+    height: none !important;
+    margin-top: 10px !important;
 }
