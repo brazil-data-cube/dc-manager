@@ -57,6 +57,9 @@ import { BandsDialogComponent } from './components/bands-dialog/bands-dialog.com
 
 import { ACE_CONFIG, AceConfigInterface, AceModule } from 'ngx-ace-wrapper';
 import { MatDialogModule } from '@angular/material/dialog';
+import { OverviewComponent } from './pages/overview/overview.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 const DEFAULT_ACE_CONFIG: AceConfigInterface = {
 };
@@ -90,6 +93,9 @@ const DEFAULT_ACE_CONFIG: AceConfigInterface = {
     MatPaginatorModule,
     MatCheckboxModule,
     MatTooltipModule,
+    MatTableModule,
+    MatButtonToggleModule,
+    MatFormFieldModule,
     AceModule
   ],
   declarations: [
@@ -120,6 +126,7 @@ const DEFAULT_ACE_CONFIG: AceConfigInterface = {
     UpdateBandDialogComponent,
     CustomBandDialogComponent,
     BandsDialogComponent,
+    OverviewComponent,
   ],
   providers: [
     AdminGuardService,

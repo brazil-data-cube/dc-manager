@@ -381,6 +381,10 @@ fieldset[disabled] .form-group .form-control{
   width: 100% !important;
 }
 
+.mat-mdc-paginator-page-size-select {
+  width: 84px !important;
+}
+
 .has-success{
   .mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
   .mat-form-field-empty.mat-form-field-label{

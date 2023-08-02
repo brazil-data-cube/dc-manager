@@ -1,0 +1,81 @@
+table {
+    width: 100%;
+}
+
+tr.overview-detail-row {
+    height: 0;
+}
+
+tr.overview-element-row:not(.overview-expanded-row):hover {
+    background: whitesmoke;
+}
+
+tr.overview-element-row:not(.overview-expanded-row):active {
+    background: #efefef;
+}
+
+.overview-element-row td {
+    border-bottom-width: 0;
+}
+
+.overview-row-entry {
+    overflow: hidden;
+    display: flex;
+}
+
+.card-tile-info {
+    padding: 3px;
+    width: 100%;
+    border-radius: var(--mdc-elevated-card-container-shape);
+    background-color: var(--mdc-elevated-card-container-color);
+    border-width: 0;
+    border-style: solid;
+    margin-bottom: 5px;
+    border-color: var(--mdc-elevated-card-container-color);
+    box-shadow: var(--mdc-elevated-card-container-elevation);
+    margin-bottom: 15px;
+}
+
+.card-tile-info span {
+    padding: 10px;
+    color: red;
+    border-bottom: 1px solid rgb(0, 0, 0, 0.12);
+    border-top: 1px solid rgb(0, 0, 0, 0.12);
+    border-left: 1px solid rgb(0, 0, 0, 0.12);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.section-card {
+    background: #FFF;
+    padding: 20px 10px 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .row {
+        margin: 0;
+        width: 100%;
+    }
+
+    button {
+        margin-top: -20px;
+        margin-right: 10px;
+    }
+    margin-bottom: 15px;
+}
+
+.cell-right {
+    float: right;
+}
+
+.tile-paginator > .mat-mdc-paginator-page-size-select {
+    width: 84px !important;
+    color: red !important;
+}
+
+.general-control-btn {
+    display: flex;
+    float: right;
+    margin-bottom: 10px;
+}
