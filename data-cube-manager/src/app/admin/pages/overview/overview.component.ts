@@ -197,9 +197,6 @@ export class OverviewComponent implements AfterViewInit {
   }
 
   async reprocessTile(tileId: string, step?: TimeStep) {
-    const message = "The re-process were scheduled."
-    this.snackBar.open(message, '', { duration: 60000, verticalPosition: 'top', panelClass: 'app_snack-bar-success' })
-
     if (!!tileId && !!step) {
       try {
         this.store.dispatch(showLoading());
